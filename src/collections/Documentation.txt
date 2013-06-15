@@ -1,0 +1,161 @@
+==============
+Documentation!
+==============
+
+
+In general, Immutable containers have reference semantics for both
+assignment and copy constructors, while mutable containers have 
+references semantics only for the copy construct - assignment 
+results in a deep copy.
+
+--- We're changing all this - all copy and assignment ops will
+have reference semantics, and users will use the new Copy() method
+to produce a deep copy.
+
+Semantic Legend         C-Constr   '='   
+--------------------+----------------------
+Array               |   Ref        Ref 
+Mutable Array       |   Ref        Copy      
+LinkedList          |   Ref        Ref
+Mutable LinkedList  |   Ref        Copy           
+Vector              |   Ref        Copy
+
+
+
+
+	/// Implementations marked with a '*' indicate that the
+	/// returned container shares data with the previous container in a manner
+	/// that can only be done with immutable, persistent data structures
+
+
+    Traversable                                         Array    Mutable Array    LinkedList   TreeSet
+    -----------                                         -----    -------------    ----------   -------
+
+	Iterator GetIterator() const                        O(1)     O(1)             O(1)          O(1)
+	void ForEach( f : T -> void ) const                 O(n)     O(n)             O(n)          O(n)
+	C<U> Map( f : T -> U ) const                        O(n)     O(n)             O(n)          O(n log n)
+
+	int Size() const                                    O(1)     O(1)             O(1)          O(1)
+	bool IsEmpty() const                                O(1)     O(1)             O(1)          O(1)
+	bool NonEmpty() const                               O(1)     O(1)             O(1)          O(1)
+	T Head() const                                      O(1)     O(1)             O(1)          O(log n)
+	T Last() const                                      O(1)     O(1)             O(1)          O(n)
+	T Find(Predicate p) const                           O(n)     O(n)             O(n)          O(log n)
+	C Init() const                                      O(1)*    O(n)             O(n)*         O(n log n)
+	C Tail() const                                      O(n)     O(n)             O(1)*         O(n log n)
+	C Take(int n) const                                 O(1)*    O(n)             O(n)*         O(n log n)
+	C Drop(int n) const                                 O(n)     O(n)             O(n)*         O(n log n)
+	C TakeWhile ( p : T -> bool ) const                 O(n)*    O(n)             O(n)*         O(n log n)
+	C DropWhile ( p : T -> bool ) const                 O(n)     O(n)             O(n)*         O(n log n)
+	C Filter    ( p : T -> bool ) const                 O(n)     O(n)             O(n)          O(n log n)
+	C FilterNot ( p : T -> bool ) const                 O(n)     O(n)             O(n)          O(n log n)
+
+	Pair<C, C> SplitAt(int n) const                     O(n)*    O(n)             O(n)*         O(n log n)
+	Pair<C, C> Span( p : T -> bool ) const              O(n)*    O(n)             O(n)*         O(n log n)
+	Pair<C, C> Partition( p : T -> bool ) const         O(n)     O(n)             O(n)          O(n log n)
+
+	bool ForAll   ( p : T -> bool ) const               O(n)     O(n)             O(n)          O(n)
+	bool Exists   ( p : T -> bool ) const               O(n)     O(n)             O(n)          O(n)
+	int Count     ( p : T -> bool ) const               O(n)     O(n)             O(n)          O(n)
+	int CountWhile( p : T -> bool ) const               O(n)     O(n)             O(n)          O(n)
+
+	static C Construct (int N, T * values)              O(n)     O(n)             O(n)          O(n log n)
+	static C Construct (int N, g : int -> T)            O(n)     O(n)             O(n)          O(n log n)
+
+
+	Sequence             
+	--------             
+	const T& operator [] (int i) const                  O(1)     O(1)             O(n)           -             
+	int IndexOf (const T& element) const                O(n)     O(n)             O(n)           -   
+	int IndexWhere ( p : T -> bool ) const              O(n)     O(n)             O(n)           -   
+	C Append  (const T& element) const                  O(n)     O(n)             O(1)*          -   
+	C Prepend (const T& element) const                  O(n)     O(n)             O(1)*          -    
+	C PadTo   (int n, const T& element) const           O(n)     O(n)             O(n)           -   
+	C Reverse () const                                  O(n)     O(n)             O(n)           -   
+	C operator + (const C& lhs, const T& rhs) const     O(n)     O(n)             O(1)*          -   
+	C operator + (const T& rhs, const C& lhs) const     O(n)     O(n)             O(1)*          -    
+	bool Contains (const E& element)                    O(n)     O(n)             O(n)           -   
+
+
+	Set
+	---
+	bool Contains (const T& element) const               -        -                -            O(n)             
+	bool IsSubsetOf (const C& set) const                 -        -                -            O(n)           
+	C Union (const C& set) const                         -        -                -            O(n log n)   
+	C Intersection (const C& set) const                  -        -                -            O(n log n)          
+	C Difference (const C& set) const                    -        -                -            O(n log n)        
+	C Insert (const T& element) const                    -        -                -            O(n)        
+	C Remove (const T& element) const                    -        -                -            O(n)        
+
+
+	Map
+	---
+	bool Contains (const K& key) const
+	const V& GetOrElse(const K& key, const V& otherwise) const
+	C Insert(const K& key, const V& value) const
+	C Remove(const K& key) const
+	Set<Key> Keys() const
+	C FilterKeys(P p) const
+	C MapValues(TtoU& vf) const
+
+
+	Mutable Sequences
+	-----------------
+	T& operator [] (int i)                               -       O(1)              -             -   
+	C& operator += (const T& element)                    -        -                -             - 
+	C& operator += (const C& container)                  -        -                -             - 
+
+	Mutable Sets
+	------------
+	C& operator += (const T& element)                    -        -                -             -   
+	C& operator += (const C& container)                  -        -                -             -     
+	C& operator -= (const T& element)                    -        -                -             -   
+	C& operator -= (const C& container)                  -        -                -             -     
+
+
+
+
+
+===============
+What's Fast (1)
+===============
+
+Immutable::Array
+----------------
+int Size() const                  
+bool IsEmpty() const              
+bool NonEmpty() const             
+T Head() const                    
+T Last() const                    
+C Init() const                    
+C Take(int n) const               
+const T& operator [] (int i) const
+
+Mutable::Array
+--------------
+int Size() const                  
+bool IsEmpty() const              
+bool NonEmpty() const             
+T Head() const                    
+T Last() const                    
+const T& operator [] (int i) const
+T& operator [] (int i)            
+
+Immutable::LinkedList
+---------------------
+Iterator GetIterator() const                    
+int Size() const                                
+bool IsEmpty() const                            
+bool NonEmpty() const                           
+T Head() const                                  
+T Last() const                                  
+C Tail() const                                  
+C Append  (const T& element) const               
+C Prepend (const T& element) const                
+C operator + (const T& rhs, const C& lhs) const   
+void Iterator::Insert(const T& element)
+
+Immutable::TreeSet
+------------------
+
+
