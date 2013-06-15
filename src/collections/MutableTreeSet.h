@@ -102,22 +102,6 @@ namespace Collections
          TreeSet<E>& operator += (const TreeSet<E>& set);   // destructive union
          TreeSet<E>& operator -= (const E& e);
          TreeSet<E>& operator -= (const TreeSet<E>& set);   // destructive set difference
-
-      /*protected:
-         virtual Builder clone(int numElementsToCopy, int reservedSpace) const
-         {
-            /// Iterating and using the Builder's AddElement method would
-            /// produce an n-log-n clone operation.  We should be able to
-            /// clone a tree in O(n) time.
-
-            if (Size() == 0) return Builder();
-
-            /// We can use the CloneSubTree method
-            const int N = MIN(numElementsToCopy, Size());
-
-            if (N == Size()) return Builder(Node::CloneSubTree(_root), N);
-            else return Traversable<E, TreeSet<E>, TreeSetTraits<E> >::clone(numElementsToCopy, reservedSpace);
-         }*/
       };
 
 
@@ -131,15 +115,7 @@ namespace Collections
       {
          /// We need to handle the strange case where the rhs is the same container
          /// as on the lhs
-         if (&set == this)
-         {
-            auto treeClone = set._tree.Clone();
-            TreeSet<E> setClone(set.Size(), treeClone);
-            Iterator itr = setClone.GetIterator();
-            while (itr.HasNext()) *this += itr.Next();
-            return *this;
-         }
-
+         if (&set == this) return *this;
          Iterator itr = set.GetIterator();
          while (itr.HasNext()) *this += itr.Next();
          return *this;
@@ -159,15 +135,7 @@ namespace Collections
       {
          /// We need to handle the strange case where the rhs is the same container
          /// as on the lhs
-         if (&set == this)
-         {
-            auto treeClone = set._tree.Clone();
-            TreeSet<E> setClone(set.Size(), treeClone);
-            Iterator itr = setClone.GetIterator();
-            while (itr.HasNext()) *this -= itr.Next();
-            return *this;
-         }
-
+         if (&set == this) return *this;
          Iterator itr = set.GetIterator();
          while (itr.HasNext()) *this -= itr.Next();
          return *this;

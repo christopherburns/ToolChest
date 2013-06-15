@@ -77,6 +77,7 @@ template <> struct ToString<Mutable::LinkedList<int>   >      { constexpr static
 template <> struct ToString<Immutable::TreeSet<int> >         { constexpr static const char * const value = "Immutable::TreeSet<int>"; };
 template <> struct ToString<Mutable::TreeSet<int>   >         { constexpr static const char * const value = "Mutable::TreeSet<int>"; };
 template <> struct ToString<Immutable::TreeMap<int, float> >  { constexpr static const char * const value = "Immutable::TreeMap<int, float>"; };
+template <> struct ToString<Mutable::TreeMap<int, float> >    { constexpr static const char * const value = "Mutable::TreeMap<int, float>"; };
 
 
 #define STREAM_OUT_DEF o << "[ "; Printer p; c.ForEach(p); o << "]"; return o;
@@ -84,7 +85,7 @@ ostream& operator << (ostream& o, const Collections::Vector<int>& c)          { 
 ostream& operator << (ostream& o, const Mutable::Array<int>& c)               { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Mutable::LinkedList<int>& c)          { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Mutable::TreeSet<int>& c)             { STREAM_OUT_DEF }
-//ostream& operator << (ostream& o, const Mutable::TreeMap<int, float>& c)      { STREAM_OUT_DEF }
+ostream& operator << (ostream& o, const Mutable::TreeMap<int, float>& c)      { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Immutable::Array<int>& c)             { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Immutable::Array<float>& c)           { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Immutable::LinkedList<int>& c)        { STREAM_OUT_DEF }
@@ -1084,6 +1085,7 @@ int main()
    cout << endl << "Testing TreeMap Structure ....." << endl << endl;
 
    Test_TraversableMap<Immutable::TreeMap<int, float> >();  Test_Map<Immutable::TreeMap<int, float> >();
+   Test_TraversableMap<Mutable::TreeMap<int, float> >();    Test_Map<Mutable::TreeMap<int, float> >();
 
    return 0;
 }

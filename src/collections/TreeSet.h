@@ -108,7 +108,7 @@ namespace Collections
          if (this->Contains(e)) return *this;
 
          auto pTree = _tree.Clone();
-         pTree.Insert(e);
+         bool r = pTree.Insert(e); assert(r);
 
          return TreeSet(_size+1, pTree);
       }

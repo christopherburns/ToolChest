@@ -123,10 +123,6 @@ namespace Collections
          auto pTree = _tree.Clone();
          pTree.Insert(Common::KeyValuePair<K, V>(key, value));
          return TreeMap(_size+1, pTree);
-
-         //Builder builder = this->clone(this->Size(), this->Size() + 1);
-         //builder.AddElement(Common::KeyValuePair<K, V>(key, value));
-         //return builder.Result();
       }
 
       /// O(n)
@@ -144,22 +140,6 @@ namespace Collections
          auto pTree = _tree.Clone();
          pTree.Remove(target, parent);
          return TreeMap(_size-1, pTree);
-
-
-
-         /*TreeMap<K, V> map = TreeMap<K, V>(this->Size(), Node::CloneSubTree(_root));
-         if (map._root->payload.key == key) Node::RemoveNodeFromSubtree(map._root, &map._root);         
-         else
-         {
-            Ref<Node > n = Node::FindParentInSubtree(Common::KeyValuePair<K, V>(key), map._root); 
-            assert(!n.IsNull());
-            if (n->right && n->right->payload.key == key)
-               Node::RemoveNodeFromSubtree(n->right, &n->right);
-            else if (n->left && n->left->payload.key == key)
-               Node::RemoveNodeFromSubtree(n->left, &n->left);
-         }
-         map._size--;
-         return map;*/
       }   
 
    } // namespace Immutable

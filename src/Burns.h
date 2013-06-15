@@ -25,6 +25,6 @@
 
 #include "collections/Map.h"
 #include "collections/TreeMap.h"
-//#include "collections/MutableTreeMap.h"
+#include "collections/MutableTreeMap.h"
 
 #endif // BURNS_H
