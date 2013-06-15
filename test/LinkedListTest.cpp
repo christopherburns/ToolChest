@@ -2,7 +2,7 @@
 #include <iostream>
 #include <list>
 
-#include "../Burns.h"
+#include "../burns/Burns.h"
 
 using namespace std;
 using namespace Burns;

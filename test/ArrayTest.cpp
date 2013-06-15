@@ -3,7 +3,7 @@
 #include <list>
 #include <vector>
 
-#include "Burns.h"
+#include "../burns/Burns.h"
 
 using namespace std;
 using namespace Burns;
