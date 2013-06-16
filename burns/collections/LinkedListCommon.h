@@ -4,7 +4,6 @@
 #define LINKED_LIST_COMMON_H
 
 
-
 namespace Collections
 {
    namespace Immutable

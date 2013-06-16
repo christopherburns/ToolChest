@@ -93,7 +93,27 @@ ostream& operator << (ostream& o, const Immutable::LinkedList<float>& c)      { 
 ostream& operator << (ostream& o, const Immutable::TreeSet<int>& c)           { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Immutable::TreeMap<int, float>& c)    { STREAM_OUT_DEF }
 
+template <class T> bool IsEqual(const T& t1, const T& t2)
+{
+   if (t1.Size() != t2.Size()) return false;
+   auto itr1 = t1.GetIterator(), itr2 = t2.GetIterator();
+   while (itr1.HasNext()) 
+      if (itr1.Next() != itr2.Next()) return false;
+   return true;
+}
 
+/*template <> bool IsEqual(const Mutable::LinkedList<int>& t1, const Mutable::LinkedList<int>& t2)
+{
+   if (t1.Size() != t2.Size()) { printf("hi!\n"); return false; }
+   auto itr1 = t1.GetIterator(), itr2 = t2.GetIterator();
+   while (itr1.HasNext()) 
+   {
+      auto a = itr1.Next(), b = itr2.Next();
+      printf("%i == %i\n", a, b);
+      if (a != b) return false;
+   }
+   return true;
+}*/
 
 ///////////////////////////////////////////////////////////////////////////////
 //                            Traversable Unit Tests                         //
@@ -756,18 +776,129 @@ template <class T> bool Test_Sequence()
 
 
 ///////////////////////////////////////////////////////////////////////////////
+//                          Mutable Sequence Tests                           //
+///////////////////////////////////////////////////////////////////////////////
+
+
+template <class T> bool Test_SquareBracketUpdate()
+{
+   const int N = 8; const int values[N] = { 5, 16, 77, 90, 191, -249, -29, 0 };
+   auto t = T::Construct(N, values);
+
+   for (int i = 0; i < N; ++i) 
+   {
+      t[i]++;
+      if (t[i] != values[i]+1) return false;
+   }
+
+   for (int i = 0; i < N; ++i) t[i] = values[i];
+   for (int i = 0; i < N; ++i) if (t[i] != values[i]) return false;
+
+   return true;
+}
+
+template <class T> bool Test_DestructiveAppendElement()
+{
+   auto t = T(); int i = 0;
+   while (t.Size() < 10)
+   {
+      t += i++;
+      if (t.Size() != i) return false;
+      if (t[i-1] != i-1) return false;
+   }
+
+   t = (T() += 5);
+   if (t.Size() != 1) return false;
+   if (t[0] != 5) return false;
+
+   return true;
+}
+
+template <class T> bool Test_DestructiveAppendList()
+{
+   int v[] = {-1, -2, -3, 1, 2, 3};
+   auto p = (((T() += -1) += -2) += -3);  if (p.Size() != 3) return false;
+   auto q = (((T() +=  1) +=  2) +=  3);  if (q.Size() != 3) return false;
+
+   p += q;
+
+   int i = 0;
+   auto itr = p.GetIterator();
+   while (itr.HasNext()) if (itr.Next() != v[i++]) return false;
+
+   return true;
+}
+
+template <class T> bool Test_DestructiveInsert()
+{
+   const int N = 6; int v[N] = {-1, -2, -3, 1, 2, 3};
+   auto t = T::Construct(N, v);
+
+   {
+      auto itr = t.GetIterator();
+      while (itr.HasNext())
+         if (itr.Next() == -3) { t.Insert(itr, 0); break; }
+   }
+
+   {
+      auto itr = t.GetIterator();
+      while (itr.HasNext())
+         if (itr.Next() == 3) { t.Insert(itr, 0); break; }
+   }
+
+   auto itr = t.GetIterator();
+   t.Insert(itr, 0);  //< Same as prepend
+
+   if (t[0] != 0) return false;
+   if (t[4] != 0) return false;
+   if (t[8] != 0) return false;
+
+   return true;
+}
+
+template <class T> bool Test_DestructiveRemove()
+{
+   const int N1 = 9; int v1[N1] = {0, -1, -2, -3, 0, 1, 2, 3, 0};
+   const int N2 = 6; int v2[N2] = {-1, -2, -3, 1, 2, 3};
+   auto t = T::Construct(N1, v1);
+
+   auto itr = t.GetIterator();
+   while (itr.HasNext())
+      if (itr.Peek() == 0) t.Remove(itr);
+      else itr.Next(); 
+
+   cout << endl << t.Size() << " : " << t << endl;
+   cout << t.Size() << " : " << T::Construct(N2, v2) << endl;
+
+   if (!IsEqual(T::Construct(N2, v2), t)) return false;
+
+   return true;
+}
+
+template <class T> bool Test_MutableArray()
+{
+   bool b = true;
+   cout << "Test_SquareBracketUpdate<" << ToString<T>::value << "> ... " << ( (b &= Test_SquareBracketUpdate<T>()) ? "Passed" : "FAILED") << endl;
+   return b;
+}
+
+
+template <class T> bool Test_MutableLinkedList()
+{
+   bool b = true;
+   cout << "Test_SquareBracketUpdate<"      << ToString<T>::value << "> ... " << ( (b &= Test_SquareBracketUpdate<T>()) ? "Passed" : "FAILED") << endl;
+   cout << "Test_DestructiveAppendElement<" << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveAppendElement<T>()) ? "Passed" : "FAILED") << endl;
+   cout << "Test_DestructiveAppendList<"    << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveAppendList<T>()) ? "Passed" : "FAILED") << endl;
+   cout << "Test_DestructiveInsert<"        << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveInsert<T>()) ? "Passed" : "FAILED") << endl;
+   cout << "Test_DestructiveRemove<"        << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveRemove<T>()) ? "Passed" : "FAILED") << endl;
+   return b;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 //                              Set Unit Tests                               //
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class T> bool IsEqual(const T& t1, const T& t2)
-{
-   if (t1.Size() != t2.Size()) return false;
-   auto itr1 = t1.GetIterator(), itr2 = t2.GetIterator();
-   while (itr1.HasNext()) 
-      if (itr1.Next() != itr2.Next()) 
-         return false;
-   return true;
-}
 
 template <class T> bool Test_SetContains()
 {
@@ -1071,11 +1202,13 @@ int main()
 
    Test_Traversable<Immutable::Array<int> >();       Test_Sequence<Immutable::Array<int> >();      
    Test_Traversable<Mutable::Array<int> >();         Test_Sequence<Mutable::Array<int> >();  
+   Test_MutableArray<Mutable::Array<int> >();
    
    cout << endl << "Testing LinkedList Structure...." << endl << endl;
 
-   Test_Traversable<Immutable::LinkedList<int> >();  Test_Sequence<Immutable::LinkedList<int> >();       
-   Test_Traversable<Mutable::LinkedList<int> >();    Test_Sequence<Mutable::LinkedList<int> >();   
+   Test_Traversable<Immutable::LinkedList<int> >();      Test_Sequence<Immutable::LinkedList<int> >();       
+   Test_Traversable<Mutable::LinkedList<int> >();        Test_Sequence<Mutable::LinkedList<int> >();   
+   Test_MutableLinkedList<Mutable::LinkedList<int> >();
 
    cout << endl << "Testing TreeSet Structure...." << endl << endl;
    
@@ -1086,6 +1219,10 @@ int main()
 
    Test_TraversableMap<Immutable::TreeMap<int, float> >();  Test_Map<Immutable::TreeMap<int, float> >();
    Test_TraversableMap<Mutable::TreeMap<int, float> >();    Test_Map<Mutable::TreeMap<int, float> >();
+
+   //cout << endl << "Testing Mutable Operations ....."
+
+   //Test_MutableMap<Mutable::TreeMap<int, float> >();
 
    return 0;
 }

@@ -213,6 +213,7 @@ namespace Collections
          if (_tail == itr._next) _tail = itr._current;
 
          itr._next = n;
+         _size--;
          return *this;
       }
 

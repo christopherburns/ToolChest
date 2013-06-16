@@ -481,6 +481,8 @@ template <class Container> void testEmpty()
    b.ForEach(p); cout << endl;
    c.ForEach(p); cout << endl;
    d.ForEach(p); cout << endl;
+
+   cout << "Complete. Press any key and Return." << endl;
 }
 
 int main()
