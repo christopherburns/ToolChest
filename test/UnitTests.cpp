@@ -829,7 +829,7 @@ template <class T> bool Test_DestructiveAppendList()
    return true;
 }
 
-template <class T> bool Test_DestructiveInsert()
+template <class T> bool Test_DestructiveListInsert()
 {
    const int N = 6; int v[N] = {-1, -2, -3, 1, 2, 3};
    auto t = T::Construct(N, v);
@@ -856,24 +856,82 @@ template <class T> bool Test_DestructiveInsert()
    return true;
 }
 
-template <class T> bool Test_DestructiveRemove()
+template <class T> bool Test_DestructiveListRemove()
 {
-   const int N1 = 9; int v1[N1] = {0, -1, -2, -3, 0, 1, 2, 3, 0};
+   const int N1 = 9; int v1[N1] = {100, -1, -2, -3, 200, 1, 2, 3, 300};
    const int N2 = 6; int v2[N2] = {-1, -2, -3, 1, 2, 3};
    auto t = T::Construct(N1, v1);
 
    auto itr = t.GetIterator();
    while (itr.HasNext())
-      if (itr.Peek() == 0) t.Remove(itr);
+      if (itr.Peek() > 10) t.Remove(itr);
       else itr.Next(); 
 
-   cout << endl << t.Size() << " : " << t << endl;
-   cout << t.Size() << " : " << T::Construct(N2, v2) << endl;
-
    if (!IsEqual(T::Construct(N2, v2), t)) return false;
-
    return true;
 }
+
+template <class T> bool Test_DestructiveSetInsertElement()
+{
+   const int N = 8; const int values[N] = { 5, 16, 77, 90, 191, -249, -29, 0 };
+   auto t = T();
+   for (int i = 0; i < N; ++i)    t += values[i];
+   for (int i = N-1; i >= 0; --i) t += values[i];
+   if (!IsEqual(t, T::Construct(N, values))) return false;
+   return true;
+}       
+
+template <class T> bool Test_DestructiveSetUnion()
+{
+   const int N = 8; const int values[N] = { 5, 16, 77, 90, 191, -249, -29, 0 };
+   auto t = T::Construct(N, values);
+   auto tPrime = T::Construct(N, values);
+
+   if (!IsEqual( t, tPrime += t  )) return false;
+   if (!IsEqual( t, tPrime += T())) return false;
+
+   for (int i = 0; i < N; ++i) 
+      if (!IsEqual( t, tPrime += T().Insert(values[i]))) return false;
+
+   if (!IsEqual(T() += T(), T())) return false;
+
+   ((tPrime += T().Insert(1)) += T().Insert(1)) += T().Insert(1);
+   if (tPrime.Size() != t.Size() + 1) return false;
+   if (!tPrime.Contains(1)) return false;
+
+   return true;
+}      
+
+template <class T> bool Test_DestructiveSetRemove()
+{
+   const int N = 8; 
+   const int values[N] = { 5, 16, 77, 90, 191, -249, -29, 0 };
+   const int indices[N] = { 4, 5, 0, 7, 2, 6, 3, 1 };
+   auto t = T::Construct(N, values);
+   t -= 1; t -= 400;
+   if (t.Size() != N) assert(false);
+
+   for (int i = 0; i < N; ++i)
+   {
+      t -= values[indices[i]];
+      if (t.Size() != N-i-1) assert(false);
+      if (t.Contains(values[indices[i]])) assert(false);
+   }
+
+   auto empty = T(); empty -= 3;
+   if (empty.Size() != 0) assert(false);
+   return true;
+}   
+
+template <class T> bool Test_DestructiveSetDifference()
+{
+   const int N = 8; const int values[N] = { 5, 16, 77, 90, 191, -249, -29, 0 };
+   auto t = T::Construct(N, values);
+   if (!IsEqual(t -= T(), T::Construct(N, values))) return false;
+   if (!IsEqual(t -= T::Construct(N, values), T())) return false;
+   if (!IsEqual(t -= t, T())) return false;
+   return true;
+}       
 
 template <class T> bool Test_MutableArray()
 {
@@ -882,15 +940,24 @@ template <class T> bool Test_MutableArray()
    return b;
 }
 
-
 template <class T> bool Test_MutableLinkedList()
 {
    bool b = true;
    cout << "Test_SquareBracketUpdate<"      << ToString<T>::value << "> ... " << ( (b &= Test_SquareBracketUpdate<T>()) ? "Passed" : "FAILED") << endl;
    cout << "Test_DestructiveAppendElement<" << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveAppendElement<T>()) ? "Passed" : "FAILED") << endl;
    cout << "Test_DestructiveAppendList<"    << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveAppendList<T>()) ? "Passed" : "FAILED") << endl;
-   cout << "Test_DestructiveInsert<"        << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveInsert<T>()) ? "Passed" : "FAILED") << endl;
-   cout << "Test_DestructiveRemove<"        << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveRemove<T>()) ? "Passed" : "FAILED") << endl;
+   cout << "Test_DestructiveListInsert<"    << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveListInsert<T>()) ? "Passed" : "FAILED") << endl;
+   cout << "Test_DestructiveListRemove<"    << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveListRemove<T>()) ? "Passed" : "FAILED") << endl;
+   return b;
+}
+
+template <class T> bool Test_MutableTreeSet()
+{
+   bool b = true;
+   cout << "Test_DestructiveSetInsertElement<" << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveSetInsertElement<T>()) ? "Passed" : "FAILED") << endl;
+   cout << "Test_DestructiveSetUnion<"         << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveSetUnion<T>()) ? "Passed" : "FAILED") << endl;
+   cout << "Test_DestructiveSetRemove<"        << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveSetRemove<T>()) ? "Passed" : "FAILED") << endl;
+   cout << "Test_DestructiveSetDifference<"    << ToString<T>::value << "> ... " << ( (b &= Test_DestructiveSetDifference<T>()) ? "Passed" : "FAILED") << endl;
    return b;
 }
 
@@ -1031,16 +1098,6 @@ template <class T> bool Test_GetOrElse_Map()
    const E values[N] = { ToElement<T>(5), ToElement<T>(16), ToElement<T>(77), ToElement<T>(90), ToElement<T>(191), ToElement<T>(-249), ToElement<T>(-29), ToElement<T>(0) };
    auto t = T::Construct(N, values);
 
-   /*auto itr = t.GetIterator();
-   int index = 0;
-   while (itr.HasNext())
-   { 
-      auto p = itr.Next();
-      printf("   t[] = (%i, %.2f)\n", p.key, p.value); 
-      printf("    (t.GetOrElse() = (%i, %.2f)\n", p.key, t.GetOrElse(p.key, -1000.0f));
-      index++;
-   }*/
-
    bool b = true;
    for (int i = 0; i < N; ++i) 
    {
@@ -1064,18 +1121,14 @@ template <class T> bool Test_Insert_Map()
    auto t = T::Construct(N, valuesA);
 
    for (int i = 0; i < N; ++i)
-      if (!t.Contains(valuesA[i].key)) 
-         return false;
+      if (!t.Contains(valuesA[i].key)) return false;
 
    for (int i = 0; i < N; ++i)
    {
       t = t.Insert(valuesB[i].key, valuesB[i].value);
-      if (!t.Contains(valuesB[i].key)) 
-         return false;
-      if (!t.Contains(valuesA[i].key)) 
-         return false;
-      if (t.GetOrElse(valuesB[i].key, -100.0f) != valuesB[i].value) 
-         return false;
+      if (!t.Contains(valuesB[i].key)) return false;
+      if (!t.Contains(valuesA[i].key)) return false;
+      if (t.GetOrElse(valuesB[i].key, -100.0f) != valuesB[i].value) return false;
    }
 
    if (!T().Insert(10, 3.14159f).Contains(10)) 
@@ -1122,7 +1175,6 @@ template <class T> bool Test_Keys_Map()
       auto k1 = T::SetType::Construct(i+1, keyValues);
       if (!IsEqual(k0, k1))  return false;
    }
-
 
    return true;
 }
@@ -1214,6 +1266,7 @@ int main()
    
    Test_Traversable<Immutable::TreeSet<int> >();     Test_Set<Immutable::TreeSet<int> >();   
    Test_Traversable<Mutable::TreeSet<int> >();       Test_Set<Mutable::TreeSet<int> >(); 
+   Test_MutableTreeSet<Mutable::TreeSet<int> >(); 
 
    cout << endl << "Testing TreeMap Structure ....." << endl << endl;
 

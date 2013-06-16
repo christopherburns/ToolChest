@@ -107,7 +107,7 @@ namespace Collections
 
       template <class E> TreeSet<E>& TreeSet<E>::operator += (const E& e)
       {
-         _tree.Insert(e); _size++;
+         if (_tree.Insert(e)) _size++;
          return *this;
       }
 
@@ -134,8 +134,13 @@ namespace Collections
       template <class E> TreeSet<E>& TreeSet<E>::operator -= (const TreeSet<E>& set)
       {
          /// We need to handle the strange case where the rhs is the same container
-         /// as on the lhs
-         if (&set == this) return *this;
+         /// as on the lhs, in which case we get an empty set
+         if (&set == this) 
+         {
+            _tree._root = -1;
+            _size = 0;
+            return *this;
+         }
          Iterator itr = set.GetIterator();
          while (itr.HasNext()) *this -= itr.Next();
          return *this;
