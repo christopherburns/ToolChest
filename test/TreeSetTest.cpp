@@ -2,7 +2,7 @@
 #include <iostream>
 #include <set>
 
-#include "../Burns.h"
+#include "../toolchest/ToolChest.h"
 
 using namespace std;
 using namespace ToolChest;

@@ -168,30 +168,6 @@ namespace ToolChest
 
    #endif
 
-   #if defined(___APPLE) || defined(___GNU_LINUX) /// unix-like systems...
-
-   // All OSAtomic* operations return the value AFTER the operation has been performed,
-   // so they are effectively prefix operators
-   inline int32 atomicDecrement(int32 volatile * v) { return OSAtomicDecrement32(v); }
-   inline int32 atomicIncrement(int32 volatile * v) { return OSAtomicIncrement32(v); }
-
-   /// Figure out what to do with the rest later...
-   inline int32 atomicExchange(int32 volatile * v, int32 a) { assert(false); return 0; }
-   inline int32 atomicExchangeAdd(int32 volatile * v, int32 a) { assert(false); return 0; }
-   inline int32 atomicCompareExchange(int32 volatile * v, int32 a, int32 b) { assert(false); return 0; }
-
-   #ifdef ___X64
-      inline int64 atomicDecrement(int64 volatile * v) { assert(false); return 0; }
-      inline int64 atomicIncrement(int64 volatile * v) { assert(false); return 0; }
-      inline int64 atomicExchange(int64 volatile * v, int64 a) { assert(false); return 0; }
-      inline int64 atomicExchangeAdd(int64 volatile * v, int64 a) { assert(false); return 0; }
-      inline int64 atomicCompareExchange(int64 volatile * v, int64 a, int64 b) { assert(false); return 0; }
-   #endif
-
-   #endif
-
-
-
 
    /////////////////////////////
    // Bit Counting Operations //
