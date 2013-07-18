@@ -47,10 +47,10 @@ namespace Collections
          ///////////////////////////////////////////
       
          /// The data array's reference counter is automatically incremented
-         FINLINE HashMap() : _size(0)  {}
+         inline HashMap() : _size(0)  {}
       
          /// The data array's reference counter is automatically incremented
-         FINLINE HashMap(const HashMap& rhs)
+         inline HashMap(const HashMap& rhs)
             : _size(rhs._size) { }
 
 
@@ -58,7 +58,7 @@ namespace Collections
          // Assignment Operator, Reference Semantics //
          //////////////////////////////////////////////
       
-         FINLINE HashMap& operator = (const HashMap& rhs)
+         inline HashMap& operator = (const HashMap& rhs)
          { _size = rhs._size; return *this; }
 
 

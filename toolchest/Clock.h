@@ -1,15 +1,10 @@
-#pragma once
-
 #ifndef CLOCK_H
 #define CLOCK_H
 
 #include "System.h"
 #include "String.h"
 
-
-
-
-namespace Burns
+namespace ToolChest
 {
    class TimeStamp;
    class TimeDuration;
@@ -180,7 +175,7 @@ namespace Burns
       }
    };
 
-}; // namespace Burns
+}; // namespace ToolChest
 
 /// Some handy-dandy macros for timing code sections
 #define START_TIMER(t) StopWatch timer_##t; timer_##t.start();

@@ -1,12 +1,9 @@
-
-#pragma once
-
 #ifndef REFERENCE_H
 #define REFERENCE_H
 
 #include <new>
 
-namespace Burns
+namespace ToolChest
 {
    template<typename T> static inline void AddRef (T* a) { if (a) a->AddRef (); }
    template<typename T> static inline void Release(T* a) { if (a) a->Release(); }

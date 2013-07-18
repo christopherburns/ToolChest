@@ -4,7 +4,7 @@
 #include "Rotation.h"
 
 
-namespace Burns
+namespace ToolChest
 {
 
 /// \class OrthogonalFrame represents an orthogonal cartesian frame of reference
@@ -34,20 +34,20 @@ public:
    // Constructors //
    //////////////////
 
-   FINLINE OrthogonalFrame() { *this = ONE<OrthogonalFrame>(); }
-   FINLINE OrthogonalFrame(const Rotation& r) : origin(ZERO<Vector3>()), rotation(r) {}
-   FINLINE OrthogonalFrame(const Rotation& r, const Vector3& o) : origin(o), rotation(r) {}
-   FINLINE OrthogonalFrame(const Quaternion& q, const Vector3& o) : origin(o), rotation(q) {}
+   inline OrthogonalFrame() { *this = ONE<OrthogonalFrame>(); }
+   inline OrthogonalFrame(const Rotation& r) : origin(ZERO<Vector3>()), rotation(r) {}
+   inline OrthogonalFrame(const Rotation& r, const Vector3& o) : origin(o), rotation(r) {}
+   inline OrthogonalFrame(const Quaternion& q, const Vector3& o) : origin(o), rotation(q) {}
 
-   static FINLINE OrthogonalFrame OrthogonalFrameLH(const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_);
-   static FINLINE OrthogonalFrame OrthogonalFrameRH(const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_);
+   static inline OrthogonalFrame OrthogonalFrameLH(const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_);
+   static inline OrthogonalFrame OrthogonalFrameRH(const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_);
    OrthogonalFrame(const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_);
 
    ////////////////
    // String I/O //
    ////////////////
 
-   INLINE String toString(int prec = 3) const
+   inline String toString(int prec = 3) const
    {
       return String("OrthogonalFrame = { ") +
          "rotation = " + rotation.toString(prec) + ", " +
@@ -61,7 +61,7 @@ typedef OrthogonalFrame<Vector<float, 8> >  OrthogonalFrame8f;
 typedef OrthogonalFrame<Vector<float, 16> > OrthogonalFrame16f;
 
 
-template <class T> INLINE OrthogonalFrame<T> OrthogonalFrame<T>::OrthogonalFrameLH
+template <class T> inline OrthogonalFrame<T> OrthogonalFrame<T>::OrthogonalFrameLH
    ( const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_) 
 {
    // Establish the three normalized vectors for our orthogonal system. We
@@ -77,7 +77,7 @@ template <class T> INLINE OrthogonalFrame<T> OrthogonalFrame<T>::OrthogonalFrame
    return ortho;
 }
 
-template <class T> INLINE OrthogonalFrame<T> OrthogonalFrame<T>::OrthogonalFrameRH
+template <class T> inline OrthogonalFrame<T> OrthogonalFrame<T>::OrthogonalFrameRH
    ( const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_) 
 {
    // Establish the three normalized vectors for our orthogonal system. We
@@ -93,7 +93,7 @@ template <class T> INLINE OrthogonalFrame<T> OrthogonalFrame<T>::OrthogonalFrame
    return ortho;
 }
 
-template <class T> INLINE OrthogonalFrame<T>::OrthogonalFrame
+template <class T> inline OrthogonalFrame<T>::OrthogonalFrame
    ( const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_) 
 { *this = OrthogonalFrame<T>::OrthogonalFrameRH(lookDir_, origin_, up_); }
 
@@ -109,11 +109,11 @@ template <class T> struct MATHEMATICS<OrthogonalFrame<T> >
 public:
 
    /// The "Identity" affine frame is the canonical cartesian frame at origin
-   static FINLINE OrthogonalFrame<T> one()
-   { return OrthogonalFrame<T>(Burns::ONE<Rotation<T> >(), Burns::ZERO<Vector<T, 3> >()); }
+   static inline OrthogonalFrame<T> one()
+   { return OrthogonalFrame<T>(ToolChest::ONE<Rotation<T> >(), ToolChest::ZERO<Vector<T, 3> >()); }
 
    /// Not sure this works properly... rcp(rcp(frame)) does not produce identity...
-   /*static INLINE OrthogonalFrame<T> rcp(const OrthogonalFrame<T>& frame)
+   /*static inline OrthogonalFrame<T> rcp(const OrthogonalFrame<T>& frame)
    {
       return OrthogonalFrame<T>(
          frame.q().conjugate(),
@@ -122,7 +122,7 @@ public:
    }*/
 };
 
-}; // namespace Burns
+}; // namespace ToolChest
 
 
 #endif // ORTHOGONAL_FRAME_H

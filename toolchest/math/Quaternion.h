@@ -1,10 +1,7 @@
 #ifndef QUATERNION_H
 #define QUATERNION_H
 
-#pragma once
-
-
-namespace Burns
+namespace ToolChest
 {
 
 template <class T>
@@ -20,26 +17,26 @@ private:
 
    Vector4 _q;   // This should always be normalized...
 
-   FINLINE Quaternion(const T& f0, const T& f1, const T& f2, const T& f3)
-      : _q(f0, f1, f2, f3) { STATIC_ASSERT(!TypeInfo<T>::Integral); }
+   inline Quaternion(const T& f0, const T& f1, const T& f2, const T& f3)
+      : _q(f0, f1, f2, f3) { STATIC_assert(!TypeInfo<T>::Integral); }
 
 public:
 
-   FINLINE Quaternion() {}
-   FINLINE Quaternion(const T& f) : _q(f, ZERO<T>(), ZERO<T>(), ZERO<T>()) {}
-   FINLINE explicit Quaternion(const Vector3& v) : _q(ZERO<T>(), v.x(), v.y(), v.z()) {}
-   FINLINE explicit Quaternion(const Vector4& v) : _q(v) {}
+   inline Quaternion() {}
+   inline Quaternion(const T& f) : _q(f, ZERO<T>(), ZERO<T>(), ZERO<T>()) {}
+   inline explicit Quaternion(const Vector3& v) : _q(ZERO<T>(), v.x(), v.y(), v.z()) {}
+   inline explicit Quaternion(const Vector4& v) : _q(v) {}
 
    /// Accessors
-   FINLINE T r() const { return _q.x(); }
-   FINLINE T i() const { return _q.y(); }
-   FINLINE T j() const { return _q.z(); }
-   FINLINE T k() const { return _q.w(); }
+   inline T r() const { return _q.x(); }
+   inline T i() const { return _q.y(); }
+   inline T j() const { return _q.z(); }
+   inline T k() const { return _q.w(); }
 
-   FINLINE Vector3 ijk() const { return Vector3(i(), j(), k()); }
+   inline Vector3 ijk() const { return Vector3(i(), j(), k()); }
 
    /// Temporary!!
-   FINLINE T operator [] (int index) const
+   inline T operator [] (int index) const
    {
       switch (index)
       {
@@ -47,7 +44,7 @@ public:
          case 1: return _q.y();
          case 2: return _q.z();
          case 3: return _q.w();
-         default: ASSERT(false);
+         default: assert(false);
       }
    }
 
@@ -56,33 +53,33 @@ public:
    ////////////////
 
    /// Unary operator -
-   FINLINE Quaternion operator - () const { return Quaternion(-_q); }
+   inline Quaternion operator - () const { return Quaternion(-_q); }
 
    /// Conjugate (complex arithmetic)
-   FINLINE Quaternion conjugate() const { return Quaternion(r(), -i(), -j(), -k()); }
+   inline Quaternion conjugate() const { return Quaternion(r(), -i(), -j(), -k()); }
 
    /// Reciprocal operation
-   FINLINE Quaternion reciprocal() const
+   inline Quaternion reciprocal() const
    { return Quaternion(conjugate() / (Vector4::dot(_q, _q))); }
 
    /// Dot product, four component
-   static FINLINE T dot(const Quaternion& q)
+   static inline T dot(const Quaternion& q)
    { return Vector4::dot(q._q, q._q); }
 
-   static FINLINE T dot(const Quaternion& a, const Quaternion& b)
+   static inline T dot(const Quaternion& a, const Quaternion& b)
    { return Vector4::dot(a._q, b._q); }
 
    /// Returns the unit-length version of this quaternion
-   FINLINE Quaternion unit() const
+   inline Quaternion unit() const
    { return (*this) * RCP_SQRT(dot(*this, *this)); }
 
 
    /// Quaternion arithmetic
-   friend FINLINE Quaternion operator + (const Quaternion& lhs, const Quaternion& rhs)
+   friend inline Quaternion operator + (const Quaternion& lhs, const Quaternion& rhs)
    { return Quaternion(lhs._q + rhs._q); }
-   friend FINLINE Quaternion operator - (const Quaternion& lhs, const Quaternion& rhs)
+   friend inline Quaternion operator - (const Quaternion& lhs, const Quaternion& rhs)
    { return Quaternion(lhs._q - rhs._q); }
-   friend FINLINE Quaternion operator * (const Quaternion& lhs, const Quaternion& rhs)
+   friend inline Quaternion operator * (const Quaternion& lhs, const Quaternion& rhs)
    {
       return Quaternion(
          lhs.r()*rhs.r() - lhs.i()*rhs.i() - lhs.j()*rhs.j() - lhs.k()*rhs.k(),
@@ -90,28 +87,28 @@ public:
          lhs.r()*rhs.j() - lhs.i()*rhs.k() + lhs.j()*rhs.r() + lhs.k()*rhs.i(),
          lhs.r()*rhs.k() + lhs.i()*rhs.j() - lhs.j()*rhs.i() + lhs.k()*rhs.r());
    }
-   friend FINLINE Quaternion operator / (const Quaternion& lhs, const Quaternion& rhs)
+   friend inline Quaternion operator / (const Quaternion& lhs, const Quaternion& rhs)
    { return lhs * rhs.reciprocal(); }
 
    /// Scalar arithmetic
-   friend FINLINE Quaternion operator + (const Quaternion& lhs, const T& rhs)
+   friend inline Quaternion operator + (const Quaternion& lhs, const T& rhs)
    { return Quaternion(lhs.r() + rhs, lhs.i(), lhs.j(), lhs.k()); }
-   friend FINLINE Quaternion operator - (const Quaternion& lhs, const T& rhs)
+   friend inline Quaternion operator - (const Quaternion& lhs, const T& rhs)
    { return Quaternion(lhs.r() - rhs, lhs.i(), lhs.j(), lhs.k()); }
-   friend FINLINE Quaternion operator * (const Quaternion& lhs, const T& rhs)
+   friend inline Quaternion operator * (const Quaternion& lhs, const T& rhs)
    { return Quaternion(lhs._q * rhs); }
-   friend FINLINE Quaternion operator / (const Quaternion& lhs, const T & rhs)
+   friend inline Quaternion operator / (const Quaternion& lhs, const T & rhs)
    { return lhs * RCP(rhs); }
 
-   FINLINE Quaternion& operator += (const Quaternion& rhs) { return (*this) = (*this) + rhs; }
-   FINLINE Quaternion& operator -= (const Quaternion& rhs) { return (*this) = (*this) - rhs; }
-   FINLINE Quaternion& operator *= (const Quaternion& rhs) { return (*this) = (*this) * rhs; }
-   FINLINE Quaternion& operator /= (const Quaternion& rhs) { return (*this) = (*this) / rhs; }
+   inline Quaternion& operator += (const Quaternion& rhs) { return (*this) = (*this) + rhs; }
+   inline Quaternion& operator -= (const Quaternion& rhs) { return (*this) = (*this) - rhs; }
+   inline Quaternion& operator *= (const Quaternion& rhs) { return (*this) = (*this) * rhs; }
+   inline Quaternion& operator /= (const Quaternion& rhs) { return (*this) = (*this) / rhs; }
 
-   FINLINE Quaternion& operator += (const T& rhs) { return (*this) = (*this) + rhs; }
-   FINLINE Quaternion& operator -= (const T& rhs) { return (*this) = (*this) - rhs; }
-   FINLINE Quaternion& operator *= (const T& rhs) { return (*this) = (*this) * rhs; }
-   FINLINE Quaternion& operator /= (const T& rhs) { return (*this) = (*this) / rhs; }
+   inline Quaternion& operator += (const T& rhs) { return (*this) = (*this) + rhs; }
+   inline Quaternion& operator -= (const T& rhs) { return (*this) = (*this) - rhs; }
+   inline Quaternion& operator *= (const T& rhs) { return (*this) = (*this) * rhs; }
+   inline Quaternion& operator /= (const T& rhs) { return (*this) = (*this) / rhs; }
 
 
    ///////////////
@@ -120,14 +117,14 @@ public:
 
    /// Construction from an angle (radians) and a unit-length 3-vector axis of
    /// rotation
-   FINLINE Quaternion(const T& angle, const Vector3& axis)
+   inline Quaternion(const T& angle, const Vector3& axis)
    {
       Vector3 s = axis * SIN(angle * 0.5f);
       _q = Vector4(COS(angle * 0.5f), s.x(), s.y(), s.z());
    }
 
    /// Construction from the three columns of a 3x3 ORTHOGONAL rotation matrix
-   INLINE Quaternion(const Vector3& cX, const Vector3& cY, const Vector3& cZ)
+   inline Quaternion(const Vector3& cX, const Vector3& cY, const Vector3& cZ)
    {
       /// We follow the "robust" algorithm outlined in the following article:
       /// http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
@@ -219,7 +216,7 @@ public:
    }
 
    /// Apply the quaternion (interpreted as a 3D rotation) to the vector u
-   FINLINE Vector3 operator () (const Vector3& u) const
+   inline Vector3 operator () (const Vector3& u) const
    {
       /// q u RCP(q) gives the rotation of u by quaterion q. u can be cast to
       /// a quaternion by attaching to it a real component of zero
@@ -231,7 +228,7 @@ public:
    // Spherical Linear Interpolation //
    ////////////////////////////////////
 
-   INLINE static Quaternion slerp(const Quaternion& qa, const Quaternion& qb, T t)
+   inline static Quaternion slerp(const Quaternion& qa, const Quaternion& qb, T t)
    {
       if (t <= ZERO<T>()) return qa;
       if (t >= ONE<T>()) return qb;
@@ -245,7 +242,7 @@ public:
          cosOmega = -cosOmega;
       }
 
-      ASSERT(cosOmega < 1.1f);
+      assert(cosOmega < 1.1f);
 
       /// Compute interpolation fraction, checking for quaternions almost exactly
       /// the same
@@ -274,7 +271,7 @@ public:
    // I/O //
    /////////
 
-   INLINE String toString(int prec = 3) const
+   inline String toString(int prec = 3) const
    { return String("Quaternion = { ") + _q.toString(3) + "}"; }
 };
 
@@ -283,7 +280,7 @@ typedef Quaternion<Vector4f>  Quaternion4f;
 typedef Quaternion<Vector8f>  Quaternion8f;
 typedef Quaternion<Vector16f> Quaternion16f;
 
-}; // namespace Burns
+}; // namespace ToolChest
 
 
 #endif // QUATERNION_H

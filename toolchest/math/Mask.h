@@ -4,7 +4,7 @@
 #include "../Strings.h"
 #include "Mathematics.h"
 
-namespace Burns
+namespace ToolChest
 {
 
 template <class T, int N> class Vector;
@@ -22,53 +22,53 @@ public:
    Mask(const T& t);           ///< Initialize all elements from scalar
    explicit Mask(T t[N]);      ///< Initialize from array
 
-   FINLINE Mask(uint64 bitField): _a(bitField), _b(bitField >> N/2) {}
+   inline Mask(uint64 bitField): _a(bitField), _b(bitField >> N/2) {}
 
    template <class S> explicit Mask(const Mask<S, N>& v);  ///< Conversion constructor
 
-   FINLINE String toString() const { return String("[") + internalToString() + "]"; }
+   inline String toString() const { return String("[") + internalToString() + "]"; }
 
    /// Access a single element
-   FINLINE bool operator [] (Index i) const
-   { ASSERT(i >= 0 && i < N); return (i < WA) ? (_a[i]) : (_b[i-WA]);  }
+   inline bool operator [] (int i) const
+   { assert(i >= 0 && i < N); return (i < WA) ? (_a[i]) : (_b[i-WA]);  }
 
    // Auto cast to bool...
-   FINLINE operator T() { return all(); } 
+   inline operator T() { return all(); } 
 
 
    ///////////////////////
    // Logical Operators //
    ///////////////////////
 
-   FINLINE Mask operator ! () const                                    { return Mask(!_a, !_b); }
-   FINLINE Mask operator ~ () const                                    { return Mask(~_a, ~_b); }
+   inline Mask operator ! () const                                    { return Mask(!_a, !_b); }
+   inline Mask operator ~ () const                                    { return Mask(~_a, ~_b); }
 
-   friend FINLINE Mask operator & (const Mask& l, const Mask& r)       { return Mask(l._a & r._a, l._b & r._b); }
-   friend FINLINE Mask operator | (const Mask& l, const Mask& r)       { return Mask(l._a | r._a, l._b | r._b); }
-   friend FINLINE Mask operator ^ (const Mask& l, const Mask& r)       { return Mask(l._a ^ r._a, l._b ^ r._b); }
+   friend inline Mask operator & (const Mask& l, const Mask& r)       { return Mask(l._a & r._a, l._b & r._b); }
+   friend inline Mask operator | (const Mask& l, const Mask& r)       { return Mask(l._a | r._a, l._b | r._b); }
+   friend inline Mask operator ^ (const Mask& l, const Mask& r)       { return Mask(l._a ^ r._a, l._b ^ r._b); }
 
-   FINLINE Mask& operator &= (const Mask& r)                           { _a &= r._a; _b &= r._b;  return *this; }
-   FINLINE Mask& operator |= (const Mask& r)                           { _a |= r._a; _b |= r._b;  return *this; }
-   FINLINE Mask& operator ^= (const Mask& r)                           { _a ^= r._a; _b ^= r._b;  return *this; }
+   inline Mask& operator &= (const Mask& r)                           { _a &= r._a; _b &= r._b;  return *this; }
+   inline Mask& operator |= (const Mask& r)                           { _a |= r._a; _b |= r._b;  return *this; }
+   inline Mask& operator ^= (const Mask& r)                           { _a ^= r._a; _b ^= r._b;  return *this; }
 
 
    //////////////////////////
    // Comparison Operators //
    //////////////////////////
 
-   friend FINLINE Mask operator == (const Mask& l, const Mask& r)      { return Mask(l._a == r._a, l._b == r._b); }
-   friend FINLINE Mask operator != (const Mask& l, const Mask& r)      { return Mask(l._a != r._a, l._b != r._b); }
+   friend inline Mask operator == (const Mask& l, const Mask& r)      { return Mask(l._a == r._a, l._b == r._b); }
+   friend inline Mask operator != (const Mask& l, const Mask& r)      { return Mask(l._a != r._a, l._b != r._b); }
 
 
    ////////////////
    // Reductions //
    ////////////////
 
-   FINLINE T reduceAnd() const;
-   FINLINE T reduceOr()  const;
-   FINLINE T all() const;
-   FINLINE T none() const;
-   FINLINE T any() const;
+   inline T reduceAnd() const;
+   inline T reduceOr()  const;
+   inline T all() const;
+   inline T none() const;
+   inline T any() const;
 
    int count() const;   ///< Returns the number of 'true' elements
 
@@ -97,10 +97,10 @@ public:
    MaskB _b;
 
    /// Private constructor
-   FINLINE Mask(const MaskA& a, const MaskB& b) : _a(a), _b(b) {}
+   inline Mask(const MaskA& a, const MaskB& b) : _a(a), _b(b) {}
 
    /// Private string I/O, necessary to make use of recursion
-   FINLINE String internalToString() const
+   inline String internalToString() const
    { return _a.internalToString() + ", " + _b.internalToString(); }
 };
 
@@ -109,28 +109,28 @@ public:
 //                       Generic Mask Implementation                         //
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class T, int N> FINLINE Mask<T, N>::Mask() {}
-template <class T, int N> FINLINE Mask<T, N>::Mask(const T& t) : _a(t), _b(t) {}
-template <class T, int N> FINLINE Mask<T, N>::Mask(T t[N]) : _a(t), _b(t+WA) {}
+template <class T, int N> inline Mask<T, N>::Mask() {}
+template <class T, int N> inline Mask<T, N>::Mask(const T& t) : _a(t), _b(t) {}
+template <class T, int N> inline Mask<T, N>::Mask(T t[N]) : _a(t), _b(t+WA) {}
 
 template <class T, int N> template <class S>
-FINLINE Mask<T, N>::Mask(const Mask<S, N>& v) : _a(v._a), _b(v._b) {}
+inline Mask<T, N>::Mask(const Mask<S, N>& v) : _a(v._a), _b(v._b) {}
 
 
 /////////////////////////////////////
 // Reduction Operation Definitions //
 /////////////////////////////////////
 
-template <class T, int N> FINLINE T Mask<T, N>::reduceAnd() const
+template <class T, int N> inline T Mask<T, N>::reduceAnd() const
 { return _a.reduceAnd() & _b.reduceAnd(); }
-template <class T, int N> FINLINE T Mask<T, N>::reduceOr()  const
+template <class T, int N> inline T Mask<T, N>::reduceOr()  const
 { return _a.reduceOr() | _b.reduceOr(); }
 
-template <class T, int N> FINLINE T Mask<T, N>::all()  const  { return reduceAnd(); }
-template <class T, int N> FINLINE T Mask<T, N>::none() const  { return !reduceOr(); }
-template <class T, int N> FINLINE T Mask<T, N>::any()  const  { return !none(); }
+template <class T, int N> inline T Mask<T, N>::all()  const  { return reduceAnd(); }
+template <class T, int N> inline T Mask<T, N>::none() const  { return !reduceOr(); }
+template <class T, int N> inline T Mask<T, N>::any()  const  { return !none(); }
 
-template <class T, int N> FINLINE int Mask<T, N>::count() const
+template <class T, int N> inline int Mask<T, N>::count() const
 { return _a.count() + _b.count(); }
 
 
@@ -139,7 +139,7 @@ template <class T, int N> FINLINE int Mask<T, N>::count() const
 ////////////////////////////////////////
 
 template <class T, int N>
-template <typename Functor> FINLINE Mask<T, N> Mask<T, N>::map(const Functor& f) const
+template <typename Functor> inline Mask<T, N> Mask<T, N>::map(const Functor& f) const
 { return Mask<T, N>(_a.map(f), _b.map(f)); }
 
 
@@ -155,30 +155,30 @@ public:
    T _t;
 
    /// Private string I/O, necessary to make use of recursion
-   FINLINE String internalToString() const { return (_t ? "1" : "0"); }
+   inline String internalToString() const { return (_t ? "1" : "0"); }
 
 public:
 
    /// Implementation of Generic Mask<T, N> interface
 
    /// Constructors
-   FINLINE Mask()                                  {}
-   FINLINE Mask(const T& t)             : _t(t)    {}
-   FINLINE explicit Mask(const T t[1])  : _t(t[0]) {}
-   template <class S> FINLINE explicit Mask(const Mask<S, 1>& v) : _t(v._t) {}
+   inline Mask()                                  {}
+   inline Mask(const T& t)             : _t(t)    {}
+   inline explicit Mask(const T t[1])  : _t(t[0]) {}
+   template <class S> inline explicit Mask(const Mask<S, 1>& v) : _t(v._t) {}
 
-   FINLINE Mask(uint64 bitMask) : _t(bitMask & 0x1) {}
+   inline Mask(uint64 bitMask) : _t(bitMask & 0x1) {}
 
-   FINLINE operator const T() const { return _t; }
-   FINLINE operator T&() { return _t; }
+   inline operator const T() const { return _t; }
+   inline operator T&() { return _t; }
 
    /// Access a single element
-   FINLINE bool operator [] (Index i) const
-   { ASSERT(i == 0); return _t;  }
+   inline bool operator [] (int i) const
+   { assert(i == 0); return _t;  }
 
 
    /// String I/O representation
-   FINLINE String toString() const { return String("[") + (_t ? "1" : "0") + "]"; }
+   inline String toString() const { return String("[") + (_t ? "1" : "0") + "]"; }
 
 
    ////////////////////////////
@@ -186,27 +186,27 @@ public:
    ////////////////////////////
 
    /// Unary minus
-   FINLINE const Mask operator ! () const { return !_t; }
-   FINLINE Mask operator ~ () const { return !_t; }
+   inline const Mask operator ! () const { return !_t; }
+   inline Mask operator ~ () const { return !_t; }
 
-   friend FINLINE Mask operator & (const Mask& l, const Mask& r)
+   friend inline Mask operator & (const Mask& l, const Mask& r)
    { return l._t && r._t; }
-   friend FINLINE Mask operator | (const Mask& l, const Mask& r)
+   friend inline Mask operator | (const Mask& l, const Mask& r)
    { return l._t || r._t; }
-   friend FINLINE Mask operator ^ (const Mask& l, const Mask& r)
+   friend inline Mask operator ^ (const Mask& l, const Mask& r)
    { return l._t ^  r._t; }
 
-   FINLINE Mask& operator &= (const Mask& r) { _t &= r._t; return *this; }
-   FINLINE Mask& operator |= (const Mask& r) { _t |= r._t; return *this; }
-   FINLINE Mask& operator ^= (const Mask& r) { _t ^= r._t; return *this; }
+   inline Mask& operator &= (const Mask& r) { _t &= r._t; return *this; }
+   inline Mask& operator |= (const Mask& r) { _t |= r._t; return *this; }
+   inline Mask& operator ^= (const Mask& r) { _t ^= r._t; return *this; }
 
    ////////////////
    // Comparison //
    ////////////////
 
-   friend FINLINE Mask operator == (const Mask& a, const Mask& b)
+   friend inline Mask operator == (const Mask& a, const Mask& b)
    { return a._t == b._t; }
-   friend FINLINE Mask operator != (const Mask& a, const Mask& b)
+   friend inline Mask operator != (const Mask& a, const Mask& b)
    { return a._t != b._t; }
 
 
@@ -214,21 +214,21 @@ public:
    // Reductions //
    ////////////////
 
-   FINLINE T reduceAnd() const { return _t & _t; }
-   FINLINE T reduceOr()  const { return _t | _t; }
+   inline T reduceAnd() const { return _t & _t; }
+   inline T reduceOr()  const { return _t | _t; }
 
-   FINLINE T all()  const  { return reduceAnd(); }
-   FINLINE T none() const  { return !reduceOr(); }
-   FINLINE T any()  const  { return !none(); }
+   inline T all()  const  { return reduceAnd(); }
+   inline T none() const  { return !reduceOr(); }
+   inline T any()  const  { return !none(); }
 
-   FINLINE int count() const { return (_t ? 1 : 0); }
+   inline int count() const { return (_t ? 1 : 0); }
 
 
    ////////////////////////////
    // Functional Programming //
    ////////////////////////////
 
-   template <typename Functor> FINLINE Mask& map(const Functor& f) { return f(_t); }
+   template <typename Functor> inline Mask& map(const Functor& f) { return f(_t); }
 };
 
 
@@ -236,7 +236,7 @@ template <class T> bool ANY(const T& a)  { return a.any(); }
 template <class T> bool NONE(const T& a) { return a.none(); }
 template <class T> bool ALL(const T& a)  { return a.all(); }
 
-}; // namespace Burns
+}; // namespace ToolChest
 
 
 #endif // MASK_H

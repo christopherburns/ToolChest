@@ -5,7 +5,7 @@
 #include "Mathematics.h"
 #include "Mask.h"
 
-namespace Burns
+namespace ToolChest
 {
 
 template <class T, int N> class Vector;
@@ -34,28 +34,28 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 
 
-template <class T> FINLINE T& update(const bool mask, T& lhs, const T& rhs)
+template <class T> inline T& update(const bool mask, T& lhs, const T& rhs)
 { if (mask) lhs = rhs; return lhs; }
 
-template <class T> FINLINE const T blend(const bool mask, const T& tValue, const T& fValue)
+template <class T> inline const T blend(const bool mask, const T& tValue, const T& fValue)
 { return mask ? tValue : fValue; }
 
 template <class T> class WriteMaskedVector
 {
 public:
    typedef typename TypeInfo<T>::Mask Mask;
-   friend FINLINE T& update(const bool mask, T& lhs, const T& rhs);
+   friend inline T& update(const bool mask, T& lhs, const T& rhs);
 
 private:
    T& _value;
    const Mask& _mask;
 
 public:
-   FINLINE WriteMaskedVector(const WriteMaskedVector&);
-   FINLINE WriteMaskedVector(T& value, const Mask& m) : _value(value), _mask(m) {}
+   inline WriteMaskedVector(const WriteMaskedVector&);
+   inline WriteMaskedVector(T& value, const Mask& m) : _value(value), _mask(m) {}
 
-   FINLINE WriteMaskedVector& operator = (const WriteMaskedVector&);
-   FINLINE T& operator = (const T& i) { return update(_mask, _value, i); }
+   inline WriteMaskedVector& operator = (const WriteMaskedVector&);
+   inline T& operator = (const T& i) { return update(_mask, _value, i); }
 };
 
 
@@ -71,61 +71,61 @@ public:
    typedef typename TypeInfo<Vector>::Mask Mask;
 
    /// Constructors
-   FINLINE Vector();                       ///< NO initialization
-   FINLINE explicit Vector(const T& t);    ///< Initialize all elements from scalar
-   FINLINE explicit Vector(const T t[N]);  ///< Initialize from memory location
+   inline Vector();                       ///< NO initialization
+   inline explicit Vector(const T& t);    ///< Initialize all elements from scalar
+   inline explicit Vector(const T t[N]);  ///< Initialize from memory location
 
    /// Conversion from different base type
-   template <class S> explicit FINLINE Vector(const Vector<S, N>& v);
+   template <class S> explicit inline Vector(const Vector<S, N>& v);
 
    /// Constructors for common partial specializations
-   FINLINE Vector(const T& t0, const T& t1);                           // N == 2
-   FINLINE Vector(const T& t0, const T& t1, const T& t2);              // N == 3
-   FINLINE Vector(const T& t0, const T& t1, const T& t2, const T& t3); // N == 4
-   FINLINE Vector(
+   inline Vector(const T& t0, const T& t1);                           // N == 2
+   inline Vector(const T& t0, const T& t1, const T& t2);              // N == 3
+   inline Vector(const T& t0, const T& t1, const T& t2, const T& t3); // N == 4
+   inline Vector(
       const T& f0,  const T& f1,  const T& f2,  const T& f3,
       const T& f4,  const T& f5,  const T& f6,  const T& f7);
-   FINLINE Vector(
+   inline Vector(
       const T& f0,  const T& f1,  const T& f2,  const T& f3,
       const T& f4,  const T& f5,  const T& f6,  const T& f7,
       const T& f8,  const T& f9,  const T& f10, const T& f11,
       const T& f12, const T& f13, const T& f14, const T& f15);
 
    // Expansion pseudo-constructors
-   FINLINE static Vector Expansion2x(const Vector<T, N/2>& t0, const Vector<T, N/2>& t1);
-   FINLINE static Vector Expansion4x(const Vector<T, N/4>& t0, const Vector<T, N/4>& t1, const Vector<T, N/4>& t2, const Vector<T, N/4>& t3);
+   inline static Vector Expansion2x(const Vector<T, N/2>& t0, const Vector<T, N/2>& t1);
+   inline static Vector Expansion4x(const Vector<T, N/4>& t0, const Vector<T, N/4>& t1, const Vector<T, N/4>& t2, const Vector<T, N/4>& t3);
 
 
    /// Dynamic Element Accessors
-   FINLINE const T& operator [] (Index i) const;
-   FINLINE T& operator [] (Index i);
+   inline const T& operator [] (int i) const;
+   inline T& operator [] (int i);
 
    /// Static element accessors
-   template <int I> FINLINE const T& get() const                      { return (I < WA) ? (_a.template get<I>()) : (_b.template get<I-WA>()); }
-   template <int I> FINLINE T& get()                                  { return (I < WA) ? (_a.template get<I>()) : (_b.template get<I-WA>()); }
-   template <int I> FINLINE void set(const T& v)                      { if     (I < WA) _a.set<I>(v); else _b.set<I-WA>(v); }
+   template <int I> inline const T& get() const                      { return (I < WA) ? (_a.template get<I>()) : (_b.template get<I-WA>()); }
+   template <int I> inline T& get()                                  { return (I < WA) ? (_a.template get<I>()) : (_b.template get<I-WA>()); }
+   template <int I> inline void set(const T& v)                      { if     (I < WA) _a.set<I>(v); else _b.set<I-WA>(v); }
 
    /// Convenience static element accessors for Vector 2, 3
-   FINLINE const T& x() const                                         { STATIC_ASSERT(N >= 1); return get<0>(); }
-   FINLINE T& x()                                                     { STATIC_ASSERT(N >= 1); return get<0>(); }
-   FINLINE const T& y() const                                         { STATIC_ASSERT(N >= 2); return get<1>(); }
-   FINLINE T& y()                                                     { STATIC_ASSERT(N >= 2); return get<1>(); }
-   FINLINE const T& z() const                                         { STATIC_ASSERT(N >= 3); return get<2>(); }
-   FINLINE T& z()                                                     { STATIC_ASSERT(N >= 3); return get<2>(); }
-   FINLINE const T& w() const                                         { STATIC_ASSERT(N >= 4); return get<3>(); }
-   FINLINE T& w()                                                     { STATIC_ASSERT(N >= 4); return get<3>(); }
+   inline const T& x() const                                         { STATIC_assert(N >= 1); return get<0>(); }
+   inline T& x()                                                     { STATIC_assert(N >= 1); return get<0>(); }
+   inline const T& y() const                                         { STATIC_assert(N >= 2); return get<1>(); }
+   inline T& y()                                                     { STATIC_assert(N >= 2); return get<1>(); }
+   inline const T& z() const                                         { STATIC_assert(N >= 3); return get<2>(); }
+   inline T& z()                                                     { STATIC_assert(N >= 3); return get<2>(); }
+   inline const T& w() const                                         { STATIC_assert(N >= 4); return get<3>(); }
+   inline T& w()                                                     { STATIC_assert(N >= 4); return get<3>(); }
 
-   FINLINE const Vector<T, 2> xy()  const { STATIC_ASSERT(N >= 2); return Vector<T, 2>(x(), y()); }
-   FINLINE const Vector<T, 3> xyz() const { STATIC_ASSERT(N >= 3); return Vector<T, 3>(x(), y(), z()); }
+   inline const Vector<T, 2> xy()  const { STATIC_assert(N >= 2); return Vector<T, 2>(x(), y()); }
+   inline const Vector<T, 3> xyz() const { STATIC_assert(N >= 3); return Vector<T, 3>(x(), y(), z()); }
 
 
    String toString(int prec) const;
    String toString() const;
 
    /// Insertion and extraction operators for C++ I/O Streams
-   friend FINLINE std::ostream& operator << (std::ostream& stream, const Vector& v)
+   friend inline std::ostream& operator << (std::ostream& stream, const Vector& v)
    { stream << v.toString(); return stream; }
-   friend FINLINE std::istream& operator >> (std::istream& stream, Vector& v)
+   friend inline std::istream& operator >> (std::istream& stream, Vector& v)
    {
       char c;
       stream >> c;   // '['
@@ -135,7 +135,7 @@ public:
       stream >> c;   // ']'
       return stream;
    }
-   FINLINE std::istream& internalStreamIn(std::istream& stream);
+   inline std::istream& internalStreamIn(std::istream& stream);
 
 
 
@@ -143,15 +143,15 @@ public:
    // Loads and Stores //
    //////////////////////
 
-   template <class U> FINLINE static Vector load(U * address);
-   template <class U> FINLINE static Vector loadBroadcast(U * address);
-   template <class U> FINLINE static Vector gather(U * address, const Vector<int32, N>& offsets);
-   template <class U> FINLINE static Vector gather(U * address, const Vector<int32, N>& offsets, const Mask& mask);
+   template <class U> inline static Vector load(U * address);
+   template <class U> inline static Vector loadBroadcast(U * address);
+   template <class U> inline static Vector gather(U * address, const Vector<int32, N>& offsets);
+   template <class U> inline static Vector gather(U * address, const Vector<int32, N>& offsets, const Mask& mask);
 
-   template <class U> FINLINE void store(U * address) const;
-   template <class U> FINLINE void storeOne(U * address) const;
-   template <class U> FINLINE void scatter(U * address, const Vector<int32, N>& offsets) const;
-   template <class U> FINLINE void scatter(U * address, const Vector<int32, N>& offsets, const Mask& mask) const;
+   template <class U> inline void store(U * address) const;
+   template <class U> inline void storeOne(U * address) const;
+   template <class U> inline void scatter(U * address, const Vector<int32, N>& offsets) const;
+   template <class U> inline void scatter(U * address, const Vector<int32, N>& offsets, const Mask& mask) const;
 
 
    ////////////////////////////
@@ -159,32 +159,32 @@ public:
    ////////////////////////////
 
    /// Unary minus
-   FINLINE Vector operator - () const                                       { return Vector<T, N>(-_a, -_b); }
+   inline Vector operator - () const                                       { return Vector<T, N>(-_a, -_b); }
 
    /// Binary arithmetical operators
-   FINLINE friend Vector operator + (const Vector& a, const Vector& b)      { return Vector(VectorA(a._a + b._a), VectorB(a._b + b._b)); }
-   FINLINE friend Vector operator - (const Vector& a, const Vector& b)      { return Vector(VectorA(a._a - b._a), VectorB(a._b - b._b)); }
-   FINLINE friend Vector operator * (const Vector& a, const Vector& b)      { return Vector(VectorA(a._a * b._a), VectorB(a._b * b._b)); }
-   FINLINE friend Vector operator / (const Vector& a, const Vector& b)      { return Vector(VectorA(a._a / b._a), VectorB(a._b / b._b)); }
-   FINLINE friend Vector operator + (const Vector& a, const T& b)           { return Vector(VectorA(a._a + b), VectorB(a._b + b)); }
-   FINLINE friend Vector operator - (const Vector& a, const T& b)           { return Vector(VectorA(a._a - b), VectorB(a._b - b)); }
-   FINLINE friend Vector operator * (const Vector& a, const T& b)           { return Vector(VectorA(a._a * b), VectorB(a._b * b)); }
-   FINLINE friend Vector operator / (const Vector& a, const T& b)           { return Vector(VectorA(a._a / b), VectorB(a._b / b)); }
-   FINLINE friend Vector operator + (const T& a, const Vector& b)           { return Vector(VectorA(a + b._a), VectorB(a + b._b)); }
-   FINLINE friend Vector operator - (const T& a, const Vector& b)           { return Vector(VectorA(a - b._a), VectorB(a - b._b)); }
-   FINLINE friend Vector operator * (const T& a, const Vector& b)           { return Vector(VectorA(a * b._a), VectorB(a * b._b)); }
-   FINLINE friend Vector operator / (const T& a, const Vector& b)           { return Vector(VectorA(a / b._a), VectorB(a / b._b)); }
+   inline friend Vector operator + (const Vector& a, const Vector& b)      { return Vector(VectorA(a._a + b._a), VectorB(a._b + b._b)); }
+   inline friend Vector operator - (const Vector& a, const Vector& b)      { return Vector(VectorA(a._a - b._a), VectorB(a._b - b._b)); }
+   inline friend Vector operator * (const Vector& a, const Vector& b)      { return Vector(VectorA(a._a * b._a), VectorB(a._b * b._b)); }
+   inline friend Vector operator / (const Vector& a, const Vector& b)      { return Vector(VectorA(a._a / b._a), VectorB(a._b / b._b)); }
+   inline friend Vector operator + (const Vector& a, const T& b)           { return Vector(VectorA(a._a + b), VectorB(a._b + b)); }
+   inline friend Vector operator - (const Vector& a, const T& b)           { return Vector(VectorA(a._a - b), VectorB(a._b - b)); }
+   inline friend Vector operator * (const Vector& a, const T& b)           { return Vector(VectorA(a._a * b), VectorB(a._b * b)); }
+   inline friend Vector operator / (const Vector& a, const T& b)           { return Vector(VectorA(a._a / b), VectorB(a._b / b)); }
+   inline friend Vector operator + (const T& a, const Vector& b)           { return Vector(VectorA(a + b._a), VectorB(a + b._b)); }
+   inline friend Vector operator - (const T& a, const Vector& b)           { return Vector(VectorA(a - b._a), VectorB(a - b._b)); }
+   inline friend Vector operator * (const T& a, const Vector& b)           { return Vector(VectorA(a * b._a), VectorB(a * b._b)); }
+   inline friend Vector operator / (const T& a, const Vector& b)           { return Vector(VectorA(a / b._a), VectorB(a / b._b)); }
 
 
    /// Accumulation operators
-   FINLINE Vector& operator += (const Vector& b)                            { return *this = *this + b; }
-   FINLINE Vector& operator -= (const Vector& b)                            { return *this = *this - b; }
-   FINLINE Vector& operator *= (const Vector& b)                            { return *this = *this * b; }
-   FINLINE Vector& operator /= (const Vector& b)                            { return *this = *this / b; }
-   FINLINE Vector& operator += (const T& b)                                 { return *this = *this + b; }
-   FINLINE Vector& operator -= (const T& b)                                 { return *this = *this - b; }
-   FINLINE Vector& operator *= (const T& b)                                 { return *this = *this * b; }
-   FINLINE Vector& operator /= (const T& b)                                 { return *this = *this / b; }
+   inline Vector& operator += (const Vector& b)                            { return *this = *this + b; }
+   inline Vector& operator -= (const Vector& b)                            { return *this = *this - b; }
+   inline Vector& operator *= (const Vector& b)                            { return *this = *this * b; }
+   inline Vector& operator /= (const Vector& b)                            { return *this = *this / b; }
+   inline Vector& operator += (const T& b)                                 { return *this = *this + b; }
+   inline Vector& operator -= (const T& b)                                 { return *this = *this - b; }
+   inline Vector& operator *= (const T& b)                                 { return *this = *this * b; }
+   inline Vector& operator /= (const T& b)                                 { return *this = *this / b; }
 
 
    /////////////////////////////
@@ -192,46 +192,46 @@ public:
    /////////////////////////////
 
    /// Bit shifting
-   FINLINE friend Vector operator >> (const Vector& a, uint32 bits)                  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(VectorA(a._a >> bits),    VectorB(a._b >> bits)); }
-   FINLINE friend Vector operator << (const Vector& a, uint32 bits)                  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(VectorA(a._a << bits),    VectorB(a._b << bits)); }
-   FINLINE friend Vector operator << (const Vector& a, const Vector& bits)           { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(VectorA(a._a << bits._a), VectorB(a._b << bits._b)); }
-   FINLINE friend Vector operator >> (const Vector& a, const Vector& bits)           { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(VectorA(a._a >> bits._a), VectorB(a._b >> bits._b)); }
+   inline friend Vector operator >> (const Vector& a, uint32 bits)                  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a >> bits),    VectorB(a._b >> bits)); }
+   inline friend Vector operator << (const Vector& a, uint32 bits)                  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a << bits),    VectorB(a._b << bits)); }
+   inline friend Vector operator << (const Vector& a, const Vector& bits)           { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a << bits._a), VectorB(a._b << bits._b)); }
+   inline friend Vector operator >> (const Vector& a, const Vector& bits)           { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a >> bits._a), VectorB(a._b >> bits._b)); }
 
 
    /// Integer Modulus
-   FINLINE friend Vector operator %  (const Vector& a, const Vector& b)     { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(VectorA(a._a % b._a), VectorB(a._b % b._b)); }
-   FINLINE friend Vector operator %  (const Vector& a, const T& b)          { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(VectorA(a._a % b), VectorB(a._b % b)); }
+   inline friend Vector operator %  (const Vector& a, const Vector& b)     { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a % b._a), VectorB(a._b % b._b)); }
+   inline friend Vector operator %  (const Vector& a, const T& b)          { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a % b), VectorB(a._b % b)); }
 
-   FINLINE Vector& operator <<= (const int bits)                            { return *this = *this << bits; }
-   FINLINE Vector& operator >>= (const int bits)                            { return *this = *this >> bits; }
-   FINLINE Vector& operator <<= (const Vector& bits)                        { return *this = *this << bits; }
-   FINLINE Vector& operator >>= (const Vector& bits)                        { return *this = *this >> bits; }
+   inline Vector& operator <<= (const int bits)                            { return *this = *this << bits; }
+   inline Vector& operator >>= (const int bits)                            { return *this = *this >> bits; }
+   inline Vector& operator <<= (const Vector& bits)                        { return *this = *this << bits; }
+   inline Vector& operator >>= (const Vector& bits)                        { return *this = *this >> bits; }
 
 
    ///////////////////////
    // Bitwise Operators //
    ///////////////////////
 
-   FINLINE Vector& operator ~ () const                                     { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(~_a, ~_b); }
-   FINLINE friend Vector operator & (const Vector& a, const Vector& bits)  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(VectorA(a._a & bits._a), VectorB(a._b & bits._b)); }
-   FINLINE friend Vector operator | (const Vector& a, const Vector& bits)  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(VectorA(a._a | bits._a), VectorB(a._b | bits._b)); }
-   FINLINE friend Vector operator ^ (const Vector& a, const Vector& bits)  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(VectorA(a._a ^ bits._a), VectorB(a._b ^ bits._b)); }
+   inline Vector& operator ~ () const                                     { STATIC_assert(TypeInfo<T>::Integral); return Vector(~_a, ~_b); }
+   inline friend Vector operator & (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a & bits._a), VectorB(a._b & bits._b)); }
+   inline friend Vector operator | (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a | bits._a), VectorB(a._b | bits._b)); }
+   inline friend Vector operator ^ (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a ^ bits._a), VectorB(a._b ^ bits._b)); }
 
-   FINLINE Vector& operator &= (const Vector& b)                           { return *this = *this & b; }
-   FINLINE Vector& operator |= (const Vector& b)                           { return *this = *this | b; }
-   FINLINE Vector& operator ^= (const Vector& b)                           { return *this = *this ^ b; }
+   inline Vector& operator &= (const Vector& b)                           { return *this = *this & b; }
+   inline Vector& operator |= (const Vector& b)                           { return *this = *this | b; }
+   inline Vector& operator ^= (const Vector& b)                           { return *this = *this ^ b; }
 
    ////////////////
    // Comparison //
    ////////////////
 
    // Lighten up the FUCKING SYNTAX just a little
-   FINLINE friend typename Vector::Mask operator == (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a == b._a, a._b == b._b); }
-   FINLINE friend typename Vector::Mask operator != (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a != b._a, a._b != b._b); }
-   FINLINE friend typename Vector::Mask operator <  (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a < b._a, a._b < b._b); }
-   FINLINE friend typename Vector::Mask operator >  (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a > b._a, a._b > b._b); }
-   FINLINE friend typename Vector::Mask operator <= (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a <= b._a, a._b <= b._b); }
-   FINLINE friend typename Vector::Mask operator >= (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a >= b._a, a._b >= b._b); }
+   inline friend typename Vector::Mask operator == (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a == b._a, a._b == b._b); }
+   inline friend typename Vector::Mask operator != (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a != b._a, a._b != b._b); }
+   inline friend typename Vector::Mask operator <  (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a < b._a, a._b < b._b); }
+   inline friend typename Vector::Mask operator >  (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a > b._a, a._b > b._b); }
+   inline friend typename Vector::Mask operator <= (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a <= b._a, a._b <= b._b); }
+   inline friend typename Vector::Mask operator >= (const Vector& a, const Vector& b) { return typename Vector::Mask(a._a >= b._a, a._b >= b._b); }
 
 
    //////////////////////////
@@ -241,14 +241,14 @@ public:
    /// Returns a vector blending the values from tValue where m is true with the
    /// values from fValue where m is false:
    ///     blend( (t,t,f,t), (1,2,3,4), (-1,-2,-3,-4) ) ==> (1,2,-3,4)
-   friend FINLINE const Vector blend(const Mask& m, const Vector& tValue, const Vector& fValue)
+   friend inline const Vector blend(const Mask& m, const Vector& tValue, const Vector& fValue)
    { return Vector(blend(m._a, tValue._a, fValue._a), blend(m._b, tValue._b, fValue._b)); }
 
    /// Update
-   friend FINLINE Vector& update(const Mask& m, Vector& lhs, const Vector& rhs)
+   friend inline Vector& update(const Mask& m, Vector& lhs, const Vector& rhs)
    { update(m._a, lhs._a, rhs._a); update(m._b, lhs._b, rhs._b); return lhs; }
 
-   FINLINE WriteMaskedVector<Vector> operator [] (const Mask& m)
+   inline WriteMaskedVector<Vector> operator [] (const Mask& m)
    { return WriteMaskedVector<Vector>(*this, m); }
 
 
@@ -256,10 +256,10 @@ public:
    // Reduction Operations //
    //////////////////////////
 
-   FINLINE T reduceSum() const;
-   FINLINE T reduceProduct() const;
-   FINLINE T reduceMin() const;
-   FINLINE T reduceMax() const;
+   inline T reduceSum() const;
+   inline T reduceProduct() const;
+   inline T reduceMin() const;
+   inline T reduceMax() const;
 
 
    //////////////////////////
@@ -268,12 +268,12 @@ public:
 
    /// These are only good for non-integral data
 
-   FINLINE T average() const;         ///< Reduce sum / N
-   FINLINE T length() const;          ///< Euclidean length of the vector
-   FINLINE T lengthSquared() const;   ///< Returns the length squared (avoids sqrt)
-   FINLINE Vector unit() const;       ///< Returns normalized copy (length == 1)
+   inline T average() const;         ///< Reduce sum / N
+   inline T length() const;          ///< Euclidean length of the vector
+   inline T lengthSquared() const;   ///< Returns the length squared (avoids sqrt)
+   inline Vector unit() const;       ///< Returns normalized copy (length == 1)
 
-   static T FINLINE dot(const Vector& v0, const Vector& v1);  ///< Dot product
+   static T inline dot(const Vector& v0, const Vector& v1);  ///< Dot product
    //static Vector<T, N> cross(const Vector& v0, const Vector& v1); ///< Cross product
 
 
@@ -281,7 +281,7 @@ public:
    // Functional Programming //
    ////////////////////////////
 
-   template <typename Functor> FINLINE Vector map(const Functor& f) const;
+   template <typename Functor> inline Vector map(const Functor& f) const;
 
 
    ///////////////////////////////////////////////////////////////////////////
@@ -300,12 +300,12 @@ private:
    VectorB _b;
 
    /// Private constructor
-   FINLINE Vector(const VectorA& a, const VectorB& b) : _a(a), _b(b) {}
+   inline Vector(const VectorA& a, const VectorB& b) : _a(a), _b(b) {}
 
    /// Private string I/O, necessary to make use of recursion
-   FINLINE String internalToString(int prec) const
+   inline String internalToString(int prec) const
    { return _a.internalToString(prec) + ", " + _b.internalToString(prec); }
-   FINLINE String internalToString() const
+   inline String internalToString() const
    { return _a.internalToString() + ", " + _b.internalToString(); }
 
    /// Befriend the mathematics structure that corresponds with each kind of
@@ -325,46 +325,46 @@ private:
 
 
 /// Constructors
-template <class T, int N> FINLINE Vector<T, N>::Vector() { }
-template <class T, int N> FINLINE Vector<T, N>::Vector(const T& t) : _a(t), _b(t) {}
-template <class T, int N> FINLINE Vector<T, N>::Vector(const T t[N]) : _a(t), _b(t+WA) {}
+template <class T, int N> inline Vector<T, N>::Vector() { }
+template <class T, int N> inline Vector<T, N>::Vector(const T& t) : _a(t), _b(t) {}
+template <class T, int N> inline Vector<T, N>::Vector(const T t[N]) : _a(t), _b(t+WA) {}
 
 /// Base Type conversion constructor
 template <class T, int N>  template <class S>
-FINLINE Vector<T, N>::Vector(const Vector<S, N>& v) : _a(v._a), _b(v._b) {}
+inline Vector<T, N>::Vector(const Vector<S, N>& v) : _a(v._a), _b(v._b) {}
 
 
 /// Constructors for common partial specializations
-template <class T, int N> FINLINE
+template <class T, int N> inline
 Vector<T, N>::Vector(const T& t0, const T& t1)
- : _a(t0), _b(t1) { STATIC_ASSERT(N == 2); }
-template <class T, int N> FINLINE
+ : _a(t0), _b(t1) { STATIC_assert(N == 2); }
+template <class T, int N> inline
 Vector<T, N>::Vector(const T& t0, const T& t1, const T& t2)
- : _a(t0, t1), _b(t2) { STATIC_ASSERT(N == 3); }
-template <class T, int N> FINLINE
+ : _a(t0, t1), _b(t2) { STATIC_assert(N == 3); }
+template <class T, int N> inline
 Vector<T, N>::Vector(const T& t0, const T& t1, const T& t2, const T& t3)
- : _a(t0, t1), _b(t2, t3) { STATIC_ASSERT(N == 4); }
-template <class T, int N> FINLINE
+ : _a(t0, t1), _b(t2, t3) { STATIC_assert(N == 4); }
+template <class T, int N> inline
 Vector<T, N>::Vector(
    const T& t0,  const T& t1,  const T& t2,  const T& t3,
    const T& t4,  const T& t5,  const T& t6,  const T& t7)
- : _a(t0, t1, t2, t3), _b(t4, t5, t6, t7) { STATIC_ASSERT(N == 8); }
-template <class T, int N> FINLINE
+ : _a(t0, t1, t2, t3), _b(t4, t5, t6, t7) { STATIC_assert(N == 8); }
+template <class T, int N> inline
 Vector<T, N>::Vector(
    const T& t0,  const T& t1,  const T& t2,  const T& t3,
    const T& t4,  const T& t5,  const T& t6,  const T& t7,
    const T& t8,  const T& t9,  const T& t10, const T& t11,
    const T& t12, const T& t13, const T& t14, const T& t15)
  : _a(t0, t1, t2, t3, t4, t5, t6, t7), _b(t8, t9, t10, t11, t12, t13, t14, t15)
-{ STATIC_ASSERT(N == 16); }
+{ STATIC_assert(N == 16); }
 
 
 // Expansions
-template <class T, int N> FINLINE Vector<T, N>
+template <class T, int N> inline Vector<T, N>
 Vector<T, N>::Expansion2x(
    const Vector<T, N/2>& t0, const Vector<T, N/2>& t1)
 { return Vector<T, N>(t0, t1); }
-template <class T, int N> FINLINE Vector<T, N>
+template <class T, int N> inline Vector<T, N>
 Vector<T, N>::Expansion4x(
    const Vector<T, N/4>& t0, const Vector<T, N/4>& t1,
    const Vector<T, N/4>& t2, const Vector<T, N/4>& t3)
@@ -374,26 +374,26 @@ Vector<T, N>::Expansion4x(
 
 
 /// Basic Accessors
-template <class T, int N> FINLINE const T&
-Vector<T, N>::operator [] (Index i) const
-{ ASSERT(i >= 0 && i < N); return (i < WA) ? (_a[i]) : (_b[i-WA]); }
-template <class T, int N> FINLINE T& Vector<T, N>::operator [] (Index i)
-{ ASSERT(i >= 0 && i < N); return (i < WA) ? (_a[i]) : (_b[i-WA]); }
+template <class T, int N> inline const T&
+Vector<T, N>::operator [] (int i) const
+{ assert(i >= 0 && i < N); return (i < WA) ? (_a[i]) : (_b[i-WA]); }
+template <class T, int N> inline T& Vector<T, N>::operator [] (int i)
+{ assert(i >= 0 && i < N); return (i < WA) ? (_a[i]) : (_b[i-WA]); }
 
 /// Conversion to String
 template <class T, int N>
-FINLINE String Vector<T, N>::toString(int prec) const
+inline String Vector<T, N>::toString(int prec) const
 { return String("[") + internalToString(prec) + "]"; }
 template <class T, int N>
-FINLINE String Vector<T, N>::toString() const
+inline String Vector<T, N>::toString() const
 { return String("[") + internalToString() + "]"; }
 
 /// Insertion and extraction operators for C++ I/O Streams
-/*template <class T, int N> FINLINE
+/*template <class T, int N> inline
 std::ostream& operator << (std::ostream& stream, const Vector<T, N>& v)
 { stream << toString(); }*/
 
-template <class T, int N> FINLINE
+template <class T, int N> inline
 std::istream& Vector<T, N>::internalStreamIn(std::istream& stream)
 {
    char c;
@@ -416,7 +416,7 @@ std::istream& Vector<T, N>::internalStreamIn(std::istream& stream)
 /// The only option, as I see it, is to define these iteratively using [],
 /// rather than recursively.
 
-template <class T, int N> template <class U> FINLINE Vector<T, N> Vector<T, N>::load(U * addr)
+template <class T, int N> template <class U> inline Vector<T, N> Vector<T, N>::load(U * addr)
 {
    Vector<T, N> v;
    v._a = Vector<T, N>::VectorA::load(addr);
@@ -424,7 +424,7 @@ template <class T, int N> template <class U> FINLINE Vector<T, N> Vector<T, N>::
    return v;
 }
 
-template <class T, int N> template <class U> FINLINE Vector<T, N> Vector<T, N>::loadBroadcast(U * addr)
+template <class T, int N> template <class U> inline Vector<T, N> Vector<T, N>::loadBroadcast(U * addr)
 {
    Vector<T, N> v;
    v._a = Vector<T, N>::VectorA::loadBroadcast(addr);
@@ -432,41 +432,41 @@ template <class T, int N> template <class U> FINLINE Vector<T, N> Vector<T, N>::
    return v;
 }
 
-template <class T, int N> template <class U> FINLINE Vector<T, N>
+template <class T, int N> template <class U> inline Vector<T, N>
 Vector<T, N>::gather(U * addr, const Vector<int32, N>& offsets)
 {
    Vector<T, N> v;
-   for (Index i = 0; i < N; ++i) v[i] = (T)(*(addr + offsets[i]));
+   for (int i = 0; i < N; ++i) v[i] = (T)(*(addr + offsets[i]));
    return v;
 }
 
-template <class T, int N> template <class U> FINLINE Vector<T, N>
+template <class T, int N> template <class U> inline Vector<T, N>
 Vector<T, N>::gather(U * addr, const Vector<int32, N>& offsets, const Mask& mask)
 {
    Vector<T, N> v;
-   for (Index i = 0; i < N; ++i)
+   for (int i = 0; i < N; ++i)
       if (mask[i])
          v[i] = (T)(*(addr + offsets[i]));
    return v;
 }
 
-template <class T, int N> template <class U> FINLINE void Vector<T, N>::store(U * addr) const
+template <class T, int N> template <class U> inline void Vector<T, N>::store(U * addr) const
 { _a.store(addr); _b.store(addr + WA); }
 
-template <class T, int N> template <class U> FINLINE void Vector<T, N>::storeOne(U * addr) const
+template <class T, int N> template <class U> inline void Vector<T, N>::storeOne(U * addr) const
 { _a.storeOne(addr); }
 
-template <class T, int N> template <class U> void FINLINE
+template <class T, int N> template <class U> void inline
 Vector<T, N>::scatter(U * addr, const Vector<int32, N>& offsets) const
 {
-   for (Index i = 0; i < N; ++i)
+   for (int i = 0; i < N; ++i)
       *(addr + offsets[i]) = (U)(operator[](i));
 }
 
-template <class T, int N> template <class U> void FINLINE
+template <class T, int N> template <class U> void inline
 Vector<T, N>::scatter(U * addr, const Vector<int32, N>& offsets, const Mask& mask) const
 {
-   for (Index i = 0; i < N; ++i)
+   for (int i = 0; i < N; ++i)
       if (mask[i])
          *(addr + offsets[i]) = (U)(operator[](i));
 }
@@ -477,16 +477,16 @@ Vector<T, N>::scatter(U * addr, const Vector<int32, N>& offsets, const Mask& mas
 // Reduction Operation Definitions //
 /////////////////////////////////////
 
-template <class T, int N> FINLINE T Vector<T, N>::reduceSum() const
+template <class T, int N> inline T Vector<T, N>::reduceSum() const
 { return _a.reduceSum() + _b.reduceSum(); }
 
-template <class T, int N> FINLINE T Vector<T, N>::reduceProduct() const
+template <class T, int N> inline T Vector<T, N>::reduceProduct() const
 { return _a.reduceProduct() * _b.reduceProduct(); }
 
-template <class T, int N> FINLINE T Vector<T, N>::reduceMin() const
+template <class T, int N> inline T Vector<T, N>::reduceMin() const
 { T m1 = _a.reduceMin(), m2 = _b.reduceMin(); return MIN(m1, m2); }
 
-template <class T, int N> FINLINE T Vector<T, N>::reduceMax() const
+template <class T, int N> inline T Vector<T, N>::reduceMax() const
 { T m1 = _a.reduceMax(), m2 = _b.reduceMax(); return MAX(m1, m2); }
 
 
@@ -496,35 +496,35 @@ template <class T, int N> FINLINE T Vector<T, N>::reduceMax() const
 
 /// These are only good for non-integral data
 
-template <class T, int N> FINLINE T Vector<T, N>::average() const
+template <class T, int N> inline T Vector<T, N>::average() const
 {
-   STATIC_ASSERT(!TypeInfo<T>::Integral);
+   STATIC_assert(!TypeInfo<T>::Integral);
    return reduceSum() * RCP((float) N);
 }
 
-template <class T, int N> FINLINE T Vector<T, N>::length() const
-{ STATIC_ASSERT(!TypeInfo<T>::Integral); return SQRT(lengthSquared()); }
+template <class T, int N> inline T Vector<T, N>::length() const
+{ STATIC_assert(!TypeInfo<T>::Integral); return SQRT(lengthSquared()); }
 
-template <class T, int N> FINLINE T Vector<T, N>::lengthSquared() const
-{ STATIC_ASSERT(!TypeInfo<T>::Integral); return dot(*this, *this); }
+template <class T, int N> inline T Vector<T, N>::lengthSquared() const
+{ STATIC_assert(!TypeInfo<T>::Integral); return dot(*this, *this); }
 
-template <class T, int N> FINLINE Vector<T, N> Vector<T, N>::unit() const
+template <class T, int N> inline Vector<T, N> Vector<T, N>::unit() const
 {
-   STATIC_ASSERT(!TypeInfo<T>::Integral);
+   STATIC_assert(!TypeInfo<T>::Integral);
    return (*this) * RCP_SQRT(lengthSquared());
 }
 
-template <class T, int N> FINLINE T
+template <class T, int N> inline T
 Vector<T, N>::dot(const Vector<T, N>& v1, const Vector<T, N>& v2)
-{ STATIC_ASSERT(!TypeInfo<T>::Integral); return (v2 * v1).reduceSum(); }
+{ STATIC_assert(!TypeInfo<T>::Integral); return (v2 * v1).reduceSum(); }
 
-/*template <class T, int N> FINLINE Vector<T, N>
+/*template <class T, int N> inline Vector<T, N>
 Vector<T, N>::cross(const Vector<T, N>& v1, const Vector<T, N>& v2)
 {
    /// IMPLEMENT ME when needed, don't feel like writing/testing it now
-   //ASSERT(false);
-   STATIC_ASSERT(!TypeInfo<T>::Integral);
-   STATIC_ASSERT(N == 3);
+   //assert(false);
+   STATIC_assert(!TypeInfo<T>::Integral);
+   STATIC_assert(N == 3);
 
    T x1 =  (v1.y()*v2.z() - v1.z()*v2.y());
    T y1 = -(v1.x()*v2.z() - v1.z()*v2.x());
@@ -537,7 +537,7 @@ Vector<T, N>::cross(const Vector<T, N>& v1, const Vector<T, N>& v2)
 ////////////////////////////////////////
 
 template <class T, int N>
-template <typename Functor> FINLINE
+template <typename Functor> inline
 Vector<T, N> Vector<T, N>::map(const Functor& f) const
 { return Vector<T, N>(_a.map(f), _b.map(f)); }
 
@@ -548,7 +548,7 @@ Vector<T, N> Vector<T, N>::map(const Functor& f) const
 
 /// Special, for 3-vectors alone! (4-vectors implement as well, ignoring
 /// the fourth component)
-template <class T> FINLINE
+template <class T> inline
 Vector<T, 3> cross(Vector<T, 3> a, Vector<T, 3> b)
 {
    return
@@ -575,10 +575,10 @@ Vector<T, 3> cross(Vector<T, 3> a, Vector<T, 3> b)
 ///   phi = atan2f(z/x)
 ///   theta = acos(y / R) - PI/2
 ///
-template <class T> FINLINE
+template <class T> inline
 Vector<T, 3> toSphericalCoordinates(const Vector<T, 3>& s)
 {
-   STATIC_ASSERT(!TypeInfo<T>::Integral);
+   STATIC_assert(!TypeInfo<T>::Integral);
    float R = s.length();
    return Vector<T, 3>(
       R,
@@ -586,10 +586,10 @@ Vector<T, 3> toSphericalCoordinates(const Vector<T, 3>& s)
       PI<T>() - ACOS(s.y() / R));
 }
 
-template <class T> FINLINE
+template <class T> inline
 Vector<T, 3> toRectangularCoordinates(const Vector<T, 3>& s)
 {
-   STATIC_ASSERT(!TypeInfo<T>::Integral);
+   STATIC_assert(!TypeInfo<T>::Integral);
    // Assuming x = R, y = phi, z = theta
    return Vector<T, 3>(
      s.x() * SIN(PI<T>()-s.z()) * COS(-s.y()-PI<T>()),
@@ -598,10 +598,10 @@ Vector<T, 3> toRectangularCoordinates(const Vector<T, 3>& s)
 }
 
 // Color space conversions
-template <class T> FINLINE
+template <class T> inline
 Vector<T, 3> toHSV(const Vector<T, 3>& rgb)
 {
-   STATIC_ASSERT(!TypeInfo<T>::Integral);
+   STATIC_assert(!TypeInfo<T>::Integral);
    // Compute the hue
    float max = MAX(rgb.x(), MAX(rgb.y(), rgb.z()));
    float min = MIN(rgb.x(), MIN(rgb.y(), rgb.z()));
@@ -620,10 +620,10 @@ Vector<T, 3> toHSV(const Vector<T, 3>& rgb)
    return Vector<T, 3>(hue, saturation, value);
 }
 
-template <class T> FINLINE
+template <class T> inline
 Vector<T, 3> toRGB(const Vector<T, 3>& hsv)
 {
-   STATIC_ASSERT(!TypeInfo<T>::Integral);
+   STATIC_assert(!TypeInfo<T>::Integral);
    // pull h into range [0, 360)
    float xHat = hsv.x();
    if (hsv.x() < 0.0f) xHat = 0.0f;
@@ -668,7 +668,7 @@ Vector<T, 3> toRGB(const Vector<T, 3>& hsv)
 
 /// This is most useful when SOA data needs to be converted to AOS layout, for
 /// output to disk, or printing, etc. at the end of computation
-template <class T, int N, int M> FINLINE Vector<Vector<T, N>, M> transpose(
+template <class T, int N, int M> inline Vector<Vector<T, N>, M> transpose(
    const Vector<Vector<T, M>, N>& m)
 {
    /// Probably very inefficient, but eh, it seems to work.
@@ -692,7 +692,7 @@ private:
    typedef Vector<T, N> Vec;  ///< For shorthand, syntactical convenience
 
 public:
-   #define PREFIX static FINLINE Vec
+   #define PREFIX static inline Vec
    PREFIX zero()                { return Vec(ZERO<T>()); }
    PREFIX one()                 { return Vec(ONE<T>()); }
    PREFIX minusOne()            { return Vec(MINUS_ONE<T>()); }
@@ -749,17 +749,17 @@ private:
 public:
 
    /// Bit rotations
-   static FINLINE Vec rotr(Vec a, int b) { return Vec(ROTR(a._a, b), ROTR(a._b, b)); }
-   static FINLINE Vec rotl(Vec a, int b) { return Vec(ROTL(a._a, b), ROTL(a._b, b)); }
+   static inline Vec rotr(Vec a, int b) { return Vec(ROTR(a._a, b), ROTR(a._b, b)); }
+   static inline Vec rotl(Vec a, int b) { return Vec(ROTL(a._a, b), ROTL(a._b, b)); }
 
    /// Bit interleaves
-   static FINLINE Vec interleave11(Vec a, Vec b)
+   static inline Vec interleave11(Vec a, Vec b)
    { return Vec(INTERLEAVE11(a._a, b._a), INTERLEAVE11(a._b, b._b)); }
-   static FINLINE Vec interleave21(Vec a, Vec b)
+   static inline Vec interleave21(Vec a, Vec b)
    { return Vec(INTERLEAVE21(a._a, b._a), INTERLEAVE21(a._b, b._b)); }
 
    /// Counts '1' bits in an integer
-   //static FINLINE Vec bitCount(T a);
+   //static inline Vec bitCount(T a);
 };
 
 
@@ -775,8 +775,8 @@ private:
    T _t;
 
    /// Private string I/O, necessary to make use of recursion
-   FINLINE String internalToString()         const { return String(_t); }
-   FINLINE String internalToString(int prec) const { return String(_t, prec); }
+   inline String internalToString()         const { return String(_t); }
+   inline String internalToString(int prec) const { return String(_t, prec); }
 
 public:
 
@@ -789,47 +789,47 @@ public:
    template <class U, int M> friend class Vector;
 
    /// Constructors
-   FINLINE Vector()                                  {}
-   FINLINE explicit Vector(const T& t)    : _t(t)    {}
-   FINLINE explicit Vector(const T t[1])  : _t(t[0]) {}
+   inline Vector()                                  {}
+   inline explicit Vector(const T& t)    : _t(t)    {}
+   inline explicit Vector(const T t[1])  : _t(t[0]) {}
 
-   template <class S> FINLINE explicit Vector(const Vector<S, 1>& v) : _t(T(v._t)) {}
+   template <class S> inline explicit Vector(const Vector<S, 1>& v) : _t(T(v._t)) {}
 
    ///////////////
    // Accessors //
    ///////////////
 
    /// Dynamic element accessors
-   FINLINE const T& operator [] (Index i) const { ASSERT(i == 0); return _t; }
-   FINLINE T& operator [] (Index i)             { ASSERT(i == 0); return _t; }
+   inline const T& operator [] (int i) const { assert(i == 0); return _t; }
+   inline T& operator [] (int i)             { assert(i == 0); return _t; }
 
    /// Static element accessors, no references
-   template <int I> FINLINE const T& get() const    { return _t; }
-   template <int I> FINLINE T& get()                { return _t; }
-   template <int I> FINLINE void set(const T& v)    { _t = v; }
+   template <int I> inline const T& get() const    { return _t; }
+   template <int I> inline T& get()                { return _t; }
+   template <int I> inline void set(const T& v)    { _t = v; }
 
 
    /// String I/O representation
-   FINLINE String toString(int prec) const { return String("[") + String(_t, prec) + "]"; }
-   FINLINE String toString() const { return String("[") + String(_t) + "]"; }
+   inline String toString(int prec) const { return String("[") + String(_t, prec) + "]"; }
+   inline String toString() const { return String("[") + String(_t) + "]"; }
 
    /// Insertion and extraction operators for C++ I/O Streams
-   friend FINLINE std::ostream& operator << (std::ostream& stream, const Vector& v)
+   friend inline std::ostream& operator << (std::ostream& stream, const Vector& v)
    { stream << v.toString(); return stream; }
-   friend FINLINE std::istream& operator >> (std::istream& stream, Vector& v)
+   friend inline std::istream& operator >> (std::istream& stream, Vector& v)
    {
       char c;
       stream >> c >> v._t >> c;
       return stream;
    }
 
-   FINLINE std::istream& internalStreamIn(std::istream& stream)
+   inline std::istream& internalStreamIn(std::istream& stream)
    { stream >> _t; return stream; }
 
 
    /// Base type conversion operator(s)
-   FINLINE operator const T&() const { return _t; }
-   FINLINE operator T&() { return _t; }
+   inline operator const T&() const { return _t; }
+   inline operator T&() { return _t; }
 
 
    //////////////////////
@@ -840,14 +840,14 @@ public:
    /// asserted. Gather and Scatter operations are supported in base+offset
    /// format.
 
-   template <class U> FINLINE static Vector load(U * addr)          { return Vector((T)(*addr)); }
-   template <class U> FINLINE static Vector loadBroadcast(U * addr) { return Vector((T)(*addr)); }
-   template <class U> FINLINE static Vector gather(U * addr, const Vector<int32, 1>& offsets)
+   template <class U> inline static Vector load(U * addr)          { return Vector((T)(*addr)); }
+   template <class U> inline static Vector loadBroadcast(U * addr) { return Vector((T)(*addr)); }
+   template <class U> inline static Vector gather(U * addr, const Vector<int32, 1>& offsets)
    { return Vector((T)(*(addr + offsets._t))); }
 
-   template <class U> FINLINE void store(U * addr)    const { (*addr) = (U)_t; }
-   template <class U> FINLINE void storeOne(U * addr) const { (*addr) = (U)_t; }
-   template <class U> FINLINE void scatter(U * addr,  const Vector<int32, 1>& offsets) const
+   template <class U> inline void store(U * addr)    const { (*addr) = (U)_t; }
+   template <class U> inline void storeOne(U * addr) const { (*addr) = (U)_t; }
+   template <class U> inline void scatter(U * addr,  const Vector<int32, 1>& offsets) const
    { *(addr + offsets._t) = (U)_t; }
 
 
@@ -857,10 +857,10 @@ public:
    ////////////////////////////
 
    /// Unary reduceMinus
-   FINLINE Vector operator - () const { return Vector(-_t); }
+   inline Vector operator - () const { return Vector(-_t); }
 
    /// Binary arithmetical operators
-   #define PREFIX friend FINLINE Vector
+   #define PREFIX friend inline Vector
    PREFIX operator + (const Vector& a, const Vector& b) { return Vector(a._t + b._t); }
    PREFIX operator - (const Vector& a, const Vector& b) { return Vector(a._t - b._t); }
    PREFIX operator * (const Vector& a, const Vector& b) { return Vector(a._t * b._t); }
@@ -869,10 +869,10 @@ public:
 
 
    /// Accumulation operators
-   FINLINE Vector& operator += (const Vector& b) { _t += b._t; return *this; }
-   FINLINE Vector& operator -= (const Vector& b) { _t -= b._t; return *this; }
-   FINLINE Vector& operator *= (const Vector& b) { _t *= b._t; return *this; }
-   FINLINE Vector& operator /= (const Vector& b) { _t /= b._t; return *this; }
+   inline Vector& operator += (const Vector& b) { _t += b._t; return *this; }
+   inline Vector& operator -= (const Vector& b) { _t -= b._t; return *this; }
+   inline Vector& operator *= (const Vector& b) { _t *= b._t; return *this; }
+   inline Vector& operator /= (const Vector& b) { _t /= b._t; return *this; }
 
 
    /// Note: Mathematical functions (sin, pow, etc.) and common bit-manipulation
@@ -884,50 +884,50 @@ public:
    // Integer-Only Arithmetic //
    /////////////////////////////
 
-   //FINLINE friend Vector operator >> (const Vector& a, uint32 bits)         { STATIC_ASSERT(TypeInfo<T>::Integral); return a._t >> bits; }
-   //FINLINE friend Vector operator << (const Vector& a, uint32 bits)         { STATIC_ASSERT(TypeInfo<T>::Integral); return a._t << bits; }
-   FINLINE friend Vector operator << (const Vector& a, const Vector& bits)  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(a._t << bits._t); }
-   FINLINE friend Vector operator >> (const Vector& a, const Vector& bits)  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(a._t >> bits._t); }
+   //inline friend Vector operator >> (const Vector& a, uint32 bits)         { STATIC_assert(TypeInfo<T>::Integral); return a._t >> bits; }
+   //inline friend Vector operator << (const Vector& a, uint32 bits)         { STATIC_assert(TypeInfo<T>::Integral); return a._t << bits; }
+   inline friend Vector operator << (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t << bits._t); }
+   inline friend Vector operator >> (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t >> bits._t); }
 
    /// Integer Modulus
-   FINLINE friend Vector operator %  (const Vector& a, const Vector& b)     { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(a._t % b._t); }
-   //FINLINE friend Vector operator %  (const Vector& a, const T& b)          { STATIC_ASSERT(TypeInfo<T>::Integral); return a._t % b; }
+   inline friend Vector operator %  (const Vector& a, const Vector& b)     { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t % b._t); }
+   //inline friend Vector operator %  (const Vector& a, const T& b)          { STATIC_assert(TypeInfo<T>::Integral); return a._t % b; }
 
-   //FINLINE Vector& operator <<= (const int bits)                            { return *this = *this << bits; }
-   //FINLINE Vector& operator >>= (const int bits)                            { return *this = *this >> bits; }
-   FINLINE Vector& operator <<= (const Vector& bits)                        { return *this = *this << bits; }
-   FINLINE Vector& operator >>= (const Vector& bits)                        { return *this = *this >> bits; }
+   //inline Vector& operator <<= (const int bits)                            { return *this = *this << bits; }
+   //inline Vector& operator >>= (const int bits)                            { return *this = *this >> bits; }
+   inline Vector& operator <<= (const Vector& bits)                        { return *this = *this << bits; }
+   inline Vector& operator >>= (const Vector& bits)                        { return *this = *this >> bits; }
 
 
    ///////////////////////
    // Bitwise Operators //
    ///////////////////////
 
-   FINLINE Vector operator ~ () const                                      { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(~_t); }
-   FINLINE friend Vector operator & (const Vector& a, const Vector& bits)  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(a._t & bits._t); }
-   FINLINE friend Vector operator | (const Vector& a, const Vector& bits)  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(a._t | bits._t); }
-   FINLINE friend Vector operator ^ (const Vector& a, const Vector& bits)  { STATIC_ASSERT(TypeInfo<T>::Integral); return Vector(a._t ^ bits._t); }
+   inline Vector operator ~ () const                                      { STATIC_assert(TypeInfo<T>::Integral); return Vector(~_t); }
+   inline friend Vector operator & (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t & bits._t); }
+   inline friend Vector operator | (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t | bits._t); }
+   inline friend Vector operator ^ (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t ^ bits._t); }
 
-   FINLINE Vector& operator &= (const Vector& b)                           { return *this = *this & b; }
-   FINLINE Vector& operator |= (const Vector& b)                           { return *this = *this | b; }
-   FINLINE Vector& operator ^= (const Vector& b)                           { return *this = *this ^ b; }
+   inline Vector& operator &= (const Vector& b)                           { return *this = *this & b; }
+   inline Vector& operator |= (const Vector& b)                           { return *this = *this | b; }
+   inline Vector& operator ^= (const Vector& b)                           { return *this = *this ^ b; }
 
 
    ////////////////
    // Comparison //
    ////////////////
 
-   friend FINLINE const Mask operator == (const Vector& a, const Vector& b)
+   friend inline const Mask operator == (const Vector& a, const Vector& b)
    { return a._t == b._t; }
-   friend FINLINE const Mask operator != (const Vector& a, const Vector& b)
+   friend inline const Mask operator != (const Vector& a, const Vector& b)
    { return a._t != b._t; }
-   friend FINLINE const Mask operator <  (const Vector& a, const Vector& b)
+   friend inline const Mask operator <  (const Vector& a, const Vector& b)
    { return a._t <  b._t; }
-   friend FINLINE const Mask operator >  (const Vector& a, const Vector& b)
+   friend inline const Mask operator >  (const Vector& a, const Vector& b)
    { return a._t >  b._t; }
-   friend FINLINE const Mask operator <= (const Vector& a, const Vector& b)
+   friend inline const Mask operator <= (const Vector& a, const Vector& b)
    { return a._t <= b._t; }
-   friend FINLINE const Mask operator >= (const Vector& a, const Vector& b)
+   friend inline const Mask operator >= (const Vector& a, const Vector& b)
    { return a._t >= b._t; }
 
 
@@ -936,14 +936,14 @@ public:
    //////////////////////////
 
    /// Blend (calls blend(T::Mask, T, T)
-   friend FINLINE const Vector blend(const Mask& m, const Vector& tValue, const Vector& fValue)
+   friend inline const Vector blend(const Mask& m, const Vector& tValue, const Vector& fValue)
    { return Vector(blend(m._t, tValue._t, fValue._t)); }
 
    /// Update
-   friend FINLINE Vector& update(const Mask& m, Vector& lhs, const Vector& rhs)
+   friend inline Vector& update(const Mask& m, Vector& lhs, const Vector& rhs)
    { update(m._t, lhs._t, rhs._t); return lhs; }
 
-   FINLINE WriteMaskedVector<Vector> operator [] (const Mask& m)
+   inline WriteMaskedVector<Vector> operator [] (const Mask& m)
    { return WriteMaskedVector<Vector>(*this, m); }
 
 
@@ -951,10 +951,10 @@ public:
    // Reduction Operations //
    //////////////////////////
 
-   FINLINE T reduceSum() const     { return _t; }
-   FINLINE T reduceProduct() const { return _t; }
-   FINLINE T reduceMin() const     { return _t; }
-   FINLINE T reduceMax() const     { return _t; }
+   inline T reduceSum() const     { return _t; }
+   inline T reduceProduct() const { return _t; }
+   inline T reduceMin() const     { return _t; }
+   inline T reduceMax() const     { return _t; }
 
 
    //////////////////////////
@@ -964,10 +964,10 @@ public:
    /// These are only good for non-integral data
    /// No dot product or cross product for a 1-vector
 
-   FINLINE T average() const { return _t; }                   ///< Reduce sum / N
-   FINLINE T length() const  { return _t; }                   ///< Euclidean length of the vector
-   FINLINE T lengthSquared() const { return _t*_t; }          ///< Returns the length squared (avoids sqrt)
-   FINLINE Vector unit() const { return Vector<T, 1>(ONE<T>()); }  ///< Returns normalized copy (length == 1)
+   inline T average() const { return _t; }                   ///< Reduce sum / N
+   inline T length() const  { return _t; }                   ///< Euclidean length of the vector
+   inline T lengthSquared() const { return _t*_t; }          ///< Returns the length squared (avoids sqrt)
+   inline Vector unit() const { return Vector<T, 1>(ONE<T>()); }  ///< Returns normalized copy (length == 1)
 
 
 
@@ -976,7 +976,7 @@ public:
    ////////////////////////////
 
    template <typename Functor>
-   FINLINE Vector map(const Functor& f) const { return f(_t); }
+   inline Vector map(const Functor& f) const { return f(_t); }
 };
 
 
@@ -988,45 +988,45 @@ private:
 
 public:
 
-   static FINLINE Vec1 zero()                 { return Vec1(ZERO<T>()); }
-   static FINLINE Vec1 one()                  { return Vec1(ONE<T>()); }
-   static FINLINE Vec1 minusOne()             { return Vec1(MINUS_ONE<T>()); }
-   static FINLINE Vec1 inf()                  { return Vec1(INF<T>()); }
-   static FINLINE Vec1 _inf()                 { return Vec1(_INF<T>()); }
-   static FINLINE Vec1 e()                    { return Vec1(E<T>()); }
-   static FINLINE Vec1 pi()                   { return Vec1(PI<T>()); }
-   static FINLINE Vec1 rcpPi()                { return Vec1(RCP_PI<T>()); }
-   static FINLINE Vec1 phi()                  { return Vec1(PHI<T>()); }
-   static FINLINE Vec1 sqrt2()                { return Vec1(SQRT2<T>()); }
+   static inline Vec1 zero()                 { return Vec1(ZERO<T>()); }
+   static inline Vec1 one()                  { return Vec1(ONE<T>()); }
+   static inline Vec1 minusOne()             { return Vec1(MINUS_ONE<T>()); }
+   static inline Vec1 inf()                  { return Vec1(INF<T>()); }
+   static inline Vec1 _inf()                 { return Vec1(_INF<T>()); }
+   static inline Vec1 e()                    { return Vec1(E<T>()); }
+   static inline Vec1 pi()                   { return Vec1(PI<T>()); }
+   static inline Vec1 rcpPi()                { return Vec1(RCP_PI<T>()); }
+   static inline Vec1 phi()                  { return Vec1(PHI<T>()); }
+   static inline Vec1 sqrt2()                { return Vec1(SQRT2<T>()); }
 
-   static FINLINE Vec1 cbrt(Vec1 x)           { return Vec1(CBRT(x._t)); }
-   static FINLINE Vec1 sqrt(Vec1 x)           { return Vec1(SQRT(x._t)); }
-   static FINLINE Vec1 rcpSqrt(Vec1 x)        { return Vec1(RCP_SQRT(x._t)); }
-   static FINLINE Vec1 rcp(Vec1 x)            { return Vec1(RCP(x._t)); }
-   static FINLINE Vec1 cos(Vec1 x)            { return Vec1(COS(x._t)); }
-   static FINLINE Vec1 sin(Vec1 x)            { return Vec1(SIN(x._t)); }
-   static FINLINE Vec1 tan(Vec1 x)            { return Vec1(TAN(x._t)); }
-   static FINLINE Vec1 pow(Vec1 x, Vec1 y)    { return Vec1(POW(x._t, y._t)); }
-   static FINLINE Vec1 exp(Vec1 x)            { return Vec1(EXP(x._t)); }
-   static FINLINE Vec1 log(Vec1 x)            { return Vec1(LOG(x._t)); }
-   static FINLINE Vec1 log2(Vec1 x)           { return Vec1(LOG2(x._t)); }
-   static FINLINE Vec1 log10(Vec1 x)          { return Vec1(LOG10(x._t)); }
-   static FINLINE Vec1 abs(Vec1 x)            { return Vec1(ABS(x._t)); }
-   static FINLINE Vec1 acos(Vec1 x)           { return Vec1(ACOS(x._t)); }
-   static FINLINE Vec1 asin(Vec1 x)           { return Vec1(ASIN(x._t)); }
-   static FINLINE Vec1 atan2(Vec1 x, Vec1 y)  { return Vec1(ATAN2(x._t, y._t)); }
-   static FINLINE Vec1 floor(Vec1 x)          { return Vec1(FLOOR(x._t)); }
-   static FINLINE Vec1 ceil(Vec1 x)           { return Vec1(CEILING(x._t)); }
-   static FINLINE Vec1 clampz(Vec1 x, Vec1 u) { return Vec1(CLAMPZ(x._t, u._t)); }
-   static FINLINE Vec1 sign(Vec1 x)           { return Vec1(SIGN(x._t)); }
+   static inline Vec1 cbrt(Vec1 x)           { return Vec1(CBRT(x._t)); }
+   static inline Vec1 sqrt(Vec1 x)           { return Vec1(SQRT(x._t)); }
+   static inline Vec1 rcpSqrt(Vec1 x)        { return Vec1(RCP_SQRT(x._t)); }
+   static inline Vec1 rcp(Vec1 x)            { return Vec1(RCP(x._t)); }
+   static inline Vec1 cos(Vec1 x)            { return Vec1(COS(x._t)); }
+   static inline Vec1 sin(Vec1 x)            { return Vec1(SIN(x._t)); }
+   static inline Vec1 tan(Vec1 x)            { return Vec1(TAN(x._t)); }
+   static inline Vec1 pow(Vec1 x, Vec1 y)    { return Vec1(POW(x._t, y._t)); }
+   static inline Vec1 exp(Vec1 x)            { return Vec1(EXP(x._t)); }
+   static inline Vec1 log(Vec1 x)            { return Vec1(LOG(x._t)); }
+   static inline Vec1 log2(Vec1 x)           { return Vec1(LOG2(x._t)); }
+   static inline Vec1 log10(Vec1 x)          { return Vec1(LOG10(x._t)); }
+   static inline Vec1 abs(Vec1 x)            { return Vec1(ABS(x._t)); }
+   static inline Vec1 acos(Vec1 x)           { return Vec1(ACOS(x._t)); }
+   static inline Vec1 asin(Vec1 x)           { return Vec1(ASIN(x._t)); }
+   static inline Vec1 atan2(Vec1 x, Vec1 y)  { return Vec1(ATAN2(x._t, y._t)); }
+   static inline Vec1 floor(Vec1 x)          { return Vec1(FLOOR(x._t)); }
+   static inline Vec1 ceil(Vec1 x)           { return Vec1(CEILING(x._t)); }
+   static inline Vec1 clampz(Vec1 x, Vec1 u) { return Vec1(CLAMPZ(x._t, u._t)); }
+   static inline Vec1 sign(Vec1 x)           { return Vec1(SIGN(x._t)); }
 
-   static FINLINE Vec1 min(Vec1 x, Vec1 y)
+   static inline Vec1 min(Vec1 x, Vec1 y)
    { return (x._t < y._t ? Vec1(x._t) : Vec1(y._t)); }
-   static FINLINE Vec1 max(Vec1 x, Vec1 y)
+   static inline Vec1 max(Vec1 x, Vec1 y)
    { return (x._t > y._t ? Vec1(x._t) : Vec1(y._t)); }
 
-   static FINLINE Vec1 min3(Vec1 x, Vec1 y, Vec1 z)  { return min(x, min(y, z)); }
-   static FINLINE Vec1 max3(Vec1 x, Vec1 y, Vec1 z)  { return max(x, max(y, z)); }
+   static inline Vec1 min3(Vec1 x, Vec1 y, Vec1 z)  { return min(x, min(y, z)); }
+   static inline Vec1 max3(Vec1 x, Vec1 y, Vec1 z)  { return max(x, max(y, z)); }
 };
 
 
@@ -1042,20 +1042,20 @@ private:
 public:
 
    /// Bit rotations
-   static FINLINE Vec rotr(Vec a, int b) { return Vec(ROTR(a._t, b)); }
-   static FINLINE Vec rotl(Vec a, int b) { return Vec(ROTL(a._t, b)); }
+   static inline Vec rotr(Vec a, int b) { return Vec(ROTR(a._t, b)); }
+   static inline Vec rotl(Vec a, int b) { return Vec(ROTL(a._t, b)); }
 
    /// Bit interleaves
-   static FINLINE Vec interleave11(Vec a, Vec b)
+   static inline Vec interleave11(Vec a, Vec b)
    { return Vec(INTERLEAVE11(a._t, b._t)); }
-   static FINLINE Vec interleave21(Vec a, Vec b)
+   static inline Vec interleave21(Vec a, Vec b)
    { return Vec(INTERLEAVE21(a._t, b._t)); }
 
    /// Counts '1' bits in an integer
-   //static FINLINE Vec bitCount(Vec a);
+   //static inline Vec bitCount(Vec a);
 };
 
-}; // namespace Burns
+}; // namespace ToolChest
 
 #endif // MATH_VECTOR_H
 

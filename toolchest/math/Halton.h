@@ -1,10 +1,8 @@
 #ifndef HALTON_H
 #define HALTON_H
 
-
-namespace Burns
+namespace ToolChest
 {
-
 
 ///////////////////////////////
 // Halton Sequence Generator //
@@ -25,31 +23,31 @@ private:
 public:
 
    // Constructor
-   INLINE Halton() : _last1D(0), _last2D(0), _last3D(0), _last4D(0) { }
-   INLINE ~Halton() {}  ///< Destructor
+   inline Halton() : _last1D(0), _last2D(0), _last3D(0), _last4D(0) { }
+   inline ~Halton() {}  ///< Destructor
 
-   INLINE void seed2D(uint32 s) { _last2D = s; }
-   INLINE void seed1D(uint32 s) { _last1D = s; }
-   INLINE void seed3D(uint32 s) { _last3D = s; }
-   INLINE void seed4D(uint32 s) { _last4D = s; }
+   inline void seed2D(uint32 s) { _last2D = s; }
+   inline void seed1D(uint32 s) { _last1D = s; }
+   inline void seed3D(uint32 s) { _last3D = s; }
+   inline void seed4D(uint32 s) { _last4D = s; }
 
-   INLINE void reset2D() { _last2D = 0; }
-   INLINE void reset1D() { _last1D = 0; }
-   INLINE void reset3D() { _last3D = 0; }
-   INLINE void reset4D() { _last4D = 0; }
+   inline void reset2D() { _last2D = 0; }
+   inline void reset1D() { _last1D = 0; }
+   inline void reset3D() { _last3D = 0; }
+   inline void reset4D() { _last4D = 0; }
 
 
-   INLINE float getNext1D()
+   inline float getNext1D()
    { _last1D++; return radicalInverse(_last1D, 3, 1.0f/3.0f); }
 
-   INLINE Vector2f getNext2D()
+   inline Vector2f getNext2D()
    {
       _last2D++;
       return Vector2f(radicalInverse(_last2D, 2, 0.5f),
                       radicalInverse(_last2D, 3, 1.0f/3.0f));
    }
 
-   INLINE Vector3f getNext3D()
+   inline Vector3f getNext3D()
    {
       _last3D++;
       return Vector3f(radicalInverse(_last3D, 2, 0.5f),
@@ -57,7 +55,7 @@ public:
                       radicalInverse(_last3D, 5, 0.2f));
    }
 
-   INLINE Vector4f getNext4D()
+   inline Vector4f getNext4D()
    {
       _last4D++;
       return Vector4f(radicalInverse(_last4D, 2, 0.5f),
@@ -74,7 +72,7 @@ public:
 };
 
 
-INLINE float Halton::radicalInverse(uint32 n, int base, float invBase) const
+inline float Halton::radicalInverse(uint32 n, int base, float invBase) const
 {
    float val = 0.0f, invBi = invBase;
    while (n > 0)
@@ -87,14 +85,14 @@ INLINE float Halton::radicalInverse(uint32 n, int base, float invBase) const
    return val;
 }
 
-INLINE float * Halton::getSequence1D(uint32 n, uint32 s) const
+inline float * Halton::getSequence1D(uint32 n, uint32 s) const
 {
    float * seq = new float[n]; assert(seq);
    for (uint32 i = s; i < s+n; ++i) seq[i-s] = radicalInverse(i+1, 2, 0.5f);
    return seq;
 }
 
-INLINE Vector2f * Halton::getSequence2D(uint32 n, uint32 s) const
+inline Vector2f * Halton::getSequence2D(uint32 n, uint32 s) const
 {
    Vector2f * seq = new Vector2f[n]; assert(seq);
    for (uint32 i = s; i < s+n; ++i)
@@ -105,7 +103,7 @@ INLINE Vector2f * Halton::getSequence2D(uint32 n, uint32 s) const
    return seq;
 }
 
-INLINE Vector3f * Halton::getSequence3D(uint32 n, uint32 s) const
+inline Vector3f * Halton::getSequence3D(uint32 n, uint32 s) const
 {
    Vector3f * seq = new Vector3f[n]; assert(seq);
    for (uint32 i = s; i < s+n; ++i)
@@ -118,7 +116,7 @@ INLINE Vector3f * Halton::getSequence3D(uint32 n, uint32 s) const
    return seq;
 }
 
-}; // namespace Burns
+}; // namespace ToolChest
 
 
 #endif

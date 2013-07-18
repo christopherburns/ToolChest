@@ -6,36 +6,32 @@
 #include "../Mathematics.h"
 #include "../Vector.h"
 
-namespace Burns
+namespace ToolChest
 {
-
-template <> class Vector<float, 4>;
-template <> class Vector<int32, 4>;
-
-}; // namespace Burns
+   template <> class Vector<float, 4>;
+   template <> class Vector<int32, 4>;
+}; // namespace ToolChest
 
 
 #include "Vector4i.h"
 #include "Vector4f.h"
 
-namespace Burns
+namespace ToolChest
 {
+   /// Casting operators
+   inline Vector<int32, 4>::operator Vector<float, 4>() const
+   { return Vector<float, 4>(_mm_cvtepi32_ps(_r.m128i())); }
 
-/// Casting operators
-FINLINE Vector<int32, 4>::operator Vector<float, 4>() const
-{ return Vector<float, 4>(_mm_cvtepi32_ps(_r.m128i())); }
+   inline Vector<float, 4>::operator Vector<int32, 4>() const
+   { return Vector<int32, 4>(_mm_cvttps_epi32(_r.m128())); }
 
-FINLINE Vector<float, 4>::operator Vector<int32, 4>() const
-{ return Vector<int32, 4>(_mm_cvttps_epi32(_r.m128())); }
+   /// Conversion constructors
+   template <> inline Vector<int32, 4>::Vector(const Vector<float, 4>& v) :
+      _r(_mm_cvttps_epi32(v._r.m128())) {}
 
-/// Conversion constructors
-template <> FINLINE Vector<int32, 4>::Vector(const Vector<float, 4>& v) :
-   _r(_mm_cvttps_epi32(v._r.m128())) {}
-
-template <> FINLINE Vector<float, 4>::Vector(const Vector<int32, 4>& v) :
-   _r(_mm_cvtepi32_ps(v._r.m128i())) {}
-
-}; // namespace Burns
+   template <> inline Vector<float, 4>::Vector(const Vector<int32, 4>& v) :
+      _r(_mm_cvtepi32_ps(v._r.m128i())) {}
+}; // namespace ToolChest
 
 #endif // ___SSE
 

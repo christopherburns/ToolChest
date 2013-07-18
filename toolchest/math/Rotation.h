@@ -1,11 +1,9 @@
 #ifndef ROTATION_H
 #define ROTATION_H
 
-#pragma once
-
 #include "Quaternion.h"
 
-namespace Burns
+namespace ToolChest
 {
 
 /// \class Rotation represents an rotation in 3D vector space. It is little
@@ -29,18 +27,18 @@ public:
    //////////////////
 
    // Default constructor
-   FINLINE Rotation() {}
+   inline Rotation() {}
 
-   explicit FINLINE Rotation(const Quaternion& q) : _q(q) {}
+   explicit inline Rotation(const Quaternion& q) : _q(q) {}
 
    /// Constructs a quaternion rotation from an angle and an axis
-   FINLINE Rotation(float angle, const Vector3& axis) : _q(angle, axis) {}
+   inline Rotation(float angle, const Vector3& axis) : _q(angle, axis) {}
 
    /// Constructs a quaternion rotation from a 3x3 column-major rotation matrix
-   FINLINE Rotation(const Vector3x3f& rotMatrix) : _q(rotMatrix) {}
+   inline Rotation(const Vector3x3f& rotMatrix) : _q(rotMatrix) {}
 
    /// Constructs a rotation by setting the zAxis to the given unit vector
-   explicit FINLINE Rotation(const Vector3& zAxis) :
+   explicit inline Rotation(const Vector3& zAxis) :
       _q(1.0f + zAxis.z(), zAxis.y(), -zAxis.x(), 0.0f)
    {
       if (_q == ZERO<Quaternion>()) _q = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
@@ -49,7 +47,7 @@ public:
 
    /// Returns a spherical linear interpolation between rotation a and
    /// rotation b using t (in [0,1]) as a parameter
-   friend FINLINE Rotation slerp(const Rotation& a, const Rotation& b, float t)
+   friend inline Rotation slerp(const Rotation& a, const Rotation& b, float t)
    {
       float w1, w2;
 
@@ -71,15 +69,15 @@ public:
       return a*w1 + b*w2;
    }
 
-   friend FINLINE Rotation operator * (const Rotation& lhs, const Rotation& rhs)
+   friend inline Rotation operator * (const Rotation& lhs, const Rotation& rhs)
    { return Rotation(lhs._q * rhs._q); }
 
-   FINLINE void setAxisAngle(float angle, const Vector3& axis)
+   inline void setAxisAngle(float angle, const Vector3& axis)
    { _q = Quaternion(angle, axis); }
 
-   FINLINE Quaternion q() const { return _q; }
+   inline Quaternion q() const { return _q; }
 
-   INLINE String toString(int prec = 3) const
+   inline String toString(int prec = 3) const
    { return String("Rotation = { q = ") + _q.toString(prec) + " }"; }
 };
 
@@ -93,9 +91,9 @@ template <class T> struct MATHEMATICS<Rotation<T> >
 {
 public:
 
-   static FINLINE Rotation<T> one()
+   static inline Rotation<T> one()
    { return Rotation<T>(ONE<Quaternion<T> >()); }
-   static FINLINE Rotation<T> zero()
+   static inline Rotation<T> zero()
    { return Rotation<T>(ZERO<Quaternion<T> >()); }
 };
 
@@ -104,6 +102,6 @@ typedef Rotation<Vector<float, 4> > Rotation4f;
 typedef Rotation<Vector<float, 8> > Rotation8f;
 typedef Rotation<Vector<float, 16> > Rotation16f;
 
-}; // namespace Burns
+}; // namespace ToolChest
 
 #endif // ROTATION_H

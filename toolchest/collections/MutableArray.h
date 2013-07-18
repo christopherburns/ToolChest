@@ -34,7 +34,7 @@ namespace Collections
       protected:
       public:
          int _size;
-         Burns::Ref<Common::InitializedBuffer<E> > _data;
+         ToolChest::Ref<Common::InitializedBuffer<E> > _data;
 
          inline Array(int initSize) 
             : _size(initSize), _data(new Common::InitializedBuffer<E>(initSize)) {}

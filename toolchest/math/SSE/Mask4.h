@@ -3,117 +3,117 @@
 
 #include "SSERegister.h"
 
-namespace Burns
+namespace ToolChest
 {
 
-template <> class Mask<bool, 4>
-{
-   ///////////////////////////////////////////////////////////////////////////
-   //                      Private Data And Methods                         //
-   ///////////////////////////////////////////////////////////////////////////
-
-  /// This shit should be private... why is it not ?
-public:
-   SSERegister _m;
- public:
-
-   FINLINE Mask(const SSERegister& r) : _m(r) {}
-
-   /// Mask<4> is a base case, no more recursion
-   INLINE String internalToString() const
+   template <> class Mask<bool, 4>
    {
-      int mask = bitMask();
-      return
-         String((mask & 1) ? "1" : "0") + ", " +
-               ((mask & 2) ? "1" : "0") + ", " +
-               ((mask & 4) ? "1" : "0") + ", " +
-               ((mask & 8) ? "1" : "0");
-   }
+      ///////////////////////////////////////////////////////////////////////////
+      //                      Private Data And Methods                         //
+      ///////////////////////////////////////////////////////////////////////////
 
-public:
+     /// This shit should be private... why is it not ?
+   public:
+      SSERegister _m;
+    public:
 
-   /// Implementation of Generic Mask<bool, N> interface
+      inline Mask(const SSERegister& r) : _m(r) {}
 
-   /// Constructors
-   FINLINE Mask() {}
-   FINLINE Mask(bool t)
-      : _m(_mm_cmpeq_epi32(_mm_set_epi32(!t, !t, !t, !t),
-      SSERegister::zeroes().m128i())) {}
-   FINLINE Mask(const bool t[4])
-      : _m(_mm_cmpeq_epi32(_mm_set_epi32(!t[3], !t[2], !t[1], !t[0]),
-      SSERegister::zeroes().m128i())) {}
-   FINLINE Mask(bool b0, bool b1, bool b2, bool b3)
-      : _m(_mm_cmpeq_epi32(_mm_set_epi32(!b3, !b2, !b1, !b0),
-      SSERegister::zeroes().m128i())) {}
+      /// Mask<4> is a base case, no more recursion
+      inline String internalToString() const
+      {
+         int mask = bitMask();
+         return
+            String((mask & 1) ? "1" : "0") + ", " +
+                  ((mask & 2) ? "1" : "0") + ", " +
+                  ((mask & 4) ? "1" : "0") + ", " +
+                  ((mask & 8) ? "1" : "0");
+      }
 
-   /// Does this work??? we'll have to test it
-   FINLINE Mask(uint64 bitField) : _m(_mm_set_epi32(!(bitField & 0x1), !((bitField >> 1) & 0x1), !((bitField >> 2) & 0x1), !((bitField >> 3) & 0x1))) {}
+   public:
 
-   /// Conversion to String
-   FINLINE String toString() const
-   { return String("[") + internalToString() + "]"; }
+      /// Implementation of Generic Mask<bool, N> interface
 
-   /// Generate a bitmask, the low four bits corrspond to the 4 Mask components
-   FINLINE uint32 bitMask() const { return _m.signMask(); }
+      /// Constructors
+      inline Mask() {}
+      inline Mask(bool t)
+         : _m(_mm_cmpeq_epi32(_mm_set_epi32(!t, !t, !t, !t),
+         SSERegister::zeroes().m128i())) {}
+      inline Mask(const bool t[4])
+         : _m(_mm_cmpeq_epi32(_mm_set_epi32(!t[3], !t[2], !t[1], !t[0]),
+         SSERegister::zeroes().m128i())) {}
+      inline Mask(bool b0, bool b1, bool b2, bool b3)
+         : _m(_mm_cmpeq_epi32(_mm_set_epi32(!b3, !b2, !b1, !b0),
+         SSERegister::zeroes().m128i())) {}
 
-   /// Access a single element
-   FINLINE bool operator [] (Index i) const
-   { ASSERT(i >= 0 && i < 4); return bitMask() & (0x1 << i); }
+      /// Does this work??? we'll have to test it
+      inline Mask(uint64 bitField) : _m(_mm_set_epi32(!(bitField & 0x1), !((bitField >> 1) & 0x1), !((bitField >> 2) & 0x1), !((bitField >> 3) & 0x1))) {}
 
+      /// Conversion to String
+      inline String toString() const
+      { return String("[") + internalToString() + "]"; }
 
-   ////////////////////////////
-   // Mathematical Operators //
-   ////////////////////////////
+      /// Generate a bitmask, the low four bits corrspond to the 4 Mask components
+      inline uint32 bitMask() const { return _m.signMask(); }
 
-   /// Unary not
-   FINLINE Mask operator ! () const { return *this ^ Mask(true); }
-   FINLINE Mask operator ~ () const { return *this ^ Mask(true); }
-
-   friend FINLINE Mask operator & (const Mask& l, const Mask& r) { return Mask(l._m & r._m); }
-   friend FINLINE Mask operator | (const Mask& l, const Mask& r) { return l._m | r._m; }
-   friend FINLINE Mask operator ^ (const Mask& l, const Mask& r) { return l._m ^ r._m; }
-
-   FINLINE Mask& operator &= (const Mask& r) { return *this = *this & r; }
-   FINLINE Mask& operator |= (const Mask& r) { return *this = *this | r; }
-   FINLINE Mask& operator ^= (const Mask& r) { return *this = *this ^ r; }
+      /// Access a single element
+      inline bool operator [] (int i) const
+      { assert(i >= 0 && i < 4); return bitMask() & (0x1 << i); }
 
 
-   ////////////////
-   // Comparison //
-   ////////////////
+      ////////////////////////////
+      // Mathematical Operators //
+      ////////////////////////////
 
-   friend FINLINE Mask operator == (const Mask& a, const Mask& b)
-   { return SSERegister::i32Equality(a._m, b._m); } //    _mm_cmpeq_epi32(data.m128i(), i.data.m128i()); }
-   friend FINLINE Mask operator != (const Mask& a, const Mask& b)
-   { return !(a == b); }
+      /// Unary not
+      inline Mask operator ! () const { return *this ^ Mask(true); }
+      inline Mask operator ~ () const { return *this ^ Mask(true); }
+
+      friend inline Mask operator & (const Mask& l, const Mask& r) { return Mask(l._m & r._m); }
+      friend inline Mask operator | (const Mask& l, const Mask& r) { return l._m | r._m; }
+      friend inline Mask operator ^ (const Mask& l, const Mask& r) { return l._m ^ r._m; }
+
+      inline Mask& operator &= (const Mask& r) { return *this = *this & r; }
+      inline Mask& operator |= (const Mask& r) { return *this = *this | r; }
+      inline Mask& operator ^= (const Mask& r) { return *this = *this ^ r; }
 
 
-   ////////////////
-   // Reductions //
-   ////////////////
+      ////////////////
+      // Comparison //
+      ////////////////
 
-   FINLINE bool reduceAnd() const { return _m.signMask() == 0xf; }
-   FINLINE bool reduceOr()  const { return _m.signMask() != 0x0; }
-   FINLINE bool all() const       { return reduceAnd(); }
-   FINLINE bool none() const      { return _m.signMask() == 0x0; }
-   FINLINE bool any() const       { return _m.signMask() != 0x0; }
+      friend inline Mask operator == (const Mask& a, const Mask& b)
+      { return SSERegister::i32Equality(a._m, b._m); } //    _mm_cmpeq_epi32(data.m128i(), i.data.m128i()); }
+      friend inline Mask operator != (const Mask& a, const Mask& b)
+      { return !(a == b); }
 
-   FINLINE int  count() const
-   {
-      static int lookup[] = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4};
-      return lookup[bitMask()];
-   }
 
-   ////////////////////////////
-   // Functional Programming //
-   ////////////////////////////
+      ////////////////
+      // Reductions //
+      ////////////////
 
-   /// Is this right... ?
-   template <typename Functor> FINLINE Mask& map(const Functor& f)
-   { return f(*this); }
-};
+      inline bool reduceAnd() const { return _m.signMask() == 0xf; }
+      inline bool reduceOr()  const { return _m.signMask() != 0x0; }
+      inline bool all() const       { return reduceAnd(); }
+      inline bool none() const      { return _m.signMask() == 0x0; }
+      inline bool any() const       { return _m.signMask() != 0x0; }
 
-}; // namespace Burns
+      inline int  count() const
+      {
+         static int lookup[] = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4};
+         return lookup[bitMask()];
+      }
+
+      ////////////////////////////
+      // Functional Programming //
+      ////////////////////////////
+
+      /// Is this right... ?
+      template <typename Functor> inline Mask& map(const Functor& f)
+      { return f(*this); }
+   };
+
+}; // namespace ToolChest
 
 
 #endif // MASK4_H

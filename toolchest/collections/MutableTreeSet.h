@@ -42,7 +42,7 @@ namespace Collections
          int _size;  //< Number of elements, for efficiency
          Tree _tree;
       
-         FINLINE TreeSet(int size, const Tree& tree)
+         inline TreeSet(int size, const Tree& tree)
             : _size(size)
             , _tree(tree) {}
       
@@ -54,10 +54,10 @@ namespace Collections
          ///////////////////////////////////////////
       
          /// The data array's reference counter is automatically incremented
-         FINLINE TreeSet() : _size(0), _tree(0) {}
+         inline TreeSet() : _size(0), _tree(0) {}
       
          /// The data array's reference counter is automatically incremented
-         FINLINE TreeSet(const TreeSet& rhs)
+         inline TreeSet(const TreeSet& rhs)
             : _size(rhs._size)
             , _tree(rhs._tree) { }
 
@@ -65,7 +65,7 @@ namespace Collections
          // Assignment Operator, Reference Semantics //
          //////////////////////////////////////////////
       
-         FINLINE TreeSet& operator = (const TreeSet& rhs)
+         inline TreeSet& operator = (const TreeSet& rhs)
          { _tree = rhs._tree; _size = rhs._size; return *this; }
 
 

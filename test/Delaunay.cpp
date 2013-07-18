@@ -4,7 +4,7 @@
 
 #include "../toolchest/ToolChest.h"
 
-using namespace Burns;
+using namespace ToolChest;
 
 #include "Delaunay.h"
 

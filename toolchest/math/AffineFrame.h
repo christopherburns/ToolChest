@@ -9,7 +9,7 @@
 /// transforming points, vectors, and other affine frames (that is, a
 /// mechanism for composing affine frames).
 
-namespace Burns
+namespace ToolChest
 {
 
 template <class T>
@@ -27,15 +27,15 @@ private:
 public:
 
    /// We initialize to the canonical cartesian frame of reference
-   FINLINE AffineFrame() { *this = ONE<AffineFrame>(); }
-   FINLINE AffineFrame(const Vector3& x, const Vector3& y, const Vector3& z) :
+   inline AffineFrame() { *this = ONE<AffineFrame>(); }
+   inline AffineFrame(const Vector3& x, const Vector3& y, const Vector3& z) :
       _vx(x), _vy(y), _vz(z), _origin(ZERO<Vector3>()) {}
-   FINLINE AffineFrame(
+   inline AffineFrame(
       const Vector3& x, const Vector3& y, const Vector3& z, const Vector3& origin) :
       _vx(x), _vy(y), _vz(z), _origin(origin) {}
    // Initialize from a column-major array of matrix components
       /// Not sure if this works....
-   FINLINE AffineFrame(const float c[16]) :
+   inline AffineFrame(const float c[16]) :
       _vx(Vector3f(c[0], c[1], c[2])),
       _vy(Vector3f(c[4], c[5], c[6])),
       _vz(Vector3f(c[8], c[9], c[10])),
@@ -45,20 +45,20 @@ public:
 
    /// Construction from an orthogonal frame of reference. The OrthogonalFrame
    /// class uses a quaternion to represent orientation
-   FINLINE AffineFrame(const OrthogonalFrame<T>& oFrame);
+   inline AffineFrame(const OrthogonalFrame<T>& oFrame);
 
    ///////////////
    // Accessors //
    ///////////////
 
-   FINLINE Vector3 x() const { return _vx; }
-   FINLINE Vector3 y() const { return _vy; }
-   FINLINE Vector3 z() const { return _vz; }
-   FINLINE Vector3 origin() const { return _origin; }
+   inline Vector3 x() const { return _vx; }
+   inline Vector3 y() const { return _vy; }
+   inline Vector3 z() const { return _vz; }
+   inline Vector3 origin() const { return _origin; }
 
    /// Produces a 4x4 matrix implementing the affine frame as a 3DH transform.
    /// The matrix is produced in COLUMN-MAJOR order!
-   FINLINE Vector4x4f generate4x4() const
+   inline Vector4x4f generate4x4() const
    {
       return Vector4x4f(
          Vector4f(_vx.x(), _vx.y(), _vx.z(), 0.0f),               // Column 0
@@ -73,21 +73,21 @@ public:
    //////////////////////////
 
    /// These generate affine frames with the requested transformation
-   FINLINE static AffineFrame Scale(float s)
+   inline static AffineFrame Scale(float s)
    { return Scale(s, s, s); }
-   FINLINE static AffineFrame Scale(const Vector3& s)
+   inline static AffineFrame Scale(const Vector3& s)
    { return Scale(s.x(), s.y(), s.z()); }
-   FINLINE static AffineFrame Scale(T x, T y, T z)
+   inline static AffineFrame Scale(T x, T y, T z)
    { return AffineFrame(Vector3(x, ZERO<T>(), ZERO<T>()), Vector3(ZERO<T>(), y, ZERO<T>()), Vector3(ZERO<T>(), ZERO<T>(), z)); }
 
-   FINLINE static AffineFrame Translate(T x, T y, T z)
+   inline static AffineFrame Translate(T x, T y, T z)
    { return Translate(Vector3(x, y, z)); }
-   FINLINE static AffineFrame Translate(Vector3 v)
+   inline static AffineFrame Translate(Vector3 v)
    { AffineFrame f; f._origin = v; return f; }
 
-   FINLINE static AffineFrame Rotate(const Vector3& vx, const Vector3& vy, const Vector3& vz)
+   inline static AffineFrame Rotate(const Vector3& vx, const Vector3& vy, const Vector3& vz)
    { return AffineFrame(vx, vy, vz); }
-   FINLINE static AffineFrame Rotate(const T angle, const Vector3& axis)
+   inline static AffineFrame Rotate(const T angle, const Vector3& axis)
    { return AffineFrame(OrthogonalFrame<T>(Quaternion<T>(angle, axis), ZERO<Vector3>())); }
 
    /// Vector transformations occur with the following conventions
@@ -96,20 +96,20 @@ public:
 
    /// These generate affine frames with the requested transformation
 
-   FINLINE Vector3 xFormVector(const Vector3& v) const
+   inline Vector3 xFormVector(const Vector3& v) const
    { return v.x() * _vx + v.y() * _vy + v.z() * _vz; }
-   FINLINE Vector3 xFormPoint(const Vector3& p) const
+   inline Vector3 xFormPoint(const Vector3& p) const
    { return _origin + xFormVector(p); }
 
-   FINLINE AffineFrame operator () (const AffineFrame& frame) const
+   inline AffineFrame operator () (const AffineFrame& frame) const
    { return xFormAffineFrame(frame); }
-   FINLINE AffineFrame operator * (const AffineFrame& frame) const
+   inline AffineFrame operator * (const AffineFrame& frame) const
    { return xFormAffineFrame(frame); }
 
 
 
 private:
-   FINLINE AffineFrame xFormAffineFrame(const AffineFrame& f) const
+   inline AffineFrame xFormAffineFrame(const AffineFrame& f) const
    {
       return
          AffineFrame(xFormVector(f._vx), xFormVector(f._vy), xFormVector(f._vz),
@@ -125,7 +125,7 @@ public:
    /// The reciprocal is defined such that F * RCP(F) == F. The transform
    /// matrix that results should be the inverse of the original frame's
    /// transform matrix
-   INLINE AffineFrame reciprocal() const
+   inline AffineFrame reciprocal() const
    {
       // Transpose of the 3x3 rotation matrix
       const Vector3 tX(_vx.x(), _vy.x(), _vz.x());
@@ -152,7 +152,7 @@ public:
    // I/O //
    /////////
 
-   INLINE String toString(int prec = 3) const
+   inline String toString(int prec = 3) const
    {
       return String("AffineFrame = { ") +
          "vx = " + _vx.toString(prec) + ", " +
@@ -200,7 +200,7 @@ template <class T> struct MATHEMATICS<AffineFrame<T> >
 public:
 
    /// The "Identity" affine frame is the canonical cartesian frame at origin
-   static FINLINE AffineFrame<T> one()
+   static inline AffineFrame<T> one()
    {
       return AffineFrame<T>(
          Vector3(ONE<T>(),  ZERO<T>(), ZERO<T>()),
@@ -209,10 +209,10 @@ public:
          ZERO<Vector3>());
    }
 
-   static FINLINE AffineFrame<T> rcp(const AffineFrame<T>& af) { return af.reciprocal(); }
+   static inline AffineFrame<T> rcp(const AffineFrame<T>& af) { return af.reciprocal(); }
 };
 
-}; // namespace Burns
+}; // namespace ToolChest
 
 
 #endif // AFFINE_FRAME_H
@@ -253,13 +253,13 @@ private:
 public:
 
    /// We initialize to the canonical cartesian frame of reference
-   FINLINE AffineFrame() { *this = ONE<AffineFrame>(); }
-   FINLINE AffineFrame(const Vector3& x, const Vector3& y, const Vector3& z) :
+   inline AffineFrame() { *this = ONE<AffineFrame>(); }
+   inline AffineFrame(const Vector3& x, const Vector3& y, const Vector3& z) :
       _vx(x), _vy(y), _vz(z), _origin(ZERO<Vector3>()) {}
-   FINLINE AffineFrame(
+   inline AffineFrame(
       const Vector3& x, const Vector3& y, const Vector3& z, const Vector3& origin) :
       _vx(x), _vy(y), _vz(z), _origin(origin) {}
-   FINLINE AffineFrame(const float c[12]) :
+   inline AffineFrame(const float c[12]) :
       _vx(Vector3f(c[0], c[1], c[2])),
       _vy(Vector3f(c[3], c[4], c[5])),
       _vz(Vector3f(c[6], c[7], c[8])),
@@ -270,23 +270,23 @@ public:
 
    /// Construction from an orthogonal frame of reference. The OrthogonalFrame
    /// class uses a quaternion to represent orientation
-   FINLINE AffineFrame(const OrthogonalFrame<T>& oFrame);
+   inline AffineFrame(const OrthogonalFrame<T>& oFrame);
 
    ///////////////
    // Accessors //
    ///////////////
 
-   FINLINE Vector3 x() const { return _vx; }
-   FINLINE Vector3 y() const { return _vy; }
-   FINLINE Vector3 z() const { return _vz; }
-   FINLINE Vector3 origin() const { return _origin; }
+   inline Vector3 x() const { return _vx; }
+   inline Vector3 y() const { return _vy; }
+   inline Vector3 z() const { return _vz; }
+   inline Vector3 origin() const { return _origin; }
 
 
    //////////////////////////
    // Transform Operations //
    //////////////////////////
 
-   FINLINE AffineFrame translate(Vector3f v) const
+   inline AffineFrame translate(Vector3f v) const
    {
       AffineFrame f = *this;
       f._origin += v;
@@ -298,21 +298,21 @@ public:
    ///     _vx, _vy, _vz are the column vectors of a 3x3 affine matrix
    ///     multiplication occurs with the "column vector on right" convention
 
-   FINLINE Vector3 xFormVector(const Vector3& v) const
+   inline Vector3 xFormVector(const Vector3& v) const
    { return v.x() * _vx + v.y() * _vy + v.z() * _vz; }
-   FINLINE Vector3 xFormPoint(const Vector3& p) const
+   inline Vector3 xFormPoint(const Vector3& p) const
    { return _origin + xFormVector(p); }
-   FINLINE AffineFrame xFormAffineFrame(const AffineFrame& f) const
+   inline AffineFrame xFormAffineFrame(const AffineFrame& f) const
    {
       return
          AffineFrame(xFormVector(f._vx), xFormVector(f._vy), xFormVector(f._vz),
                      xFormPoint(f._origin));
    }
 
-   FINLINE AffineFrame operator () (const AffineFrame& frame) const
+   inline AffineFrame operator () (const AffineFrame& frame) const
    { return xFormAffineFrame(frame); }
 
-   FINLINE AffineFrame operator * (const AffineFrame& frame) const
+   inline AffineFrame operator * (const AffineFrame& frame) const
    { return xFormAffineFrame(frame); }
 
 
@@ -321,7 +321,7 @@ public:
    ////////////////
 
    /// The reciprocal is defined such that F * RCP(F) == F
-   INLINE AffineFrame reciprocal() const
+   inline AffineFrame reciprocal() const
    {
       // Transpose of the 3x3 rotation matrix
       const Vector3 tX(_vx.x(), _vy.x(), _vz.x());
@@ -348,7 +348,7 @@ public:
    // I/O //
    /////////
 
-   INLINE String toString(int prec = 3) const
+   inline String toString(int prec = 3) const
    {
       return String("AffineFrame = { ") +
          "vx = " + _vx.toString(prec) + ", " +
@@ -396,7 +396,7 @@ template <class T> struct MATHEMATICS<AffineFrame<T> >
 public:
 
    /// The "Identity" affine frame is the canonical cartesian frame at origin
-   static FINLINE AffineFrame<T> one()
+   static inline AffineFrame<T> one()
    {
       return AffineFrame<T>(
          Vector3(ONE<T>(),  ZERO<T>(), ZERO<T>()),
@@ -405,7 +405,7 @@ public:
          ZERO<Vector3>());
    }
 
-   static FINLINE AffineFrame<T> rcp(const AffineFrame<T>& af) { return af.reciprocal(); }
+   static inline AffineFrame<T> rcp(const AffineFrame<T>& af) { return af.reciprocal(); }
 };
 
 

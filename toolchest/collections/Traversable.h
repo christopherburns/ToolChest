@@ -55,7 +55,7 @@ namespace Collections
 
    namespace Common
    {      
-      template <class E> class InitializedBuffer : public Burns::Object
+      template <class E> class InitializedBuffer : public ToolChest::Object
       {
       private:
       public:
@@ -86,7 +86,7 @@ namespace Collections
       };
 
 
-      template <class E> class MemoryPool : public Burns::Object
+      template <class E> class MemoryPool : public ToolChest::Object
       {
       private:
          static const int MIN_CAPACITY = 0x10;
@@ -130,9 +130,9 @@ namespace Collections
          inline int Capacity() const { return _capacity; }
          inline int NextFreeIndex() const { return _nextFreeIndex; }
 
-         Burns::Ref<MemoryPool> Clone() const
+         ToolChest::Ref<MemoryPool> Clone() const
          {
-            Burns::Ref<MemoryPool> p = new MemoryPool();
+            ToolChest::Ref<MemoryPool> p = new MemoryPool();
             p->_capacity = _capacity;
             p->_nextFreeIndex = _nextFreeIndex;
             p->_pool = (E*)malloc(_capacity * sizeof(E));
@@ -211,7 +211,7 @@ namespace Collections
 
    // E is the element type, C is the concrete derived class, e.g. Array<int>
    template <class E, class C, class CTraits>
-   class Traversable : public Burns::Object
+   class Traversable : public ToolChest::Object
    {
    public:
 
@@ -313,8 +313,8 @@ namespace Collections
       {
          /// We will not copy more elements than exist, nor reserve
          /// less space than we are about to copy
-         const int N = Burns::MIN(numElementsToCopy, Size());
-         const int R = Burns::MAX(reservedSpace, N);
+         const int N = ToolChest::MIN(numElementsToCopy, Size());
+         const int R = ToolChest::MAX(reservedSpace, N);
          Builder builder(R);
          Iterator itr = GetIterator();
          for (int i = 0; i < N; ++i) 
@@ -372,7 +372,7 @@ namespace Collections
 
    template <class E, class C, class CTraits> 
    C Traversable<E, C, CTraits>::Init() const                              
-   { return Take(Burns::MAX(0, Size()-1)); }                                                                               
+   { return Take(ToolChest::MAX(0, Size()-1)); }                                                                               
 
    template <class E, class C, class CTraits> 
    C Traversable<E, C, CTraits>::Take(int n) const                         

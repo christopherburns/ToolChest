@@ -43,15 +43,15 @@ namespace Collections
 
          int _i;      
          int _size;
-         Burns::Ref<Common::InitializedBuffer<E> > _data;
+         ToolChest::Ref<Common::InitializedBuffer<E> > _data;
       
-         FINLINE ArrayIterator(const Mutable::Array<E>& a)   : _size(a._size), _data(a._data), _i(-1) {}
-         FINLINE ArrayIterator(const Immutable::Array<E>& a) : _size(a._size), _data(a._data), _i(-1) {}
+         inline ArrayIterator(const Mutable::Array<E>& a)   : _size(a._size), _data(a._data), _i(-1) {}
+         inline ArrayIterator(const Immutable::Array<E>& a) : _size(a._size), _data(a._data), _i(-1) {}
       
       public:
-         FINLINE ArrayIterator(const ArrayIterator& itr) : _i(itr._i), _size(itr._size), _data(itr._data) {}
-         FINLINE bool HasNext() const { return _size > (_i+1); }
-         FINLINE const E& Next() { assert(HasNext()); _i++; return _data->Index(_i); }
+         inline ArrayIterator(const ArrayIterator& itr) : _i(itr._i), _size(itr._size), _data(itr._data) {}
+         inline bool HasNext() const { return _size > (_i+1); }
+         inline const E& Next() { assert(HasNext()); _i++; return _data->Index(_i); }
       
          friend class Mutable::Array<E>;
          friend class Immutable::Array<E>;
@@ -71,8 +71,8 @@ namespace Collections
          bool _complete;
 
       public:
-         FINLINE ArrayBuilder(int expectedSize = 1) 
-            : _array(Burns::MAX(expectedSize, 1)), _nextEmptyIndex(0), _complete(false)
+         inline ArrayBuilder(int expectedSize = 1) 
+            : _array(ToolChest::MAX(expectedSize, 1)), _nextEmptyIndex(0), _complete(false)
          { }
 
 
@@ -81,14 +81,14 @@ namespace Collections
          //////////////////////////////////////////////
 
          /// The data array's reference counter is automatically incremented
-         FINLINE ArrayBuilder(const ArrayBuilder& rhs)
+         inline ArrayBuilder(const ArrayBuilder& rhs)
             : _complete(rhs._complete)
             , _array(rhs._array) 
             , _nextEmptyIndex(rhs._nextEmptyIndex) { }
 
          /// Again, Ref<E> handles all the reference counting correctly, even if
          /// _data == rhs._data
-         FINLINE ArrayBuilder& operator = (const ArrayBuilder& rhs)
+         inline ArrayBuilder& operator = (const ArrayBuilder& rhs)
          {  
             _complete       = rhs._complete; 
             _nextEmptyIndex = rhs._nextEmptyIndex; 
@@ -96,7 +96,7 @@ namespace Collections
             return *this; 
          }
 
-         FINLINE void AddElement(E t) 
+         inline void AddElement(E t) 
          {
             assert(!_complete);
             if (_nextEmptyIndex == _array.Size()) resize();
@@ -105,7 +105,7 @@ namespace Collections
             _nextEmptyIndex++;         
          }
 
-         FINLINE C Result() 
+         inline C Result() 
          {
             /// Fix the recorded size of the underlying array to the actual number
             /// of elements added (we leave the allocation where it is)

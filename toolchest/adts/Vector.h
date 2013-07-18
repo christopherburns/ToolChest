@@ -3,7 +3,6 @@
 
 #include "../collections/MutableArray.h"
 
-
 namespace Collections
 {
    template <class E> class Vector : public Mutable::Array<E>
@@ -17,7 +16,7 @@ namespace Collections
       {
          if (newCapacity <= Capacity()) return;
 
-         Burns::Ref<Common::InitializedBuffer<E> > newData 
+         ToolChest::Ref<Common::InitializedBuffer<E> > newData 
             = new Common::InitializedBuffer<E>(newCapacity);
          for (int i = 0; i < Size(); ++i)
             ((E*)*newData)[i] = ((E*)(*Mutable::Array<E>::_data))[i];

@@ -4,7 +4,7 @@
 #include "../toolchest/ToolChest.h"
 
 using namespace std;
-using namespace Burns;
+using namespace ToolChest;
 using namespace Collections;
 
 ///////////////////////

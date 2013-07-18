@@ -1,6 +1,6 @@
 #include <Burns.h>
 
-using namespace Burns;
+using namespace ToolChest;
 
 
 ////////////////

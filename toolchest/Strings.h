@@ -21,7 +21,7 @@
 /// "string.h" library. This is mostly a problem for file systems which are
 /// not case sensitive.
 
-namespace Burns
+namespace ToolChest
 {
 
    class String
@@ -34,7 +34,7 @@ namespace Burns
       /// constructors which initializes to the value of an integer.
       inline String(int length, int dummy0, int dummy1) : _s(NULL)
       {
-         ASSERT(length >= 0);
+         assert(length >= 0);
          _s = new char[length+1]; _s[length] = '\0';
       }
 
@@ -66,7 +66,7 @@ namespace Burns
       inline String() { _s = new char[1]; _s[0] = '\0'; }
 
       /// Copy constructor
-      inline String(const String& s) : _s(NULL) { ASSERT(s._s); allocate(s._s); }
+      inline String(const String& s) : _s(NULL) { assert(s._s); allocate(s._s); }
       inline String(const char * s)  : _s(NULL) { allocate(s); }
       inline String(char * const s)  : _s(NULL) { allocate(s); }
       inline String(char c) { _s = new char[2]; _s[0] = c; _s[1] = '\0'; }
@@ -125,7 +125,7 @@ namespace Burns
          else   { strcpy(_s, "false"); _s[5] = '\0'; }
       }
 
-      inline ~String() { ASSERT(_s); release(); }  ///< Destructor
+      inline ~String() { assert(_s); release(); }  ///< Destructor
 
       //////////////////////////
       // Assignment Operators //
@@ -133,9 +133,9 @@ namespace Burns
 
       /// \brief Standard assignment operator(s)
       inline String& operator = (const String& s)
-      { ASSERT(s._s); release(); allocate(s._s); return *this; }
+      { assert(s._s); release(); allocate(s._s); return *this; }
       inline String& operator = (const char * s)
-      { ASSERT(s); release(); allocate(s); return *this; }
+      { assert(s); release(); allocate(s); return *this; }
 
 
       ///////////////
@@ -147,13 +147,13 @@ namespace Burns
       inline const char * Get() const         { return _s; }
 
       /// \\brief Returns length of the string
-      inline Index Length() const       { return (Index)strlen(_s); }
+      inline int Length() const       { return (int)strlen(_s); }
 
       /// \brief Accesses a character in the string as if it were an array
-      inline const char& operator[](Index i) const
-      { ASSERT(Length() >= i); return _s[i]; }
-      inline char& operator[](Index i)
-      { ASSERT(Length() >= i); return _s[i]; }
+      inline const char& operator[](int i) const
+      { assert(Length() >= i); return _s[i]; }
+      inline char& operator[](int i)
+      { assert(Length() >= i); return _s[i]; }
 
       //////////////////////
       // Append Operators //
@@ -165,7 +165,7 @@ namespace Burns
       inline String operator + (const String& s) const
       { return (String(_s) += s._s); }
       inline String& operator += (const String& s)
-      { ASSERT(s._s); return operator+=(s._s); }
+      { assert(s._s); return operator+=(s._s); }
 
       String& operator += (const char * s); ///< Do not inline, results in code bloat
 
@@ -204,7 +204,7 @@ namespace Burns
 
       /// \brief Produces x instances of the character c in a string
       inline static String Replicate(int x, char c)
-      { ASSERT(x >= 0); String r; for (int i = 0; i < x; ++i) r += c; return r; }
+      { assert(x >= 0); String r; for (int i = 0; i < x; ++i) r += c; return r; }
 
       String& Trim(); ///< Removes leading and trailing whitespace
       String PadToFieldWidth(uint32 w) const;   ///< Adds trailing whitespace
@@ -215,17 +215,17 @@ namespace Burns
 
          String x = *this;
          x.Trim();
-         Index first = (x[0] == '\"' || x[0] == '\'' ? 1 : 0);
-         Index last  = (x[x.Length()-1] == '\"' || x[x.Length()-1] == '\'' ? x.Length()-1 : x.Length());
+         int first = (x[0] == '\"' || x[0] == '\'' ? 1 : 0);
+         int last  = (x[x.Length()-1] == '\"' || x[x.Length()-1] == '\'' ? x.Length()-1 : x.Length());
          return x.SubString((int)first, (int)last).Trim();
       }
 
       void RemoveAllWhiteSpace();
       String SubString(int a, int b) const;
-      Index FindFirst(char c) const;     ///< Finds first occurance of c
-      Index FindFirst(String set) const; ///< Find first occurance of any char in set
-      Index FindLast(char c) const;      ///< Finds the last occurance of c
-      Index FindLast(String set) const;  ///< Find last occurance of any char in set
+      int FindFirst(char c) const;     ///< Finds first occurance of c
+      int FindFirst(String set) const; ///< Find first occurance of any char in set
+      int FindLast(char c) const;      ///< Finds the last occurance of c
+      int FindLast(String set) const;  ///< Find last occurance of any char in set
 
       /// \brief Returns all characters after the last dot, returns "" if there
       /// is no dot (and thus no file extension)
@@ -245,7 +245,7 @@ namespace Burns
       /// \brief Allocates memory for the string in source
       inline void allocate(const char * source)
       {
-         release(); Index length = (Index)strlen(source);
+         release(); int length = (int)strlen(source);
          _s = new char[length + 1];
          strcpy(_s, source); _s[length] = '\0';
       }
@@ -332,7 +332,7 @@ namespace Burns
    inline String& String::operator += (const char * c)
    {
       // No null pointers please
-      ASSERT(_s); ASSERT(c);
+      assert(_s); assert(c);
 
       uint32 newLength = (uint32)(strlen(_s) + strlen(c));
       char * temp = new char[newLength+1];
@@ -354,10 +354,10 @@ namespace Burns
 
    String& String::Reverse()
    {
-      ASSERT(_s);
-      Index length = (Index)strlen(_s);
-      Index halfLength = (length/2);
-      for (Index i = 0; i < halfLength; ++i)
+      assert(_s);
+      int length = (int)strlen(_s);
+      int halfLength = (length/2);
+      for (int i = 0; i < halfLength; ++i)
       {
          char c = _s[i];
          _s[i] = _s[length-i-1];
@@ -372,7 +372,7 @@ namespace Burns
    bool String::operator /= (const char * s) const
    {
       #ifdef WIN32
-      ASSERT(_s);
+      assert(_s);
       return (stricmp(_s, s) == 0);
       #else
 
@@ -402,15 +402,15 @@ namespace Burns
    {
       if (strlen(_s) == 0) return *this;
 
-      Index beginning = 0;
-      Index end = (Index)strlen(_s)-1;
+      int beginning = 0;
+      int end = (int)strlen(_s)-1;
 
-      Index index = 0;
-      while ((_s[index] == ' ' || _s[index] == '\t') && index < (Index)strlen(_s))
+      int index = 0;
+      while ((_s[index] == ' ' || _s[index] == '\t') && index < (int)strlen(_s))
       { beginning++; index++; }
 
       // Special case, the string was all whitespace
-      if (index == (Index)strlen(_s))
+      if (index == (int)strlen(_s))
       {
          release();
          _s = new char[1];
@@ -430,8 +430,8 @@ namespace Burns
    void String::RemoveAllWhiteSpace()
    {
       String result;
-      Index length = (Index)strlen(_s);
-      for (Index i = 0; i < length; ++i)
+      int length = (int)strlen(_s);
+      for (int i = 0; i < length; ++i)
          if (_s[i] != ' ' && _s[i] != '\t') result += _s[i];
 
       allocate(result._s);
@@ -440,8 +440,8 @@ namespace Burns
    // 'a' is the index of the first character, 'b' is one past the last.
    String String::SubString(int a, int b) const
    {
-      ASSERT(a >= 0); ASSERT(a <= b);
-      ASSERT((unsigned int)b <= strlen(_s));
+      assert(a >= 0); assert(a <= b);
+      assert((unsigned int)b <= strlen(_s));
 
       if (b-a == 0) return String();
 
@@ -452,41 +452,41 @@ namespace Burns
    }
 
    // Finds first occurance of character c
-   Index String::FindFirst(char c) const
+   int String::FindFirst(char c) const
    {
-      Index length = (Index)strlen(_s);
-      for (Index i = 0; i < length; ++i)
+      int length = (int)strlen(_s);
+      for (int i = 0; i < length; ++i)
          if (_s[i] == c) return i;
       return -1;   // nothing was found
    }
 
    // Finds first occurance of any character in "set"
-   Index String::FindFirst(String set) const
+   int String::FindFirst(String set) const
    {
-      Index length = (Index)strlen(_s);
-      Index length2 = set.Length();
-      for (Index i = 0; i < length; ++i)
-         for (Index j = 0; j < length2; ++j)
+      int length = (int)strlen(_s);
+      int length2 = set.Length();
+      for (int i = 0; i < length; ++i)
+         for (int j = 0; j < length2; ++j)
             if (_s[i] == set[j]) return i;
       return -1;
    }
 
    // Finds last occurance of character c
-   Index String::FindLast(char c) const
+   int String::FindLast(char c) const
    {
-      Index length = (Index)strlen(_s);
-      for (Index i = length-1; i >= 0; --i)
+      int length = (int)strlen(_s);
+      for (int i = length-1; i >= 0; --i)
          if (_s[i] == c) return i;
       return -1;   // nothing was found
    }
 
    // Finds last occurance of any character in "set"
-   Index String::FindLast(String set) const
+   int String::FindLast(String set) const
    {
-      Index length = (Index)strlen(_s);
-      Index length2 = set.Length();
-      for (Index i = length-1; i >= 0; --i)
-         for (Index j = 0; j < length2; ++j)
+      int length = (int)strlen(_s);
+      int length2 = set.Length();
+      for (int i = length-1; i >= 0; --i)
+         for (int j = 0; j < length2; ++j)
             if (_s[i] == set[j]) return i;
       return -1;
    }
@@ -533,7 +533,7 @@ void String::ToLower()
 
    inline void String::Format(double d, int prec)
    {
-      ASSERT(!_s);
+      assert(!_s);
 
       if (prec > 8) prec = 8;
       char buffer[64];
@@ -546,7 +546,7 @@ void String::ToLower()
    template <typename IntegerType>
    inline void String::Format(IntegerType i, int fieldWidth, const char ** formats)
    {
-      ASSERT(!_s);
+      assert(!_s);
 
       if (fieldWidth > MAX_FIELD_WIDTH) fieldWidth = MAX_FIELD_WIDTH;
       char buffer[64];
