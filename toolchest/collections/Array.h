@@ -98,7 +98,7 @@ namespace Collections
       template <class E> Array<E> Array<E>::Init() const                              
       {                                                                               
          Array<E> copy = *this;
-         copy._size = MAX(0, copy._size-1);
+         copy._size = Burns::MAX(0, copy._size-1);
          return copy;
       }                                                                               
               
@@ -106,7 +106,7 @@ namespace Collections
       template <class E> Array<E> Array<E>::Take(int n) const                         
       {                                                                               
          Array<E> copy = *this;                                                       
-         copy._size = MIN(n, copy._size);                                             
+         copy._size = Burns::MIN(n, copy._size);                                             
          return copy;                                                                 
       }     
 
