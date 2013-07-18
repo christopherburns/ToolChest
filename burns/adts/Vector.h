@@ -1,9 +1,7 @@
-#pragma once
-
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include "MutableArray.h"
+#include "../collections/MutableArray.h"
 
 
 namespace Collections

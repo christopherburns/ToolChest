@@ -33,8 +33,7 @@ namespace Collections
          int _size;
          Burns::Ref<Common::InitializedBuffer<E> > _data;
 
-         inline Array(int initSize) 
-            : _size(initSize), _data(new Common::InitializedBuffer<E>(initSize)) {}
+         
 
       public:
 
@@ -46,9 +45,10 @@ namespace Collections
          typedef Common::ArrayBuilder<E, Array<E> > Builder;
          template <class U> struct SwapElementType { typedef Array<U> C; };
 
-      
          /// Construct an immutable array of size zero
-         inline Array() : _size(0), _data(new Common::InitializedBuffer<E>()) {}
+         //inline Array() : _size(0), _data(new Common::InitializedBuffer<E>()) {}
+         inline Array(int initSize = 0) 
+            : _size(initSize), _data(new Common::InitializedBuffer<E>(initSize)) {}
 
          //////////////////////////////////////////////
          // Copy and Assignment, Reference Semantics //

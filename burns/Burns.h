@@ -15,7 +15,6 @@
 #include "collections/Sequence.h"
 #include "collections/Array.h"
 #include "collections/MutableArray.h"
-#include "collections/Vector.h"
 #include "collections/LinkedList.h"
 #include "collections/MutableLinkedList.h"
 
@@ -26,5 +25,8 @@
 #include "collections/Map.h"
 #include "collections/TreeMap.h"
 #include "collections/MutableTreeMap.h"
+
+#include "adts/Vector.h"
+
 
 #endif // BURNS_H

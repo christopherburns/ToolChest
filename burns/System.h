@@ -44,6 +44,8 @@
    #define ___MS_COMPILER
 #elif defined(__GNUG__) || defined(__GNUC__)
    #define ___GNU_COMPILER
+#elif defined(__clang__)
+   #define ___CLANG
 #endif
 
 /// Resolve microarchitectural details, such as ISA extentions
@@ -317,47 +319,6 @@ inline void logAssert( const char* expression, const char* fileName, const int f
 #endif
 
 
-//////////////////////////////
-// Normalized Integer Types //
-//////////////////////////////
-
-// And a few additional primitive types common in graphics. "unorm" types
-// usually mean integer types that should be scaled to range [0.0, 1.0] when
-// converted to floating point.
-///
-/// We need to define ONE<unorm8>() as 255, and ONE<unorm16>() as 65535...
-///
-
-namespace Burns
-{
-
-struct unorm8
-{
-	uint8 n;
-
-   unorm8() {}
-   template <class T> INLINE unorm8(const T& u8) : n((uint8)u8) {}
-   explicit INLINE unorm8(const float& f) : n((uint8)(f * 255.0f)) {}
-
-	FINLINE operator uint8() const { return n; }
-	FINLINE operator float() const { return (float)n * (1.0f / 255.0f); }
-};
-
-struct unorm16
-{
-	uint16 n;
-
-   unorm16() {}
-   template <class T> INLINE unorm16(const T& u16) : n((uint16)u16) {}
-   explicit INLINE unorm16(const float& f) : n((uint16)(f * 65535.0f)) {}
-
-	FINLINE operator uint16() const { return n; }
-	FINLINE operator float()  const { return (float)n * (1.0f / 65535.0f); }
-};
-
-}; // namespace Burns
-
-
 
 ///////////////////////////////
 // Missing Windows Functions //
@@ -372,10 +333,6 @@ FINLINE float log2f(const float& f) { return ::log10f(f) / ::log10f(2.0f); }
 FINLINE double log2(const double& d) { return ::log10(d) / ::log10(2.0); }
 
 #endif
-
-
-
-
 
 
 //////////////////////////////
@@ -611,16 +568,6 @@ public:
    typedef uint8 ElementType;
    typedef bool Mask;
 };
-template <> class TypeInfo<unorm8>
-{
-public:
-   static const bool Integral = true;
-   static const bool Unsigned = true;
-   static const int  Rank = 0;
-   static const int  Width = 1;
-   typedef unorm8 ElementType;
-   typedef bool Mask;
-};
 template <> class TypeInfo<uint16>
 {
 public:
@@ -629,16 +576,6 @@ public:
    static const int  Rank = 0;
    static const int  Width = 1;
    typedef uint16 ElementType;
-   typedef bool Mask;
-};
-template <> class TypeInfo<unorm16>
-{
-public:
-   static const bool Integral = true;
-   static const bool Unsigned = true;
-   static const int  Rank = 0;
-   static const int  Width = 1;
-   typedef unorm16 ElementType;
    typedef bool Mask;
 };
 template <> class TypeInfo<uint32>
@@ -703,112 +640,6 @@ public:
    typedef bool Mask;
 };
 
-
-////////////////////////
-// System Clock Stuff //
-////////////////////////
-
-/// Note: The APPLE code paths here are mostly untested.
-
-/// Reads the x86 cycle count register, works on any (post-Pentium) Intel
-/// processor. The rdtsc instruction is used to move the 64-bit counter value
-/// into the resgisters EDX:EAX.
-///
-///
-
-/// Returns the performance counter reading, converted to nanoseconds
-FINLINE uint64 readClockNS()
-{
-   #if defined(___WINDOWS_NT)
-
-      LARGE_INTEGER pCounter, freq;
-      QueryPerformanceCounter(&pCounter);
-      QueryPerformanceFrequency(&freq);
-      uint64 nsReading = (uint64)((double)pCounter.QuadPart / (double)freq.QuadPart * 1000000000.0);
-      return nsReading;
-
-   #else
-
-      static bool initialized = false;
-      static mach_timebase_info_data_t sTimebaseInfo;
-      static double conversionFactor;
-      if (!initialized)
-      {
-         (void) mach_timebase_info(&sTimebaseInfo);
-         conversionFactor = (double)sTimebaseInfo.numer / (double)sTimebaseInfo.denom;
-         initialized = true;
-      }
-      return uint64(conversionFactor * mach_absolute_time());
-
-   #endif
-}
-
-FINLINE uint64 readClockCounter()
-{
-   #if defined(___APPLE)
-   return mach_absolute_time();
-   #elif defined(___WINDOWS_NT)
-
-   LARGE_INTEGER qwTime;
-   QueryPerformanceCounter(&qwTime);
-   return (uint64)qwTime.QuadPart;
-
-   //uint64 clock = __rdtsc();
-   //uint32 _[4]; __cpuid(_, 0); uint64 clock = __rdtsc(); __cpuid(_, 0);
-   //return clock;
-
-   #endif
-}
-
-/// Provides a scale factor to convert clock ticks (as read by readCycleCounter())
-/// to seconds. This value is the number of ticks per second (Hz)
-FINLINE double readClockFrequency()
-{
-   #if defined(___APPLE)
-   static bool initialized = false;
-   static mach_timebase_info_data_t sTimebaseInfo;
-
-   if (!initialized)
-   {
-      (void) mach_timebase_info(&sTimebaseInfo);
-      initialized = true;
-   }
-
-   /// I think this works.
-   return sTimebaseInfo.numer / sTimebaseInfo.denom * 1e-9;
-
-   #elif defined(___WINDOWS_NT)
-
-   LARGE_INTEGER qwTicksPerSec;
-   QueryPerformanceFrequency(&qwTicksPerSec);
-   return (double)cast<uint64>(qwTicksPerSec.QuadPart);
-
-   #else /// LINUX ?
-
-   return 0.0;
-
-   #endif
-}
-
-
-/////////////
-// Structs //
-/////////////
-
-
-template <class T, class U = T, class V = T>
-struct Triple
-{
-   T first;
-   U second;
-   V third;
-
-   FINLINE Triple() {}
-   FINLINE Triple(T f, U s, V t) : first(f), second(s), third(t) {}
-
-   FINLINE bool operator==(Triple<T, U, V> rhs) const
-   { return first == rhs.first && second == rhs.second && third == rhs.third; }
-};
 
 
 }; // namespace Burns

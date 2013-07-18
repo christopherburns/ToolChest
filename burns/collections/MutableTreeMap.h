@@ -2,7 +2,6 @@
 #define MUTABLE_TREE_MAP_H
 
 #include "Map.h"
-#include "Vector.h"
 #include "TreeCommon.h"
 
 

@@ -1,6 +1,3 @@
-
-#pragma once
-
 #ifndef SEQUENCE_H
 #define SEQUENCE_H
 
@@ -113,7 +110,7 @@ namespace Collections
    template <class E, class C, class CTraits> 
    C Sequence<E, C, CTraits>::PadTo(int n, const E& element) const 
    { 
-      const int N = MAX(0, n - this->Size());
+      const int N = Burns::MAX(0, n - this->Size());
       Builder builder = this->clone(this->Size(), N);   
       for (int i = 0; i < N; ++i) 
          builder.AddElement(element);

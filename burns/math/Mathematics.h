@@ -1,6 +1,3 @@
-
-#pragma once
-
 #ifndef MATHEMATICS_H
 #define MATHEMATICS_H
 
@@ -241,12 +238,6 @@ template <> struct MATHEMATICS<uint8>
    static FINLINE uint8 max3(uint8 x, uint8 y, uint8 z) { return max(x, max(y, z)); }
 };
 
-template <> struct MATHEMATICS<unorm8>
-{
-   static FINLINE unorm8 zero()         { return unorm8(0u); }
-   static FINLINE unorm8 one()          { return unorm8(255u); }
-};
-
 /// Specialization for uint16s
 template <> struct MATHEMATICS<uint16>
 {
@@ -267,12 +258,6 @@ template <> struct MATHEMATICS<uint16>
    static FINLINE uint16 max3(uint16 x, uint16 y, uint16 z) { return max(x, max(y, z)); }
 
    static FINLINE uint16 maxv() { return 0xffffu; }
-};
-
-template <> struct MATHEMATICS<unorm16>
-{
-   static FINLINE unorm16 zero()         { return unorm16(0u); }
-   static FINLINE unorm16 one()          { return unorm16(65535u); }
 };
 
 /// Specialization for uint32s

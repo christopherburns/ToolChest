@@ -1,6 +1,3 @@
-
-#pragma once
-
 #ifndef ORTHOGONAL_FRAME_H
 #define ORTHOGONAL_FRAME_H
 

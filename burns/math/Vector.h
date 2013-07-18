@@ -1,6 +1,3 @@
-
-#pragma once
-
 #ifndef MATH_VECTOR_H
 #define MATH_VECTOR_H
 
@@ -104,12 +101,12 @@ public:
    FINLINE T& operator [] (Index i);
 
    /// Static element accessors
-   //template <int I> FINLINE const T& get() const                      { return (I < WA) ? (_a.get<I>()) : (_b.get<I-WA>()); }
-   //template <int I> FINLINE T& get()                                  { return (I < WA) ? (_a.get<I>()) : (_b.get<I-WA>()); }
+   template <int I> FINLINE const T& get() const                      { return (I < WA) ? (_a.template get<I>()) : (_b.template get<I-WA>()); }
+   template <int I> FINLINE T& get()                                  { return (I < WA) ? (_a.template get<I>()) : (_b.template get<I-WA>()); }
    template <int I> FINLINE void set(const T& v)                      { if     (I < WA) _a.set<I>(v); else _b.set<I-WA>(v); }
 
    /// Convenience static element accessors for Vector 2, 3
-   /*FINLINE const T& x() const                                         { STATIC_ASSERT(N >= 1); return get<0>(); }
+   FINLINE const T& x() const                                         { STATIC_ASSERT(N >= 1); return get<0>(); }
    FINLINE T& x()                                                     { STATIC_ASSERT(N >= 1); return get<0>(); }
    FINLINE const T& y() const                                         { STATIC_ASSERT(N >= 2); return get<1>(); }
    FINLINE T& y()                                                     { STATIC_ASSERT(N >= 2); return get<1>(); }
@@ -120,7 +117,7 @@ public:
 
    FINLINE const Vector<T, 2> xy()  const { STATIC_ASSERT(N >= 2); return Vector<T, 2>(x(), y()); }
    FINLINE const Vector<T, 3> xyz() const { STATIC_ASSERT(N >= 3); return Vector<T, 3>(x(), y(), z()); }
-*/
+
 
    String toString(int prec) const;
    String toString() const;

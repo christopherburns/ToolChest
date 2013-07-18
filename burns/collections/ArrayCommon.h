@@ -72,7 +72,7 @@ namespace Collections
 
       public:
          FINLINE ArrayBuilder(int expectedSize = 1) 
-            : _array(MAX(expectedSize, 1)), _nextEmptyIndex(0), _complete(false)
+            : _array(Burns::MAX(expectedSize, 1)), _nextEmptyIndex(0), _complete(false)
          { }
 
 

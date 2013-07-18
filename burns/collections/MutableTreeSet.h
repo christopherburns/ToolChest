@@ -1,10 +1,7 @@
-#pragma once
-
 #ifndef MUTABLE_TREE_SET_H
 #define MUTABLE_TREE_SET_H
 
 #include "Set.h"
-#include "Vector.h"
 #include "TreeCommon.h"
 
 /////////////////////////////////////////
@@ -156,10 +153,8 @@ namespace Collections
       TreeSet<E>::Insert(const E& e) const
       {
          if (this->Contains(e)) return *this;
-
          auto pTree = _tree.Clone();
          pTree.Insert(e);
-
          return TreeSet(_size+1, pTree);
       }
 

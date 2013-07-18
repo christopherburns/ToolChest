@@ -1,7 +1,7 @@
-#pragma once
-
 #ifndef TREE_COMMON_H
 #define TREE_COMMON_H
+
+#include "../adts/Vector.h"
 
 namespace Collections
 {
@@ -165,6 +165,12 @@ namespace Collections
             else /* n.right == -1 && _stack.Empty() */ _nextNode = -1;
 
             return e;
+         }
+
+         inline const E& Peek() const
+         {
+            assert(HasNext());
+            return _pool->Index(_nextNode).payload;
          }
 
 

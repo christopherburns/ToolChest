@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef TRAVERSABLE_H
 #define TRAVERSABLE_H
 
@@ -31,13 +29,13 @@
  */
 
 /* Temporary ... until we add our math library */
-namespace Math
+/*namespace Math
 {
    template <class T> inline T MAX(T a, T b) { return (a > b ? a : b); }
    template <class T> inline T MIN(T a, T b) { return (a < b ? a : b); }
-}
+}*/
 
-using namespace Math;
+//using namespace Math;
 
 
 namespace Collections
@@ -315,8 +313,8 @@ namespace Collections
       {
          /// We will not copy more elements than exist, nor reserve
          /// less space than we are about to copy
-         const int N = MIN(numElementsToCopy, Size());
-         const int R = MAX(reservedSpace, N);
+         const int N = Burns::MIN(numElementsToCopy, Size());
+         const int R = Burns::MAX(reservedSpace, N);
          Builder builder(R);
          Iterator itr = GetIterator();
          for (int i = 0; i < N; ++i) 
@@ -374,7 +372,7 @@ namespace Collections
 
    template <class E, class C, class CTraits> 
    C Traversable<E, C, CTraits>::Init() const                              
-   { return Take(MAX(0, Size()-1)); }                                                                               
+   { return Take(Burns::MAX(0, Size()-1)); }                                                                               
 
    template <class E, class C, class CTraits> 
    C Traversable<E, C, CTraits>::Take(int n) const                         

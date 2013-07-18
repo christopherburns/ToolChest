@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef LINKED_LIST_COMMON_H
 #define LINKED_LIST_COMMON_H
 
@@ -23,6 +21,12 @@ namespace Collections
       ///////////////////////////////////////////
       // Structures for LinkedList Collections //
       ///////////////////////////////////////////
+
+      /// Consider an iterator method called Advance() which 
+      /// has the same side effect as Next(), but returns *this so that you can:
+      ///     itrToThirdItem = t.GetIterator().Advance().Advance();
+      ///
+      /// Consider operator* for equivalent of Iterator::Peek()
 
       template <class E> class LinkedListNode
       {
@@ -63,7 +67,7 @@ namespace Collections
             _next = _nodePool->Index(_next).next; 
             return n; 
          }
-         inline const E& Peek()
+         inline const E& Peek() const
          {
             assert(HasNext());
             return _nodePool->Index(_next).payload;
@@ -98,7 +102,7 @@ namespace Collections
             _next = _nodePool->Index(_next).next; 
             return n; 
          }
-         inline const E& Peek()
+         inline const E& Peek() const
          {
             assert(HasNext());
             return _nodePool->Index(_next).payload;

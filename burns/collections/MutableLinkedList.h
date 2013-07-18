@@ -1,6 +1,3 @@
-
-#pragma once
-
 #ifndef MUTABLE_LINKED_LIST_H
 #define MUTABLE_LINKED_LIST_H
 
@@ -54,7 +51,7 @@ namespace Collections
 
          // Used for creating new lists which alias the node array with 
          // an existing list
-         FINLINE LinkedList
+         inline LinkedList
             ( int size
             , int head
             , int tail
@@ -72,12 +69,12 @@ namespace Collections
       
          /// The data array's reference counter is automatically incremented
          /// Question: should we allocate a node pool in this constructor?
-         FINLINE LinkedList() 
+         inline LinkedList(int reserve = 4) 
             : _size(0), _head(-1), _tail(-1)
-            , _nodePool(new Common::MemoryPool<Node>(4)) { }
+            , _nodePool(new Common::MemoryPool<Node>(reserve)) { }
       
          /// The data array's reference counter is automatically incremented
-         FINLINE LinkedList(const LinkedList& rhs)
+         inline LinkedList(const LinkedList& rhs)
             : _size(rhs._size)
             , _head(rhs._head)
             , _tail(rhs._tail)
@@ -87,7 +84,7 @@ namespace Collections
          // Assignment Operator, Reference Semantics //
          //////////////////////////////////////////////
       
-         FINLINE LinkedList& operator = (const LinkedList& rhs)
+         inline LinkedList& operator = (const LinkedList& rhs)
          {  
             _head = rhs._head; _tail = rhs._tail; 
             _size = rhs._size; 
@@ -111,7 +108,7 @@ namespace Collections
          // Inherited From Sequence //
          /////////////////////////////
       
-         FINLINE const E& operator [] (int i) const 
+         inline const E& operator [] (int i) const 
          { 
             assert(i < _size);
          
@@ -126,7 +123,7 @@ namespace Collections
          // Mutable LinkedList Only //
          /////////////////////////////
 
-         FINLINE E& operator [] (int i)
+         inline E& operator [] (int i)
          { 
             assert(i < _size);
          
