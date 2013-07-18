@@ -2,7 +2,7 @@
 #include <iostream>
 #include <list>
 
-#include "../burns/Burns.h"
+#include "../toolchest/ToolChest.h"
 
 using namespace std;
 using namespace Burns;

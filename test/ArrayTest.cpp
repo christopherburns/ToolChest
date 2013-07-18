@@ -3,7 +3,7 @@
 #include <list>
 #include <vector>
 
-#include "../burns/Burns.h"
+#include "../toolchest/ToolChest.h"
 
 using namespace std;
 using namespace Burns;

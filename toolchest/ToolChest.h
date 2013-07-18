@@ -1,7 +1,5 @@
-#pragma once
-
-#ifndef BURNS_H
-#define BURNS_H
+#ifndef TOOL_CHEST_H
+#define TOOL_CHEST_H
 
 #include "System.h"
 #include "Reference.h"
@@ -29,4 +27,4 @@
 #include "adts/Vector.h"
 
 
-#endif // BURNS_H
+#endif // TOOL_CHEST_H

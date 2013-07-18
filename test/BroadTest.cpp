@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "../burns/Burns.h"
+#include "../toolchest/ToolChest.h"
 
 using namespace std;
 using namespace Burns;

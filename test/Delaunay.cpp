@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../burns/Burns.h"
+#include "../toolchest/ToolChest.h"
 
 using namespace Burns;
 
