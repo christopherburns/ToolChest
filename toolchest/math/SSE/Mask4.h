@@ -15,7 +15,7 @@ namespace ToolChest
      /// This shit should be private... why is it not ?
    public:
       SSERegister _m;
-    public:
+   private:
 
       inline Mask(const SSERegister& r) : _m(r) {}
 
@@ -50,11 +50,11 @@ namespace ToolChest
       inline Mask(uint64 bitField) : _m(_mm_set_epi32(!(bitField & 0x1), !((bitField >> 1) & 0x1), !((bitField >> 2) & 0x1), !((bitField >> 3) & 0x1))) {}
 
       /// Conversion to String
-      inline String toString() const
+      inline String ToString() const
       { return String("[") + internalToString() + "]"; }
 
       /// Generate a bitmask, the low four bits corrspond to the 4 Mask components
-      inline uint32 bitMask() const { return _m.signMask(); }
+      inline uint32 BitMask() const { return _m.signMask(); }
 
       /// Access a single element
       inline bool operator [] (int i) const
@@ -92,16 +92,16 @@ namespace ToolChest
       // Reductions //
       ////////////////
 
-      inline bool reduceAnd() const { return _m.signMask() == 0xf; }
-      inline bool reduceOr()  const { return _m.signMask() != 0x0; }
-      inline bool all() const       { return reduceAnd(); }
-      inline bool none() const      { return _m.signMask() == 0x0; }
-      inline bool any() const       { return _m.signMask() != 0x0; }
+      inline bool ReduceAnd() const { return _m.signMask() == 0xf; }
+      inline bool ReduceOr()  const { return _m.signMask() != 0x0; }
+      inline bool All() const       { return reduceAnd(); }
+      inline bool None() const      { return _m.signMask() == 0x0; }
+      inline bool Any() const       { return _m.signMask() != 0x0; }
 
-      inline int  count() const
+      inline int  Count() const
       {
          static int lookup[] = {0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4};
-         return lookup[bitMask()];
+         return lookup[BitMask()];
       }
 
       ////////////////////////////
@@ -109,7 +109,7 @@ namespace ToolChest
       ////////////////////////////
 
       /// Is this right... ?
-      template <typename Functor> inline Mask& map(const Functor& f)
+      template <typename Functor> inline Mask& Map(const Functor& f)
       { return f(*this); }
    };
 

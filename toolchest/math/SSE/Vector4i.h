@@ -65,12 +65,12 @@ public:
    inline const Vector<int32, 2> xy() const { return cast<Vector<int32, 2>>(*this); } //{ return Vector2i(x(), y()); }
    inline const Vector<int32, 3> xyz() const { return cast<Vector<int32, 3>>(*this); } //{ return Vector3i(x(), y(), z()); }
 
-   template <int I> inline float get() const { return _r.i32Extract<I>(); }
-   template <int I> inline void set(const int32& v) { _r = _r.i32Insert<I>(v); }
+   template <int I> inline float Get() const { return _r.i32Extract<I>(); }
+   template <int I> inline void Set(const int32& v) { _r = _r.i32Insert<I>(v); }
 
    /// Conversion to String (introduces aliasing)
    /// Conversion to String
-   inline String toString(int prec = 3) const
+   inline String ToString(int prec = 3) const
    { return String("[") + internalToString(prec) + "]"; }
 
 
@@ -86,16 +86,16 @@ public:
    /// asserted. Gather and Scatter operations are supported in base+offset
    /// format.
 
-   template <class U> static Vector load(U * addr);
-   template <class U> static Vector loadu(U * addr);
-   template <class U> static Vector loadBroadcast(U * addr);
-   template <class U> static Vector gather(U * addr, const Vector<int32, 4>& offsets);
-   template <class U> static Vector gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m);
+   template <class U> static Vector Load(U * addr);
+   template <class U> static Vector Loadu(U * addr);
+   template <class U> static Vector LoadBroadcast(U * addr);
+   template <class U> static Vector Gather(U * addr, const Vector<int32, 4>& offsets);
+   template <class U> static Vector Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m);
 
-   template <class U> void store(U * addr) const;
-   template <class U> void storeOne(U * addr) const;
-   template <class U> void scatter(U * addr, const Vector<int32, 4>& offsets) const;
-   template <class U> void scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const;
+   template <class U> void Store(U * addr) const;
+   template <class U> void StoreOne(U * addr) const;
+   template <class U> void Scatter(U * addr, const Vector<int32, 4>& offsets) const;
+   template <class U> void Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const;
 
    ////////////////////////////
    // Mathematical Operators //
@@ -135,10 +135,10 @@ public:
 
    inline Vector operator << (const int bits) const                        { return _r.shiftLeft32((uint8)bits); }
    inline Vector operator >> (const int bits) const                        { return _r.shiftRightA32((uint8)bits); }
-   inline Vector logicalRightShift(const int bits) const                   { return _r.shiftRightL32((uint8)bits); }
+   inline Vector LogicalRightShift(const int bits) const                   { return _r.shiftRightL32((uint8)bits); }
    inline Vector operator << (const Vector& bits) const;
    inline Vector operator >> (const Vector& bits) const;
-   inline Vector logicalRightShift(const Vector& bits) const;
+   inline Vector LogicalRightShift(const Vector& bits) const;
 
    /// Integer Modulus
    friend Vector operator %  (const Vector& a, const Vector& b);
@@ -184,11 +184,11 @@ public:
    /// Returns a vector blending the values from tValue where m is true with the
    /// values from fValue where m is false:
    ///     blend( (t,t,f,t), (1,2,3,4), (-1,-2,-3,-4) ) ==> (1,2,-3,4)
-   friend inline const Vector blend(const Mask& m, const Vector& tValue, const Vector& fValue)
+   friend inline const Vector Blend(const Mask& m, const Vector& tValue, const Vector& fValue)
    { return Vector(m._m.blend(tValue._r, fValue._r)); }
 
    /// Update
-   friend inline Vector& update(const Mask& m, Vector& lhs, const Vector& rhs)
+   friend inline Vector& Update(const Mask& m, Vector& lhs, const Vector& rhs)
    { lhs._r = m._m.blend(rhs._r, lhs._r); return lhs; }
 
    /// Masking operator
@@ -196,7 +196,7 @@ public:
    { return WriteMaskedVector<Vector>(*this, m); }
 
    /// Shuffle
-   template<uint8 i0, uint8 i1, uint8 i2, uint8 i3> inline Vector shuffle() const
+   template<uint8 i0, uint8 i1, uint8 i2, uint8 i3> inline Vector Shuffle() const
    { return _r.shuffle32<i0, i1, i2, i3>(); }
 
 
@@ -204,24 +204,24 @@ public:
    // Reduction Operations //
    //////////////////////////
 
-   inline int32 reduceSum() const     { return _r.i32ReduceAdd().i32Extract<0>(); }
-   inline int32 reduceProduct() const { return _r.i32ReduceMul().i32Extract<0>(); }
-   inline int32 reduceMin() const     { return _r.i32ReduceMin().i32Extract<0>(); }
-   inline int32 reduceMax() const     { return _r.i32ReduceMax().i32Extract<0>(); }
+   inline int32 ReduceSum() const     { return _r.i32ReduceAdd().i32Extract<0>(); }
+   inline int32 ReduceProduct() const { return _r.i32ReduceMul().i32Extract<0>(); }
+   inline int32 ReduceMin() const     { return _r.i32ReduceMin().i32Extract<0>(); }
+   inline int32 ReduceMax() const     { return _r.i32ReduceMax().i32Extract<0>(); }
 
 
    ////////////////////////////
    // Functional Programming //
    ////////////////////////////
 
-   template <typename Functor> inline Vector map(const Functor& f) const { return f(*this); }
+   template <typename Functor> inline Vector Map(const Functor& f) const { return f(*this); }
 
 
    ///////////////////////////////////////////////////////////////////////////
    //                      Private Data And Methods                         //
    ///////////////////////////////////////////////////////////////////////////
 
-public:
+private:
    SSERegister _r;
 
    /// Private constructors
@@ -283,7 +283,7 @@ inline Vector<int32, 4> Vector<int32, 4>::operator >> (const Vector<int32, 4>& b
    return r;
 }
 
-inline Vector<int32, 4> Vector<int32, 4>::logicalRightShift(const Vector<int32, 4>& bits) const
+inline Vector<int32, 4> Vector<int32, 4>::LogicalRightShift(const Vector<int32, 4>& bits) const
 {
    /// This is the slowest possible way to do this
    Vector<int32, 4> r;
@@ -332,25 +332,25 @@ inline Vector<int32, 4> operator % (
 // up-conversion on the load.  Specializations for U == float will use the SSE
 // instructions
 
-template <class U> inline Vector<int32, 4> Vector<int32, 4>::load(U * addr)
+template <class U> inline Vector<int32, 4> Vector<int32, 4>::Load(U * addr)
 {
    Vector<int32, 4> v;
    for (int i = 0; i < 4; ++i) v[i] = (int32)(*(addr + i));
    return v;
 }
 
-template <class U> inline Vector<int32, 4> Vector<int32, 4>::loadu(U * addr)
+template <class U> inline Vector<int32, 4> Vector<int32, 4>::Loadu(U * addr)
 {
    Vector<int32, 4> v;
    for (int i = 0; i < 4; ++i) v[i] = (int32)(*(addr + i));
    return v;
 }
 
-template <class U> inline Vector<int32, 4> Vector<int32, 4>::loadBroadcast(U * addr)
+template <class U> inline Vector<int32, 4> Vector<int32, 4>::LoadBroadcast(U * addr)
 { return Vector<int32, 4>((int32)(*addr)); }
 
 template <class U> inline Vector<int32, 4>
-Vector<int32, 4>::gather(U * addr, const Vector<int32, 4>& offsets)
+Vector<int32, 4>::Gather(U * addr, const Vector<int32, 4>& offsets)
 {
    Vector v;
    for (int i = 0; i < 4; ++i) v[i] = (int32)(*(addr + offsets[i]));
@@ -358,15 +358,15 @@ Vector<int32, 4>::gather(U * addr, const Vector<int32, 4>& offsets)
 }
 
 template <class U> inline Vector<int32, 4>
-Vector<int32, 4>::gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m)
+Vector<int32, 4>::Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m)
 {
    Vector v;
    for (int i = 0; i < 4; ++i)
-      if (m.bitMask() & (1 << i)) { /*printf("  Ouch! (mask = %s)\n", *m.toString());*/ v[i] = (int32)(*(addr + offsets[i])); }
+      if (m.BitMask() & (1 << i)) { /*printf("  Ouch! (mask = %s)\n", *m.ToString());*/ v[i] = (int32)(*(addr + offsets[i])); }
    return v;
 }
 
-template <class U> inline void Vector<int32, 4>::store(U * addr) const
+template <class U> inline void Vector<int32, 4>::Store(U * addr) const
 {
    *(addr + 0) = (U)x();
    *(addr + 1) = (U)y();
@@ -374,11 +374,11 @@ template <class U> inline void Vector<int32, 4>::store(U * addr) const
    *(addr + 3) = (U)w();
 }
 
-template <class U> inline void Vector<int32, 4>::storeOne(U * addr) const
+template <class U> inline void Vector<int32, 4>::StoreOne(U * addr) const
 { *addr = (U)x(); }
 
 template <class U> inline void
-Vector<int32, 4>::scatter(U * addr, const Vector<int32, 4>& offsets) const
+Vector<int32, 4>::Scatter(U * addr, const Vector<int32, 4>& offsets) const
 {
    *(addr + offsets[0]) = (U)x();
    *(addr + offsets[1]) = (U)y();
@@ -387,7 +387,7 @@ Vector<int32, 4>::scatter(U * addr, const Vector<int32, 4>& offsets) const
 }
 
 template <class U> inline void
-Vector<int32, 4>::scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const
+Vector<int32, 4>::Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const
 {
    int mask = m.bitMask();
    if (mask & 0x1) *(addr + offsets[0]) = (U)x();
@@ -397,16 +397,16 @@ Vector<int32, 4>::scatter(U * addr, const Vector<int32, 4>& offsets, const Mask&
 }
 
 /// Specialization for U == int32
-template <> inline Vector<int32, 4> Vector<int32, 4>::load(int32 * addr)
+template <> inline Vector<int32, 4> Vector<int32, 4>::Load(int32 * addr)
 { return Vector(SSERegister::load((const SSERegister*)addr)); }
 
-template <> inline Vector<int32, 4> Vector<int32, 4>::loadu(int32 * addr)
+template <> inline Vector<int32, 4> Vector<int32, 4>::Loadu(int32 * addr)
 { return Vector(SSERegister::loadu((const SSERegister*)addr)); }
 
-template <> inline Vector<int32, 4> Vector<int32, 4>::loadBroadcast(int32 * addr)
+template <> inline Vector<int32, 4> Vector<int32, 4>::LoadBroadcast(int32 * addr)
 { return Vector(SSERegister::loadBroadcast((const SSERegister*)addr)); }
 
-template <> inline void Vector<int32, 4>::store(int32 * addr) const
+template <> inline void Vector<int32, 4>::Store(int32 * addr) const
 { _r.store((SSERegister*)addr); }
 
 
@@ -460,18 +460,18 @@ private:
 public:
 
    /// Bit rotations
-   static inline Vec4 rotr(Vec4 a, uint8 b)
+   static inline Vec4 Rotr(Vec4 a, uint8 b)
    { return Vec4(a._r.rotateRight32(b)); }
-   static inline Vec4 rotl(Vec4 a, uint8 b)
+   static inline Vec4 Rotl(Vec4 a, uint8 b)
    { return Vec4(a._r.rotateLeft32(b)); }
 
    /// Bit interleaves, no SSE instructions for this, very slow
-   static inline Vec4 interleave11(Vec4 a, Vec4 b)
+   static inline Vec4 Interleave11(Vec4 a, Vec4 b)
    {
       return Vec4(INTERLEAVE11(a[0], b[0]), INTERLEAVE11(a[1], b[1]),
                   INTERLEAVE11(a[2], b[2]), INTERLEAVE11(a[3], b[3]));
    }
-   static inline Vec4 interleave21(Vec4 a, Vec4 b)
+   static inline Vec4 Interleave21(Vec4 a, Vec4 b)
    {
       return Vec4(INTERLEAVE21(a[0], b[0]), INTERLEAVE21(a[1], b[1]),
                   INTERLEAVE21(a[2], b[2]), INTERLEAVE21(a[3], b[3]));
