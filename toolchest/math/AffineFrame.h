@@ -54,11 +54,11 @@ public:
    inline Vector3 x() const { return _vx; }
    inline Vector3 y() const { return _vy; }
    inline Vector3 z() const { return _vz; }
-   inline Vector3 origin() const { return _origin; }
+   inline Vector3 Origin() const { return _origin; }
 
    /// Produces a 4x4 matrix implementing the affine frame as a 3DH transform.
    /// The matrix is produced in COLUMN-MAJOR order!
-   inline Vector4x4f generate4x4() const
+   inline Vector4x4f Generate4x4() const
    {
       return Vector4x4f(
          Vector4f(_vx.x(), _vx.y(), _vx.z(), 0.0f),               // Column 0
@@ -96,24 +96,24 @@ public:
 
    /// These generate affine frames with the requested transformation
 
-   inline Vector3 xFormVector(const Vector3& v) const
+   inline Vector3 XFormVector(const Vector3& v) const
    { return v.x() * _vx + v.y() * _vy + v.z() * _vz; }
-   inline Vector3 xFormPoint(const Vector3& p) const
-   { return _origin + xFormVector(p); }
+   inline Vector3 XFormPoint(const Vector3& p) const
+   { return _origin + XFormVector(p); }
 
    inline AffineFrame operator () (const AffineFrame& frame) const
-   { return xFormAffineFrame(frame); }
+   { return XFormAffineFrame(frame); }
    inline AffineFrame operator * (const AffineFrame& frame) const
-   { return xFormAffineFrame(frame); }
+   { return XFormAffineFrame(frame); }
 
 
 
 private:
-   inline AffineFrame xFormAffineFrame(const AffineFrame& f) const
+   inline AffineFrame XFormAffineFrame(const AffineFrame& f) const
    {
       return
-         AffineFrame(xFormVector(f._vx), xFormVector(f._vy), xFormVector(f._vz),
-                     xFormPoint(f._origin));
+         AffineFrame(XFormVector(f._vx), XFormVector(f._vy), XFormVector(f._vz),
+                     XFormPoint(f._origin));
    }
 
 public:
@@ -125,23 +125,23 @@ public:
    /// The reciprocal is defined such that F * RCP(F) == F. The transform
    /// matrix that results should be the inverse of the original frame's
    /// transform matrix
-   inline AffineFrame reciprocal() const
+   inline AffineFrame Reciprocal() const
    {
       // Transpose of the 3x3 rotation matrix
       const Vector3 tX(_vx.x(), _vy.x(), _vz.x());
       const Vector3 tY(_vx.y(), _vy.y(), _vz.y());
       const Vector3 tZ(_vx.z(), _vy.z(), _vz.z());
 
-      const T id = RCP(Vector3::dot(tX, cross(tY, tZ)));
+      const T id = RCP(Vector3::Dot(tX, Cross(tY, tZ)));
 
       /*Vector<Vector3, 3> newV = Vector<Vector3, 3>(Vector3(id)) *
-         Vector<Vector3, 3>(cross(tY, tZ), cross(tZ, tX), cross(tX, tY));
+         Vector<Vector3, 3>(Cross(tY, tZ), Cross(tZ, tX), Cross(tX, tY));
 
       return AffineFrame(-(newV * _origin).reduceSum(), newV.x(), newV.y(), newV.z());*/
 
-      const Vector3 vx = cross(tY, tZ) * id;
-      const Vector3 vy = cross(tZ, tX) * id;
-      const Vector3 vz = cross(tX, tY) * id;
+      const Vector3 vx = Cross(tY, tZ) * id;
+      const Vector3 vy = Cross(tZ, tX) * id;
+      const Vector3 vz = Cross(tX, tY) * id;
       const Vector3 p( -(vx*_origin.x() + vy*_origin.y() + vz*_origin.z()) );
 
       return AffineFrame(vx, vy, vz, p);
@@ -152,13 +152,13 @@ public:
    // I/O //
    /////////
 
-   inline String toString(int prec = 3) const
+   inline String ToString(int prec = 3) const
    {
       return String("AffineFrame = { ") +
-         "vx = " + _vx.toString(prec) + ", " +
-         "vy = " + _vy.toString(prec) + ", " +
-         "vz = " + _vz.toString(prec) + ", " +
-         "origin = " + _origin.toString(prec) + "}";
+         "vx = " + _vx.ToString(prec) + ", " +
+         "vy = " + _vy.ToString(prec) + ", " +
+         "vz = " + _vz.ToString(prec) + ", " +
+         "origin = " + _origin.ToString(prec) + "}";
    }
 };
 
@@ -265,7 +265,7 @@ public:
       _vz(Vector3f(c[6], c[7], c[8])),
       _origin(Vector3f(c[9], c[10], c[11]))
    {
-      printf("_origin = %s\n", *_origin.toString());
+      printf("_origin = %s\n", *_origin.ToString());
    }
 
    /// Construction from an orthogonal frame of reference. The OrthogonalFrame
@@ -298,22 +298,22 @@ public:
    ///     _vx, _vy, _vz are the column vectors of a 3x3 affine matrix
    ///     multiplication occurs with the "column vector on right" convention
 
-   inline Vector3 xFormVector(const Vector3& v) const
+   inline Vector3 XFormVector(const Vector3& v) const
    { return v.x() * _vx + v.y() * _vy + v.z() * _vz; }
-   inline Vector3 xFormPoint(const Vector3& p) const
-   { return _origin + xFormVector(p); }
-   inline AffineFrame xFormAffineFrame(const AffineFrame& f) const
+   inline Vector3 XFormPoint(const Vector3& p) const
+   { return _origin + XFormVector(p); }
+   inline AffineFrame XFormAffineFrame(const AffineFrame& f) const
    {
       return
-         AffineFrame(xFormVector(f._vx), xFormVector(f._vy), xFormVector(f._vz),
-                     xFormPoint(f._origin));
+         AffineFrame(XFormVector(f._vx), XFormVector(f._vy), XFormVector(f._vz),
+                     XFormPoint(f._origin));
    }
 
    inline AffineFrame operator () (const AffineFrame& frame) const
-   { return xFormAffineFrame(frame); }
+   { return XFormAffineFrame(frame); }
 
    inline AffineFrame operator * (const AffineFrame& frame) const
-   { return xFormAffineFrame(frame); }
+   { return XFormAffineFrame(frame); }
 
 
    ////////////////
@@ -348,13 +348,13 @@ public:
    // I/O //
    /////////
 
-   inline String toString(int prec = 3) const
+   inline String ToString(int prec = 3) const
    {
       return String("AffineFrame = { ") +
-         "vx = " + _vx.toString(prec) + ", " +
-         "vy = " + _vy.toString(prec) + ", " +
-         "vz = " + _vz.toString(prec) + ", " +
-         "origin = " + _origin.toString(prec) + "}";
+         "vx = " + _vx.ToString(prec) + ", " +
+         "vy = " + _vy.ToString(prec) + ", " +
+         "vz = " + _vz.ToString(prec) + ", " +
+         "origin = " + _origin.ToString(prec) + "}";
    }
 };
 

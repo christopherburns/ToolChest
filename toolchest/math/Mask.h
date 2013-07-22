@@ -26,14 +26,14 @@ public:
 
    template <class S> explicit Mask(const Mask<S, N>& v);  ///< Conversion constructor
 
-   inline String toString() const { return String("[") + internalToString() + "]"; }
+   inline String ToString() const { return String("[") + internalToString() + "]"; }
 
    /// Access a single element
    inline bool operator [] (int i) const
    { assert(i >= 0 && i < N); return (i < WA) ? (_a[i]) : (_b[i-WA]);  }
 
    // Auto cast to bool...
-   inline operator T() { return all(); } 
+   inline operator T() { return All(); } 
 
 
    ///////////////////////
@@ -64,19 +64,19 @@ public:
    // Reductions //
    ////////////////
 
-   inline T reduceAnd() const;
-   inline T reduceOr()  const;
-   inline T all() const;
-   inline T none() const;
-   inline T any() const;
+   inline T ReduceAnd() const;
+   inline T ReduceOr()  const;
+   inline T All() const;
+   inline T None() const;
+   inline T Any() const;
 
-   int count() const;   ///< Returns the number of 'true' elements
+   int Count() const;   ///< Returns the number of 'true' elements
 
    ////////////////////////////
    // Functional Programming //
    ////////////////////////////
 
-   template <typename Functor> Mask map(const Functor& f) const;
+   template <typename Functor> Mask Map(const Functor& f) const;
 
 
    ///////////////////////////////////////////////////////////////////////////
@@ -121,17 +121,17 @@ inline Mask<T, N>::Mask(const Mask<S, N>& v) : _a(v._a), _b(v._b) {}
 // Reduction Operation Definitions //
 /////////////////////////////////////
 
-template <class T, int N> inline T Mask<T, N>::reduceAnd() const
-{ return _a.reduceAnd() & _b.reduceAnd(); }
-template <class T, int N> inline T Mask<T, N>::reduceOr()  const
-{ return _a.reduceOr() | _b.reduceOr(); }
+template <class T, int N> inline T Mask<T, N>::ReduceAnd() const
+{ return _a.ReduceAnd() & _b.ReduceAnd(); }
+template <class T, int N> inline T Mask<T, N>::ReduceOr()  const
+{ return _a.ReduceOr() | _b.ReduceOr(); }
 
-template <class T, int N> inline T Mask<T, N>::all()  const  { return reduceAnd(); }
-template <class T, int N> inline T Mask<T, N>::none() const  { return !reduceOr(); }
-template <class T, int N> inline T Mask<T, N>::any()  const  { return !none(); }
+template <class T, int N> inline T Mask<T, N>::All()  const  { return ReduceAnd(); }
+template <class T, int N> inline T Mask<T, N>::None() const  { return !ReduceOr(); }
+template <class T, int N> inline T Mask<T, N>::Any()  const  { return !None(); }
 
-template <class T, int N> inline int Mask<T, N>::count() const
-{ return _a.count() + _b.count(); }
+template <class T, int N> inline int Mask<T, N>::Count() const
+{ return _a.Count() + _b.Count(); }
 
 
 ////////////////////////////////////////
@@ -139,8 +139,8 @@ template <class T, int N> inline int Mask<T, N>::count() const
 ////////////////////////////////////////
 
 template <class T, int N>
-template <typename Functor> inline Mask<T, N> Mask<T, N>::map(const Functor& f) const
-{ return Mask<T, N>(_a.map(f), _b.map(f)); }
+template <typename Functor> inline Mask<T, N> Mask<T, N>::Map(const Functor& f) const
+{ return Mask<T, N>(_a.Map(f), _b.Map(f)); }
 
 
 
@@ -178,7 +178,7 @@ public:
 
 
    /// String I/O representation
-   inline String toString() const { return String("[") + (_t ? "1" : "0") + "]"; }
+   inline String ToString() const { return String("[") + (_t ? "1" : "0") + "]"; }
 
 
    ////////////////////////////
@@ -214,27 +214,27 @@ public:
    // Reductions //
    ////////////////
 
-   inline T reduceAnd() const { return _t & _t; }
-   inline T reduceOr()  const { return _t | _t; }
+   inline T ReduceAnd() const { return _t & _t; }
+   inline T ReduceOr()  const { return _t | _t; }
 
-   inline T all()  const  { return reduceAnd(); }
-   inline T none() const  { return !reduceOr(); }
-   inline T any()  const  { return !none(); }
+   inline T All()  const  { return ReduceAnd(); }
+   inline T None() const  { return !ReduceOr(); }
+   inline T Any()  const  { return !None(); }
 
-   inline int count() const { return (_t ? 1 : 0); }
+   inline int Count() const { return (_t ? 1 : 0); }
 
 
    ////////////////////////////
    // Functional Programming //
    ////////////////////////////
 
-   template <typename Functor> inline Mask& map(const Functor& f) { return f(_t); }
+   template <typename Functor> inline Mask& Map(const Functor& f) { return f(_t); }
 };
 
 
-template <class T> bool ANY(const T& a)  { return a.any(); }
-template <class T> bool NONE(const T& a) { return a.none(); }
-template <class T> bool ALL(const T& a)  { return a.all(); }
+template <class T> bool ANY(const T& a)  { return a.Any(); }
+template <class T> bool NONE(const T& a) { return a.None(); }
+template <class T> bool ALL(const T& a)  { return a.All(); }
 
 }; // namespace ToolChest
 

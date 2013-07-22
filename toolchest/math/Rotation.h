@@ -47,7 +47,7 @@ public:
 
    /// Returns a spherical linear interpolation between rotation a and
    /// rotation b using t (in [0,1]) as a parameter
-   friend inline Rotation slerp(const Rotation& a, const Rotation& b, float t)
+   friend inline Rotation Slerp(const Rotation& a, const Rotation& b, float t)
    {
       float w1, w2;
 
@@ -72,12 +72,12 @@ public:
    friend inline Rotation operator * (const Rotation& lhs, const Rotation& rhs)
    { return Rotation(lhs._q * rhs._q); }
 
-   inline void setAxisAngle(float angle, const Vector3& axis)
+   inline void SetAxisAngle(float angle, const Vector3& axis)
    { _q = Quaternion(angle, axis); }
 
    inline Quaternion q() const { return _q; }
 
-   inline String toString(int prec = 3) const
+   inline String ToString(int prec = 3) const
    { return String("Rotation = { q = ") + _q.toString(prec) + " }"; }
 };
 

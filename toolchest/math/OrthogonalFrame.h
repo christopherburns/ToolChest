@@ -47,7 +47,7 @@ public:
    // String I/O //
    ////////////////
 
-   inline String toString(int prec = 3) const
+   inline String ToString(int prec = 3) const
    {
       return String("OrthogonalFrame = { ") +
          "rotation = " + rotation.toString(prec) + ", " +
@@ -66,9 +66,9 @@ template <class T> inline OrthogonalFrame<T> OrthogonalFrame<T>::OrthogonalFrame
 {
    // Establish the three normalized vectors for our orthogonal system. We
    // assert the right to adjust the up vector to achieve this condition.
-   Vector3 Z = lookDir_.unit();
-   Vector3 yPrime = Vector3::dot(up_, Z) * Z;
-   Vector3 Y = (up_ - yPrime).unit();
+   Vector3 Z = lookDir_.Unit();
+   Vector3 yPrime = Vector3::Dot(up_, Z) * Z;
+   Vector3 Y = (up_ - yPrime).Unit();
    Vector3 X = cross(Y, Z);
 
    OrthogonalFrame<T> ortho;
@@ -82,10 +82,10 @@ template <class T> inline OrthogonalFrame<T> OrthogonalFrame<T>::OrthogonalFrame
 {
    // Establish the three normalized vectors for our orthogonal system. We
    // assert the right to adjust the up vector to achieve this condition.
-   Vector3 Z = -lookDir_.unit();
-   Vector3 yPrime = Vector3::dot(up_, Z) * Z;
-   Vector3 Y = (up_ - yPrime).unit();
-   Vector3 X = cross(Y, Z);
+   Vector3 Z = -lookDir_.Unit();
+   Vector3 yPrime = Vector3::Dot(up_, Z) * Z;
+   Vector3 Y = (up_ - yPrime).Unit();
+   Vector3 X = Cross(Y, Z);
 
    OrthogonalFrame<T> ortho;
    ortho.origin = origin_;

@@ -81,18 +81,18 @@ public:
 
 /// Rounds the integer argument i to the next largest multiple of N,
 /// where N must be a power of two
-template <int N> inline int nextPowerOf2Multiple(int i)
+template <int N> inline int NextPowerOf2Multiple(int i)
 { return ((i + N-1) >> ILOG2<N>::value) << ILOG2<N>::value; }
 
 /// Integer base-2 logarithm functions
-inline uint32 ilog2(uint32 x)
+inline uint32 ILog2(uint32 x)
 {
    int r = 0;
    while ((x >> r) != 0) r++;
    return r-1; // returns -1 for x == 0, floor(log2(x)) otherwise
 }
 
-inline uint64 ilog2(uint64 x)
+inline uint64 ILog2(uint64 x)
 {
    int r = 0;
    while ((x >> r) != 0) r++;
@@ -119,7 +119,7 @@ inline uint64 ilog2(uint64 x)
 
 /// Returns true if the argument is a power of two. Use only on integral
 /// types (int8, uint16, etc)
-template <typename T> inline bool isPowerOfTwo(T n)
+template <typename T> inline bool IsPowerOfTwo(T n)
 {
    unsigned count;
    for (count = 0; n != 0; count++) n &= n - 1;
@@ -133,7 +133,7 @@ template <typename T> inline bool isPowerOfTwo(T n)
 /// significant 1 as x, but all 1's below it. Adding 1 to that value yields
 /// the next largest power of 2.
 ///
-template <class T> inline T nextLargestPowerOfTwo(T i)
+template <class T> inline T NextLargestPowerOfTwo(T i)
 {
 
    i -= T(1);      // Sutract 1 so that powers of two produce themselves
@@ -148,7 +148,7 @@ template <class T> inline T nextLargestPowerOfTwo(T i)
 
 /// Linear interpolation between two coordinates. Parameter 't' is presumed
 /// to be between 0.0 and 1.0
-template <class T> inline T lerp(T coord0, T coord1, float t)
+template <class T> inline T Lerp(T coord0, T coord1, float t)
 { return (1.0f - t) * coord0 + t*coord1; }
 
 
@@ -225,7 +225,7 @@ template <> struct MATHEMATICS<uint8>
    static inline uint8 clampz(uint8 x, uint8 u)
    { return (x > u ? u : x); }
 
-   static inline uint8 log2(uint8 x)                   { return (uint8)ilog2((uint32)x); }
+   static inline uint8 log2(uint8 x)                   { return (uint8)ILog2((uint32)x); }
 
    //static inline uint8 sign(uint8 x)                   { return 0u; }
    static inline uint8 min(uint8 x, uint8 y)           { return (x < y ? x : y); }
@@ -245,7 +245,7 @@ template <> struct MATHEMATICS<uint16>
    static inline uint16 clampz(uint16 x, uint16 u)
    { return (x > u ? u : x); }
 
-   static inline uint16 log2(uint16 x)                      { return (uint16)ilog2((uint32)x); }
+   static inline uint16 log2(uint16 x)                      { return (uint16)ILog2((uint32)x); }
 
    //static inline uint16 sign(uint16 x)                     { return 0u; }
    static inline uint16 min(uint16 x, uint16 y)            { return (x < y ? x : y); }
@@ -267,7 +267,7 @@ template <> struct MATHEMATICS<uint32>
    static inline uint32 clampz(uint32 x, uint32 u)
    { return (x > u ? u : x); }
 
-   static inline uint32 log2(uint32 x)                      { return (uint32)ilog2(x); }
+   static inline uint32 log2(uint32 x)                      { return (uint32)ILog2(x); }
 
    //static inline uint16 sign(uint32 x)                     { return 0u; }
    static inline uint32 min(uint32 x, uint32 y)            { return (x < y ? x : y); }
@@ -289,7 +289,7 @@ template <> struct MATHEMATICS<uint64>
    static inline uint64 clampz(uint64 x, uint64 u)
    { return (x > u ? u : x); }
 
-   static inline uint64 log2(uint64 x)                      { return ilog2(x); }
+   static inline uint64 log2(uint64 x)                      { return ILog2(x); }
 
    //static inline uint16 sign(uint64 x)                     { return 0ULL; }
    static inline uint64 min(uint64 x, uint64 y)            { return (x < y ? x : y); }
@@ -484,14 +484,14 @@ class Prime
 public:
 
    /// Returns the smallest prime number greater-than or equal to \param p
-   static inline uint32 nextPrime(uint32 p)
+   static inline uint32 NextPrime(uint32 p)
    {
-      while (!isPrime(p)) ++p;
+      while (!IsPrime(p)) ++p;
       return p;
    }
 
    /// Returns true if the integer i is prime, false otherwise
-   static inline bool isPrime(uint32 i)
+   static inline bool IsPrime(uint32 i)
    {
       uint32 si = isqrt(i);
       for (uint32 j = 2; j <= si; j++) if (i % j == 0) return false;

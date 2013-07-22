@@ -56,22 +56,22 @@ public:
    inline Quaternion operator - () const { return Quaternion(-_q); }
 
    /// Conjugate (complex arithmetic)
-   inline Quaternion conjugate() const { return Quaternion(r(), -i(), -j(), -k()); }
+   inline Quaternion Conjugate() const { return Quaternion(r(), -i(), -j(), -k()); }
 
    /// Reciprocal operation
-   inline Quaternion reciprocal() const
-   { return Quaternion(conjugate() / (Vector4::dot(_q, _q))); }
+   inline Quaternion Reciprocal() const
+   { return Quaternion(Conjugate() / (Vector4::dot(_q, _q))); }
 
    /// Dot product, four component
-   static inline T dot(const Quaternion& q)
-   { return Vector4::dot(q._q, q._q); }
+   static inline T Dot(const Quaternion& q)
+   { return Vector4::Dot(q._q, q._q); }
 
-   static inline T dot(const Quaternion& a, const Quaternion& b)
-   { return Vector4::dot(a._q, b._q); }
+   static inline T Dot(const Quaternion& a, const Quaternion& b)
+   { return Vector4::Dot(a._q, b._q); }
 
    /// Returns the unit-length version of this quaternion
-   inline Quaternion unit() const
-   { return (*this) * RCP_SQRT(dot(*this, *this)); }
+   inline Quaternion Unit() const
+   { return (*this) * RCP_SQRT(Dot(*this, *this)); }
 
 
    /// Quaternion arithmetic
@@ -88,7 +88,7 @@ public:
          lhs.r()*rhs.k() + lhs.i()*rhs.j() - lhs.j()*rhs.i() + lhs.k()*rhs.r());
    }
    friend inline Quaternion operator / (const Quaternion& lhs, const Quaternion& rhs)
-   { return lhs * rhs.reciprocal(); }
+   { return lhs * rhs.Reciprocal(); }
 
    /// Scalar arithmetic
    friend inline Quaternion operator + (const Quaternion& lhs, const T& rhs)
@@ -220,7 +220,7 @@ public:
    {
       /// q u RCP(q) gives the rotation of u by quaterion q. u can be cast to
       /// a quaternion by attaching to it a real component of zero
-      return ((*this) * Quaternion(u) * reciprocal()).ijk();
+      return ((*this) * Quaternion(u) * Reciprocal()).ijk();
    }
 
 
@@ -233,7 +233,7 @@ public:
       if (t <= ZERO<T>()) return qa;
       if (t >= ONE<T>()) return qb;
 
-      T cosOmega = dot(qa, qb);
+      T cosOmega = Dot(qa, qb);
 
       Quaternion q = qb;
       if (cosOmega < ZERO<T>())
@@ -272,7 +272,7 @@ public:
    /////////
 
    inline String toString(int prec = 3) const
-   { return String("Quaternion = { ") + _q.toString(3) + "}"; }
+   { return String("Quaternion = { ") + _q.ToString(3) + "}"; }
 };
 
 typedef Quaternion<float>     Quaternionf;

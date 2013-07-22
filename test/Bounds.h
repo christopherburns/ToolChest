@@ -53,12 +53,12 @@ template <class T> class Bounds
    inline T centroid() const { return (ur + ll) * T(0.5f); }
 
    inline bool inside(const T& point) const
-   { return ((point < ur) & (point >= ll)).all(); }
+   { return ((point < ur) & (point >= ll)).All(); }
    
    /// Getting the sign right is tricky and depends on the number of dimensions
    /// to the bounds, so we'll punt on that for this function
    inline typename ToolChest::TypeInfo<T>::ElementType unsignedVolume() const
-   { return ABS((ur - ll).reduceProduct()); }
+   { return ABS((ur - ll).ReduceProduct()); }
 
    /// Enlarges the box by pushing the ur away from the ll so that all 
    /// dimensions are as large as the largest one, making it a minimal hypercube
@@ -67,12 +67,12 @@ template <class T> class Bounds
    inline Bounds enlargeToSquare() const
    {
       T delta = ur - ll;
-      typename ToolChest::TypeInfo<T>::ElementInfo maxExtent = delta.reduceMax();
+      typename ToolChest::TypeInfo<T>::ElementInfo maxExtent = delta.ReduceMax();
       return Bounds(ll + T(maxExtent), ll);
    }
    
    inline ToolChest::String toString(int prec = 3) const
-   { return ToolChest::String("AABBox3 = { ur = ") + ur.toString(prec) + ", ll = " + ll.toString(prec) + " }"; }
+   { return ToolChest::String("AABBox3 = { ur = ") + ur.ToString(prec) + ", ll = " + ll.ToString(prec) + " }"; }
 };
 
 
