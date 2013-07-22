@@ -83,6 +83,7 @@ namespace Collections
          void RotateRight(int a, int b, int bParent);
 
          void Print(const char * fileName) const;
+         void PrintArray(int n) const;
 
          inline BinaryTree Clone() const
          {
@@ -173,7 +174,11 @@ namespace Collections
             return _pool->Index(_nextNode).payload;
          }
 
-
+         inline E& Peek() 
+         {
+            assert(HasNext());
+            return _pool->Index(_nextNode).payload;
+         }
       };
 
 
@@ -468,7 +473,24 @@ namespace Collections
       // Printing //
       //////////////
 
-      /// This method outputs 
+      /// Prints the tree in array representation, first n nodes
+      template <class E> void BinaryTree<E>::PrintArray(int n) const
+      {
+         using namespace std;
+         typedef BinaryTreeNode<E> Node;
+         MemoryPool<Node>& pool = *_pool;
+
+         cout << "_root = " << _root << endl;
+         for (int i = 0; i < n; ++i)
+            cout << "pool[" << i << "] = (" 
+                 << pool[i].left << ", "
+                 << pool[i].right << ", "
+                 << pool[i].priority << ", "
+                 << pool[i].payload << ")" << endl;
+      }
+
+      /// This method outputs a graphviz tree representationt into the 
+      /// indicated file
       template <class E> void BinaryTree<E>::Print(const char * fileName) const
       {
          using namespace std;

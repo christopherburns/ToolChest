@@ -68,10 +68,9 @@ namespace Collections
             return n; 
          }
          inline const E& Peek() const
-         {
-            assert(HasNext());
-            return _nodePool->Index(_next).payload;
-         }
+         { assert(HasNext()); return _nodePool->Index(_next).payload; }
+         inline E& Peek()
+         { assert(HasNext()); return _nodePool->Index(_next).payload; }
 
          friend class Immutable::LinkedList<E>;
          friend class Mutable::LinkedList<E>;
@@ -102,11 +101,11 @@ namespace Collections
             _next = _nodePool->Index(_next).next; 
             return n; 
          }
+         
          inline const E& Peek() const
-         {
-            assert(HasNext());
-            return _nodePool->Index(_next).payload;
-         }
+         { assert(HasNext()); return _nodePool->Index(_next).payload; }
+         inline E& Peek()
+         { assert(HasNext()); return _nodePool->Index(_next).payload; }
 
          friend class Immutable::LinkedList<E>;
          friend class Mutable::LinkedList<E>;

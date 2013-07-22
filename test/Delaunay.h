@@ -1,12 +1,11 @@
-#pragma once
-
 #ifndef DELAUNAY_H
 #define DELAUNAY_H
 
-#include "../burns/Burns.h"
 #include "Bounds.h"
 
+#include <sstream>
 
+class PeriodicDelaunay;
 
 //////////////////////////////////////////////////////////////////////////////
 //                           Delaunay Triangulator                          //
@@ -16,39 +15,28 @@ class Delaunay
 {
 public:
 
+   friend class PeriodicDelaunay;
+
    ///////////////
    // Interface //
    ///////////////
 
    typedef Vector2f Vertex;
 
-   /// Clears all existing data, generates a brand new triangulation
-   void Tessellate(const Vertex * points, const int NUM_POINTS);
+   /// Constructor generates delaunay mesh
+   inline Delaunay(const Vertex * points, const int NUM_POINTS)
+   { tessellate(points, NUM_POINTS); }
 
-   /// Adds a new point to the triangulation, must be INSIDE at least one
-   /// existing triangle in the tessellation though
-   void InsertPoint(Vertex v, int i);
+   /// Accessors
+   inline const Vertex * GetPoints() const { return &_points[0]; }
+   inline const int * GetTriangles() const { return &_indices[0]; }
+
+   inline int GetNumPoints() const { return _points.Size(); }
+   inline int GetNumTriangles() const { return _indices.Size() / 3; }
+   
+   void Print() const;
 
 private:
-   static void generateSuperTriangle(AABBox2f bounds, Vertex verts[3]);
-   
-   enum Compare { LESS_THAN, EQUAL, GREATER_THAN };
-   inline static Compare compareVertices(Vertex p0, Vertex p1)
-   {
-      for (int i = 0; i < TypeInfo<Vertex>::Width; ++i)
-      {
-              if (p0[i] == p1[i]) continue;
-         else if (p0[i] >  p1[i]) return GREATER_THAN;
-         else if (p0[i] <  p1[i]) return LESS_THAN ;
-      }
-      return EQUAL;
-   }
-
-   friend class Triangle;
-   friend class Edge;
-
-   typedef Collections::Mutable::Array<Vertex> PointList;
-
 
    ///////////////////
    // Simplex Class //
@@ -89,9 +77,6 @@ private:
       inline Vertex circumcenter(Vertex v0, Vertex v1, Vertex v2);
    };
 
-   typedef Collections::Mutable::LinkedList<Triangle> TriangleList;
-
-
    ////////////////
    // Edge Class //
    ////////////////
@@ -121,27 +106,53 @@ private:
       /// It is critical that !(a < b) && !(b < a) == (a != b)
       inline bool operator < (const Edge& rhs) const
       {
-         //Compare c0 = Delaunay::compareVertices(v0, rhs.v0);
-         //Compare c1 = Delaunay::compareVertices(v1, rhs.v1);
-         //return (c0 == EQUAL ? c1 == LESS_THAN : c0 == LESS_THAN);
-         if (i0 < rhs.i0) return true;
+         if      (i0 < rhs.i0) return true;
          else if (rhs.i0 < i0) return false;
          else // lower bound is equal, check upper edge
          {
-            if (i1 < rhs.i1) return true;
-            else if (rhs.i1 < i1) return true;
+            if      (i1 < rhs.i1) return true;
+            else if (rhs.i1 < i1) return false;
             else return false;
          }
       }
    };
 
 
+   typedef Collections::Mutable::LinkedList<Triangle> TriangleList;
+   typedef Collections::Mutable::Array<Vertex> PointList;
+   typedef Collections::Immutable::Array<int> IndexList;
+
+   /// Clears all existing data, generates a brand new triangulation
+   void tessellate(const Vertex * points, const int NUM_POINTS);
+
+   /// Adds a new point to the triangulation, must be INSIDE at least one
+   /// existing triangle in the tessellation though
+   void insertPoint(TriangleList& tList, Vertex v, int i);
+
+   static void generateSuperTriangle(AABBox2f bounds, Vertex verts[3]);
+   
+   enum Compare { LESS_THAN, EQUAL, GREATER_THAN };
+   inline static Compare compareVertices(Vertex p0, Vertex p1)
+   {
+      for (int i = 0; i < TypeInfo<Vertex>::Width; ++i)
+      {
+              if (p0[i] == p1[i]) continue;
+         else if (p0[i] >  p1[i]) return GREATER_THAN;
+         else if (p0[i] <  p1[i]) return LESS_THAN ;
+      }
+      return EQUAL;
+   }
+
+   friend class Triangle;
+   friend class Edge;
+
+
    ////////////////////////
    // Triangulation Data //
    ////////////////////////
 
-   PointList    _points;
-   TriangleList _simplexMesh;
+   PointList _points;
+   IndexList _indices;
 };
 
 ////////////////////
@@ -173,8 +184,6 @@ inline Delaunay::Triangle::Triangle
    center = circumcenter(v0, v1, v2);
    radiusSq = (v0 - center).lengthSquared();
    radius = SQRT(radiusSq);
-   
-   //printf("triangle: %s, %s, %s,   circumcenter = %s\n", *String(v0->coordinate()), *String(v1->coordinate()), *String(v2->coordinate()), *String(center));
 }
 
 inline void Delaunay::generateSuperTriangle(AABBox2f bounds, Delaunay::Vertex verts[3])
@@ -196,18 +205,28 @@ inline void Delaunay::generateSuperTriangle(AABBox2f bounds, Delaunay::Vertex ve
 }
 
 
-inline void Delaunay::InsertPoint(Vertex v, int i)
+//class Printer { public:  void operator() (const Delaunay::Edge& e) const { printf("[%i %i] ", e.i0, e.i1); } };
+//#define STREAM_OUT_DEF o << "[ "; Printer p; c.ForEach(p); o << "]"; return o;
+//inline std::ostream& operator << (std::ostream& o, const Collections::Mutable::TreeSet<Delaunay::Edge>& c) { STREAM_OUT_DEF }
+
+
+//inline std::ostream& operator << (std::ostream& o, const Delaunay::Edge& e)
+//{
+//   o << "[" << e.i0 << ", " << e.i1 << "]";
+//   return o; 
+//}
+
+inline void Delaunay::insertPoint(TriangleList& tList, Vertex v, int i)
 {
    typedef Collections::Mutable::TreeSet<Edge> EdgeSet;
 
    EdgeSet edgeSet = EdgeSet(); //edgeSet += Edge(); /// WTF?
-   auto t = _simplexMesh.GetIterator();
+   auto t = tList.GetIterator();
 
    _points[i] = v;
 
    /// This is why the algo is N^2 --> #triangles * #points
 
-   //while (!t.isNull())
    while (t.HasNext())
    {
       auto triangle = t.Peek();
@@ -226,24 +245,25 @@ inline void Delaunay::InsertPoint(Vertex v, int i)
          if (!edgeSet.Contains(e2)) edgeSet += e2;
          else edgeSet -= e2;
 
-         _simplexMesh.Remove(t); // t is automatically incremented
+         tList.Remove(t); // t is automatically incremented
       }
       else t.Next();
    }
 
    /// Now we can iterate over these remaining edges, and build new triangles
    for (auto e = edgeSet.GetIterator(); e.HasNext(); e.Next())
-      _simplexMesh += Triangle
+      tList += Triangle
          ( _points[i], _points[e.Peek().i0], _points[e.Peek().i1]
          , i, e.Peek().i0, e.Peek().i1);
 }
 
-inline void Delaunay::Tessellate(const Vertex * points, const int NUM_POINTS)
+
+inline void Delaunay::tessellate(const Vertex * points, const int NUM_POINTS)
 {
    if (NUM_POINTS < 3) return;
 
-   _points = PointList(NUM_POINTS + 3);                       // Exact allocation
-   _simplexMesh = TriangleList(NUM_POINTS + NUM_POINTS/4);    // Approx. allocation
+   _points = PointList(NUM_POINTS + 3);           // Exact allocation
+   TriangleList triangles = TriangleList(NUM_POINTS + NUM_POINTS/4);    // Approx. allocation
 
    /// Compute the bounding box of the data, and build the list of points
    AABBox2f bounds = AABBox2f::invertedBounds();
@@ -255,14 +275,18 @@ inline void Delaunay::Tessellate(const Vertex * points, const int NUM_POINTS)
    for (int i = 0; i < 3; ++i) _points[i] = superTriangle[i];
 
    /// We start our tessellation with the super triangle
-   _simplexMesh += Triangle
+   triangles += Triangle
       ( superTriangle[0], superTriangle[1], superTriangle[2], 0, 1, 2 );
 
    /// Build the delaunay triangulation incrementally
-   for (int v = 0; v < NUM_POINTS; ++v) InsertPoint(points[v], v + 3);
+   for (int v = 0; v < NUM_POINTS; ++v) 
+      insertPoint(triangles, points[v], v + 3);
 
-   /// Remove triangles referencing the super-triangle verts
-   auto t = _simplexMesh.GetIterator();
+   /// Remove triangles referencing the super-triangle verts, and simultaneously
+   /// rebase the vertex references in anticipation of removal of the first
+   /// three (super-triangle) vertices
+   auto indexListBuilder = Collections::Immutable::Array<int>::Builder();
+   auto t = triangles.GetIterator();
    while (t.HasNext())
    {
       /// If *any* of t's vertices match *any* of the super triangle's
@@ -270,40 +294,59 @@ inline void Delaunay::Tessellate(const Vertex * points, const int NUM_POINTS)
       /// are at indices 0, 1, 2
       bool cullMe = false;
       for (int tv = 0; tv < 3; ++tv)
-         cullMe |= (t.Peek().vIndices[tv] < 3);
+         cullMe |= (t.Peek().vIndices[tv] < 3); // Mark for removal if necessary
 
-      if (cullMe) _simplexMesh.Remove(t);
-      else t.Next(); 
+      if (cullMe) triangles.Remove(t);
+      else 
+      {
+         for (int i = 0; i < 3; ++i) assert(t.Peek().vIndices[i]-3 >= 0);
+
+         indexListBuilder.AddElement(t.Peek().vIndices[0]-3);
+         indexListBuilder.AddElement(t.Peek().vIndices[1]-3);
+         indexListBuilder.AddElement(t.Peek().vIndices[2]-3);
+         t.Next(); 
+      }
    }
+   _indices = indexListBuilder.Result();
 
 
    /// Remove the super-triangle vertices from the list ...
+   /// This is basically a copy, and we visit each triangle to
+   /// rebase the indices (-3)
+   PointList pList = PointList(NUM_POINTS);
+   for (int i = 3; i < _points.Size(); ++i) pList[i-3] = _points[i];
+   _points = pList; //< Copy by reference
+}
 
-   printf("Complete!\n");
-   printf("NumVertices: %i\n", _points.Size());
-   printf("NumTriangles: %i\n", _simplexMesh.Size());
 
 
+inline void Delaunay::Print() const
+{
    printf("points = {\n");
-   for (int i = 0; i < _points.Size(); ++i)
+   for (int i = 0; i < _points.Size()-1; ++i)
       printf("{%.3f, %.3f}, ", _points[i].x(), _points[i].y());
+   printf("{%.3f, %.3f}", _points[_points.Size()-1].x(), _points[_points.Size()-1].y());
    printf("}\n");
 
    printf("edges = {\n");
-   for (auto tItr = _simplexMesh.GetIterator(); tItr.HasNext(); )
+   for (auto tItr = _indices.GetIterator(); tItr.HasNext(); )
    {
-      auto t = tItr.Next();
-      printf
-         ( "{%i, %i}, {%i, %i}, {%i, %i}, "
-         , t.vIndices[0]+1, t.vIndices[1]+1, t.vIndices[1]+1
-         , t.vIndices[2]+1, t.vIndices[2]+1, t.vIndices[0]+1 );
-   }
-
+      auto i0 = tItr.Next();
+      auto i1 = tItr.Next();
+      auto i2 = tItr.Next();
+      if (tItr.HasNext())
+         printf
+            ( "{%i, %i}, {%i, %i}, {%i, %i}, "
+            , i0+1, i1+1, i1+1
+            , i2+1, i2+1, i0+1 );
+      else
+         printf
+            ( "{%i, %i}, {%i, %i}, {%i, %i}"
+            , i0+1, i1+1, i1+1
+            , i2+1, i2+1, i0+1 );            
+   }   
    printf("}\n");
-
-   //_points.Remove(_points.GetIterator());
-   //_points.Remove(_points.GetIterator());
-   //_points.Remove(_points.GetIterator());
 }
+
 
 #endif // DELAUNAY_H

@@ -204,7 +204,8 @@ namespace Collections
 
          /// We remove the node indicated by "next"
          int n = _nodePool->Index(itr._next).next;
-         _nodePool->Index(itr._current).next = n;
+         if (itr._current != -1)
+            _nodePool->Index(itr._current).next = n;
 
          if (_head == itr._next) _head = n;
          if (_tail == itr._next) _tail = itr._current;

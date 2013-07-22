@@ -38,6 +38,7 @@ namespace Collections
          template <class U> struct SwapElementType { typedef TreeSet<U> C; };
 
       private:
+      public:
 
          int _size;  //< Number of elements, for efficiency
          Tree _tree;
@@ -122,7 +123,6 @@ namespace Collections
       {
          int parent, target;
          _tree.Find(e, parent, target);
-
          if (target == -1) return *this;
          _tree.Remove(target, parent); _size--;
          return *this;
