@@ -868,6 +868,12 @@ template <class T> bool Test_DestructiveListRemove()
       else itr.Next(); 
 
    if (!IsEqual(T::Construct(N2, v2), t)) return false;
+
+
+   itr = t.GetIterator();
+   while (itr.HasNext()) t.Remove(itr);
+   if (t.Size() > 0) return false;
+
    return true;
 }
 
