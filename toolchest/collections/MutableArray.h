@@ -32,12 +32,44 @@ namespace Collections
 
 
       protected:
-      public:
          int _size;
          ToolChest::Ref<Common::InitializedBuffer<E> > _data;
 
          inline Array(int initSize) 
             : _size(initSize), _data(new Common::InitializedBuffer<E>(initSize)) {}
+         inline Array(int size, ToolChest::Ref<Common::InitializedBuffer<E> > data)
+            : _size(size), _data(data) {}
+
+
+         /// Helper functions for in-place quick sort
+         #define SWAP(a, b) { auto t = a; a = b; b = t; }
+         inline static int partition(E * array, int left, int right, int pivotIndex)
+         {
+            assert(pivotIndex >= left && pivotIndex <= right);
+            const E pivotValue = array[pivotIndex];
+            SWAP(array[pivotIndex], array[right]);
+            int cursor = left;
+            for (int i = left; i < right; ++i)
+            {
+               if (array[i] < pivotValue)
+               {
+                  SWAP(array[i], array[cursor]);
+                  cursor++;
+               }
+            }
+            SWAP(array[cursor], array[right]);
+            return cursor;
+         }
+         inline static void inPlaceQuicksort(E * array, int left, int right)
+         {
+            if (left < right)
+            {
+               int pivotIndex = partition(array, left, right, (right+left) / 2);
+               inPlaceQuicksort(array, left, pivotIndex);
+               inPlaceQuicksort(array, pivotIndex+1, right);
+            }    
+         }
+         #undef SWAP
 
       public:
       
@@ -75,6 +107,7 @@ namespace Collections
          inline const E& operator [] (int i) const { return _data->Index(i); }
 
          virtual Array<E> Reverse() const;
+         virtual Array<E> Sorted() const;
       };
 
 
@@ -93,6 +126,18 @@ namespace Collections
             ((E*)*newArray._data)[i] = (*this)[Size()-i-1];                            
          return newArray;                                                             
       } 
+
+      template <class E> 
+      Array<E> Array<E>::Sorted() const
+      {
+         /// 1. Make a copy
+         /// 2. In-place quicksort the copy
+         Builder builder = this->clone(this->Size(), this->Size()); 
+         Array<E> sorted = builder.Result();
+         inPlaceQuicksort(((E*)*sorted._data), 0, Size()-1);
+         return sorted;
+      }
+
    } // namespace Mutable
 } // namespace Collections
 

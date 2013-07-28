@@ -58,7 +58,6 @@ namespace Collections
       template <class E> class InitializedBuffer : public ToolChest::Object
       {
       private:
-      public:
          E * _pool;
          int _capacity;
 

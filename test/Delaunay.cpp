@@ -58,7 +58,7 @@ void GeneratePeriodicPatch(const int32 N)
 
 int main(int argc, const char ** argv)
 {
-   int N = 10000;
+   int N = 1000;
    if (argc > 1) N = atoi(argv[1]);
    GeneratePeriodicPatch(N);
 	return 0;

@@ -266,7 +266,7 @@ inline void Delaunay::tessellate(const Vertex * points, const int NUM_POINTS)
    TriangleList triangles = TriangleList(NUM_POINTS + NUM_POINTS/4);    // Approx. allocation
 
    /// Compute the bounding box of the data, and build the list of points
-   AABBox2f bounds = AABBox2f::invertedBounds();
+   AABBox2f bounds = AABBox2f::InvertedBounds();
    for (int i = 0; i < NUM_POINTS; ++i) bounds |= points[i];
 
    /// Generate the super triangle

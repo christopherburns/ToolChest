@@ -1,6 +1,3 @@
-
-#pragma once
-
 #ifndef BOUNDS_H
 #define BOUNDS_H
 
@@ -35,43 +32,43 @@ template <class T> class Bounds
    inline const Bounds& operator |= (const T& b)       { *this = *this | b; return *this; } 
 	inline const Bounds& operator &= (const Bounds& b ) { *this = *this & b; return *this; }
    
-   inline static Bounds bUnion(const Bounds& a, const Bounds& b)          { return a | b; }
-   inline static Bounds bUnion(const Bounds& a, const T& point)           { return a | point; }
-   inline static Bounds bIntersection(const Bounds& a, const Bounds& b)   { return a & b; }
+   inline static Bounds BUnion(const Bounds& a, const Bounds& b)          { return a | b; }
+   inline static Bounds BUnion(const Bounds& a, const T& point)           { return a | point; }
+   inline static Bounds BIntersection(const Bounds& a, const Bounds& b)   { return a & b; }
 
    
    
-   inline Bounds clipTo(const Bounds& b) const
-   { return bIntersection(*this, b); }
+   inline Bounds ClipTo(const Bounds& b) const
+   { return BIntersection(*this, b); }
    
    /// Creates a unit-size hypercube, [0, 1]^N where N is the width of T
-   inline static Bounds unitBounds() { return Bounds(ToolChest::ONE<T>(), ToolChest::ZERO<T>()); }
+   inline static Bounds UnitBounds() { return Bounds(ToolChest::ONE<T>(), ToolChest::ZERO<T>()); }
    /// Creates a bounds with -infinity volume
-   inline static Bounds invertedBounds() { return Bounds(-ToolChest::MAXV<T>(), ToolChest::MAXV<T>()); }
+   inline static Bounds InvertedBounds() { return Bounds(-ToolChest::MAXV<T>(), ToolChest::MAXV<T>()); }
    
    /// Returns the numerical center of the bounds
-   inline T centroid() const { return (ur + ll) * T(0.5f); }
+   inline T Centroid() const { return (ur + ll) * T(0.5f); }
 
-   inline bool inside(const T& point) const
+   inline bool Inside(const T& point) const
    { return ((point < ur) & (point >= ll)).All(); }
    
    /// Getting the sign right is tricky and depends on the number of dimensions
    /// to the bounds, so we'll punt on that for this function
-   inline typename ToolChest::TypeInfo<T>::ElementType unsignedVolume() const
+   inline typename ToolChest::TypeInfo<T>::ElementType UnsignedVolume() const
    { return ABS((ur - ll).ReduceProduct()); }
 
    /// Enlarges the box by pushing the ur away from the ll so that all 
    /// dimensions are as large as the largest one, making it a minimal hypercube
    /// AABB which encloses the given AABB. There are many ways to compute this,
    /// choosing to push the ur away from the ll is an arbitrary choice
-   inline Bounds enlargeToSquare() const
+   inline Bounds EnlargeToSquare() const
    {
       T delta = ur - ll;
       typename ToolChest::TypeInfo<T>::ElementInfo maxExtent = delta.ReduceMax();
       return Bounds(ll + T(maxExtent), ll);
    }
    
-   inline ToolChest::String toString(int prec = 3) const
+   inline ToolChest::String ToString(int prec = 3) const
    { return ToolChest::String("AABBox3 = { ur = ") + ur.ToString(prec) + ", ll = " + ll.ToString(prec) + " }"; }
 };
 

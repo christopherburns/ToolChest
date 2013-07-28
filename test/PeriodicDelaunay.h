@@ -18,7 +18,10 @@ public:
    typedef Vector2f Vertex;
 
    /// Constructor generates delaunay mesh
-   inline PeriodicDelaunay(const Vertex * points, const int NUM_POINTS);
+   inline PeriodicDelaunay
+      ( const Vertex * points
+      , const int NUM_POINTS
+      , const int RELAXATION_ITERATIONS = 0);
 
    /// Accessors
    inline const Vertex * GetPoints() const { return &_points[0]; }
@@ -70,7 +73,10 @@ inline void PeriodicDelaunay::Print() const
 
 
 
-inline PeriodicDelaunay::PeriodicDelaunay(const PeriodicDelaunay::Vertex * points, const int NUM_POINTS)
+inline PeriodicDelaunay::PeriodicDelaunay
+   ( const PeriodicDelaunay::Vertex * points
+   , const int NUM_POINTS
+   , const int RELAXATION_ITERATIONS)
 {
    /// Assumptions:
    ///    points are located in the unit domain
@@ -97,6 +103,25 @@ inline PeriodicDelaunay::PeriodicDelaunay(const PeriodicDelaunay::Vertex * point
    auto triangulation = dt.GetTriangles();
    auto tPoints = dt.GetPoints();
 
+
+   /// Optionally relax the points to reduce discrepancy in the point set
+   for (int iteration = 0; iteration < RELAXATION_ITERATIONS; ++iteration)
+   {
+      // To compute neighborsOf(pivotVertex) we need some adjacency data
+      // structure
+      //   1. List of valent triangles for each vertex
+
+      foreach Vertex pivotVertex in tPoints:
+         if (UnitBox.Inside(pivotVertex)):
+            foreach Vertex neighbor in neighborsOf(pivotVertex):
+               minDist = MIN(minDist, dist(neighbor, pivotVertex));
+
+
+
+   }
+
+
+
    /// Ok, now we need to rip out redundant triangles
    AABBox2f UnitCube(Vector2f(1.0f), Vector2f(0.0f));
    _indices = Collections::Vector<int32>::Construct(dt.GetNumTriangles()/4);
@@ -108,7 +133,7 @@ inline PeriodicDelaunay::PeriodicDelaunay(const PeriodicDelaunay::Vertex * point
       Vertex v2 = tPoints[triangulation[3*i+2]];
 
       Vertex lower = MIN(v0, MIN(v1, v2));  /// Per component 3-way min
-      if (UnitCube.inside(lower))
+      if (UnitCube.Inside(lower))
       {
          _indices.Push(triangulation[3*i+0]);
          _indices.Push(triangulation[3*i+1]);
