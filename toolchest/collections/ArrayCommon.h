@@ -129,6 +129,39 @@ namespace Collections
             assert(_nextEmptyIndex < _array.Size()); 
          }
       };
+
+
+      /// Helper functions for in-place quick sort
+      #define SWAP(a, b) { auto t = a; a = b; b = t; }
+      template <class E>
+      inline int partition(E * array, int left, int right, int pivotIndex)
+      {
+         assert(pivotIndex >= left && pivotIndex <= right);
+         const E pivotValue = array[pivotIndex];
+         SWAP(array[pivotIndex], array[right]);
+         int cursor = left;
+         for (int i = left; i < right; ++i)
+         {
+            if (array[i] < pivotValue)
+            {
+               SWAP(array[i], array[cursor]);
+               cursor++;
+            }
+         }
+         SWAP(array[cursor], array[right]);
+         return cursor;
+      }
+      template <class E>
+      inline void SortInPlace(E * array, int left, int right)
+      {
+         if (left < right)
+         {
+            int pivotIndex = partition(array, left, right, (right+left) / 2);
+            SortInPlace(array, left, pivotIndex);
+            SortInPlace(array, pivotIndex+1, right);
+         }    
+      }
+      #undef SWAP
 	}
 }
 

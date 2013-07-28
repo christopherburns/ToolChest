@@ -118,6 +118,7 @@ namespace Collections
          }
       
          virtual LinkedList<E> Reverse() const;
+         virtual LinkedList<E> Sorted() const;
 
          /////////////////////////////
          // Mutable LinkedList Only //
@@ -213,6 +214,17 @@ namespace Collections
          itr._next = n;
          _size--;
          return *this;
+      }
+
+      template <class E> LinkedList<E> LinkedList<E>::Sorted() const
+      {
+         Builder builder = this->clone(_size, _size);
+         LinkedList newList = builder.Result();
+
+         /// SORT HERE
+         assert(false);
+
+         return newList;
       }
 
    } // namespace Mutable

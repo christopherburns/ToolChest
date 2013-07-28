@@ -43,7 +43,7 @@ namespace Collections
       inline friend C operator + (const E& element, const C& rhs)
       { return rhs.Prepend(element); }
 
-      virtual C Sorted() const;
+      virtual C Sorted() const = 0;
       //virtual C SortedWith(Comparator lessThan) const = 0;
       //virtual C SortedWith(ComparatorByValue lessThan) const = 0;
 
@@ -140,12 +140,12 @@ namespace Collections
 
 
    /// Dummy implementation
-   template <class E, class C, class CTraits> 
-   C Sequence<E, C, CTraits>::Sorted() const
-   {
-      Builder builder = this->clone(this->Size(), this->Size());   
-      return builder.Result();
-   }
+   //template <class E, class C, class CTraits> 
+   //C Sequence<E, C, CTraits>::Sorted() const
+   //{
+   //   Builder builder = this->clone(this->Size(), this->Size());   
+   //   return builder.Result();
+   //}
 }
 
 #endif

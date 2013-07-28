@@ -126,6 +126,7 @@ namespace Collections
          virtual LinkedList<E> Append(const E& e) const;
          virtual LinkedList<E> Prepend(const E& e) const;
          virtual LinkedList<E> Reverse() const;
+         virtual LinkedList<E> Sorted() const;
       };
 
 
@@ -233,6 +234,17 @@ namespace Collections
          int temp = newList._head;
          newList._head = newList._tail;
          newList._tail = temp;
+
+         return newList;
+      }
+
+      template <class E> LinkedList<E> LinkedList<E>::Sorted() const
+      {
+         Builder builder = this->clone(_size, _size);
+         LinkedList newList = builder.Result();
+
+         /// SORT HERE
+         assert(false);
 
          return newList;
       }

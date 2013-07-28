@@ -122,8 +122,6 @@ template <class C> void performanceTestTreeSet()
    // TreeSet Reduction //
    ///////////////////////
 
-   
-
    {
       watch.Start();
       float sum = 0;
@@ -143,8 +141,6 @@ template <class C> void performanceTestTreeSet()
    }
 
 
-
-
    delete [] orderedPool;
    delete [] randomPool;
 
@@ -154,10 +150,6 @@ template <class C> void performanceTestTreeSet()
    printf("TreeSet Random  Construction:   %8.2f ms  %8.2f ms\n", (float)randomConstructionTimes[MINE], randomConstructionTimes[THEIRS]);
    printf("TreeSet Item Removal:           %8.2f ms  %8.2f ms\n", (float)removalTimes[MINE], removalTimes[THEIRS]);
    printf("TreeSet Reduction:              %8.2f ms  %8.2f ms\n", (float)reductionTimes[MINE]   , reductionTimes[THEIRS]);
-
-   
-
-   //performanceTestMutableLinkedMyTreeSet<C>();
 
    printf("Exiting profiling routine...\n");
 }
@@ -249,8 +241,6 @@ template <class C> void testTreeSet()
       //sNoOdds.PrintGraph(*(String("Removal") + n + ".dot"));
    }
    cout << "   sNoOdds = " << sNoOdds << endl << endl;
-
-
 
    cout << "s.Filter(IsEven())    = " << s.Filter(IsEven()) << endl;
    cout << "s.FilterNot(IsEven()) = " << s.FilterNot(IsEven()) << endl;

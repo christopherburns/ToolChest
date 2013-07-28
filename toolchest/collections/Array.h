@@ -83,6 +83,7 @@ namespace Collections
          inline const E& operator [] (int i) const { return _data->Index(i); }
       
          virtual Array<E> Reverse() const;
+         virtual Array<E> Sorted() const;
       };
 
 
@@ -117,7 +118,18 @@ namespace Collections
          for (int i = 0; i < Size(); ++i) 
             ((E*) *newArray._data)[i] = (*this)[Size()-i-1];
          return newArray;                                                             
-      }                                                                               
+      }  
+
+      template <class E> 
+      Array<E> Array<E>::Sorted() const
+      {
+         /// 1. Make a copy
+         /// 2. In-place quicksort the copy
+         Builder builder = this->clone(this->Size(), this->Size()); 
+         Array<E> sorted = builder.Result();
+         Common::SortInPlace(((E*)*sorted._data), 0, Size()-1);
+         return sorted;
+      }                                                                             
    } // namespace Immutable
 } // namespace Collections
 
