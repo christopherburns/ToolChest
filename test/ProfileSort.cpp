@@ -33,17 +33,17 @@ public:
 ostream& operator << (ostream& o, const Collections::Vector<int>& c)          { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Mutable::Array<int>& c)               { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Mutable::LinkedList<int>& c)          { STREAM_OUT_DEF }
-ostream& operator << (ostream& o, const Mutable::TreeSet<int>& c)             { STREAM_OUT_DEF }
-ostream& operator << (ostream& o, const Mutable::TreeMap<int, float>& c)      { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Immutable::Array<int>& c)             { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Immutable::Array<float>& c)           { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Immutable::LinkedList<int>& c)        { STREAM_OUT_DEF }
 ostream& operator << (ostream& o, const Immutable::LinkedList<float>& c)      { STREAM_OUT_DEF }
-ostream& operator << (ostream& o, const Immutable::TreeSet<int>& c)           { STREAM_OUT_DEF }
-ostream& operator << (ostream& o, const Immutable::TreeMap<int, float>& c)    { STREAM_OUT_DEF }
 
 
-std::pair<float, float> Profile_MutableArraySort(const int N)
+void Profile_MutableArraySort
+   ( const int N
+   , float& sortedTime
+   , float& inPlaceSortTime
+   , float& stlTime)
 {
    StopWatch watch;
    std::pair<float, float> times;
@@ -57,37 +57,29 @@ std::pair<float, float> Profile_MutableArraySort(const int N)
 
    watch.Start();
    Mutable::Array<int> sorted = burnsArray.Sorted();
-   watch.Stop(); times.first = watch.ReadTime().ToMilliseconds();
+   watch.Stop(); sortedTime = watch.ReadTime().ToMilliseconds();
+
+   watch.Start();
+   burnsArray.SortInPlace();
+   watch.Stop(); inPlaceSortTime = watch.ReadTime().ToMilliseconds();
 
    watch.Start();
    std::sort (stlArray.begin(), stlArray.begin()+N);  
-   watch.Stop(); times.second = watch.ReadTime().ToMilliseconds();
-
-   return times;
+   watch.Stop(); stlTime = watch.ReadTime().ToMilliseconds();
 }
-
-void Test_QuickSortInPlace (Mutable::Array<int> a)
-{
-
-}
-
-void Test_TreeSort         (Mutable::Array<int> a)
-{
-
-}
-
 
 
 int main()
 {
    cout << endl << "Testing Sort on Array...." << endl << endl;
 
-   const int N = 1000000;
+   const int N = 5000000;
 
-   auto rSorted = Profile_MutableArraySort(N);
+   float mArray[3] = {0.0f};
+   Profile_MutableArraySort (N, mArray[0], mArray[1], mArray[2]);
 
-   printf("                                   Burns        STL   \n");
-   printf("Mutable::Array<int> Sorted()   %8.2f ms  %8.2f ms\n", rSorted.first, rSorted.second);
+   printf("                         Sorted()   SortInPlace()     std::sort()   \n");
+   printf("Mutable::Array<int>   %8.2f ms     %8.2f ms     %8.2f ms\n", mArray[0], mArray[1], mArray[2]);
    
 
    return 0;

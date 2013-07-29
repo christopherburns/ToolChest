@@ -154,7 +154,8 @@ namespace Collections
       template <class E>
       inline void SortInPlace(E * array, int left, int right)
       {
-         if (left < right)
+         if (right-left == 1 && array[right] < array[left]) { SWAP(array[left], array[right]); }
+         else if (left < right)
          {
             int pivotIndex = partition(array, left, right, (right+left) / 2);
             SortInPlace(array, left, pivotIndex);

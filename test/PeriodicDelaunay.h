@@ -111,13 +111,14 @@ inline PeriodicDelaunay::PeriodicDelaunay
       // structure
       //   1. List of valent triangles for each vertex
 
+      #if 0
       foreach Vertex pivotVertex in tPoints:
          if (UnitBox.Inside(pivotVertex)):
             foreach Vertex neighbor in neighborsOf(pivotVertex):
                minDist = MIN(minDist, dist(neighbor, pivotVertex));
 
 
-
+      #endif
    }
 
 

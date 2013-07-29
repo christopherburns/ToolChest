@@ -35,8 +35,6 @@ namespace Collections
          int _size;
          ToolChest::Ref<Common::InitializedBuffer<E> > _data;
 
-         inline Array(int initSize) 
-            : _size(initSize), _data(new Common::InitializedBuffer<E>(initSize)) {}
          inline Array(int size, ToolChest::Ref<Common::InitializedBuffer<E> > data)
             : _size(size), _data(data) {}
 
@@ -45,6 +43,8 @@ namespace Collections
          /// Construct a mutable array of size zero
          inline Array() : _size(0), _data(new Common::InitializedBuffer<E>()) {}
 
+         inline Array(int initSize) 
+            : _size(initSize), _data(new Common::InitializedBuffer<E>(initSize)) {}
 
          //////////////////////////////////////////////
          // Copy and Assignment, Reference Semantics //
@@ -77,6 +77,12 @@ namespace Collections
 
          virtual Array<E> Reverse() const;
          Array<E> Sorted() const;
+
+         ////////////////////////
+         // Mutable Array Only //
+         ////////////////////////
+
+         Array<E>& SortInPlace();
       };
 
 
@@ -104,6 +110,12 @@ namespace Collections
          Array<E> sorted = builder.Result();
          Common::SortInPlace<E>(((E*)*sorted._data), 0, Size()-1);
          return sorted;
+      }
+
+      template <class E> Array<E>& Array<E>::SortInPlace()
+      {
+         Common::SortInPlace<E>(((E*)*_data), 0, Size()-1);
+         return *this;
       }
 
    } // namespace Mutable
