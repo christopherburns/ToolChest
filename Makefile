@@ -12,6 +12,9 @@ LDFLAGS = -lstdc++
 
 EXES = testunit profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
 
+.PHONY: all $(EXES)
+all: $(EXES)
+
 delaunay: test/Delaunay.cpp test/Delaunay.h test/PeriodicDelaunay.h test/Bounds.h
 	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
 	mkdir -vp bin; mv -f $@ $(BIN)/;

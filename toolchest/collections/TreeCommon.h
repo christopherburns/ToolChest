@@ -268,9 +268,9 @@ namespace Collections
 
          assert(pool[a].right == b);
 
-         int x = pool[a].left;
+         //int x = pool[a].left;
          int y = pool[b].left;
-         int z = pool[b].right;
+         //int z = pool[b].right;
 
          pool[b].left  = a; pool[a].right = y;
 
@@ -297,9 +297,9 @@ namespace Collections
 
          assert(pool[b].left == a);
 
-         int x = pool[a].left;
+         //int x = pool[a].left;
          int y = pool[a].right;
-         int z = pool[b].right;
+         //int z = pool[b].right;
 
          pool[b].left  = y; pool[a].right = b;
 

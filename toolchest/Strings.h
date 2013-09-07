@@ -38,7 +38,7 @@ namespace ToolChest
          _s = new char[length+1]; _s[length] = '\0';
       }
 
-      static String GetNumericChars()
+      inline static String GetNumericChars()
       {
          const static String numeric = "0123456789";
          return numeric;
@@ -272,7 +272,7 @@ namespace ToolChest
 
       /// Formatting string arrays for use in the format functions
 
-      static const char ** GetFloatFormats()
+      inline static const char ** GetFloatFormats()
       {
          static const char * f[MAX_FIELD_WIDTH]
             = {"%g", "%.0f", "%.1f", "%.2f", "%.3f", "%.4f", "%.5f", 
@@ -280,7 +280,7 @@ namespace ToolChest
          return f;
       }
 
-      static const char ** GetUnsigned32Formats()
+      inline static const char ** GetUnsigned32Formats()
       {
          static const char * f[MAX_FIELD_WIDTH]
             = {"%u", "%1u", "%2u", "%3u", "%4u", "%5u", "%6u", "%7u", 
@@ -288,7 +288,7 @@ namespace ToolChest
          return f;
       }
 
-      static const char ** GetUnsigned64Formats()
+      inline static const char ** GetUnsigned64Formats()
       {
          static const char * f[MAX_FIELD_WIDTH]
             = {"%llu", "%1llu", "%2llu", "%3llu", "%4llu", "%5llu", "%6llu", 
@@ -296,7 +296,7 @@ namespace ToolChest
          return f;
       }
 
-      static const char ** GetSigned32Formats()
+      inline static const char ** GetSigned32Formats()
       {
          static const char * f[MAX_FIELD_WIDTH]
             = {"%i", "%1i", "%2i", "%3i", "%4i", "%5i", "%6i", "%7i", "%8i", 
@@ -304,7 +304,7 @@ namespace ToolChest
          return f;
       }
 
-      static const char ** GetSigned64Formats()
+      inline static const char ** GetSigned64Formats()
       {
          static const char * f[MAX_FIELD_WIDTH]
             = {"%lli", "%1lli", "%2lli", "%3lli", "%4lli", "%5lli", "%6lli", 
@@ -352,7 +352,7 @@ namespace ToolChest
    ////////////////////////////
 
 
-   String& String::Reverse()
+   inline String& String::Reverse()
    {
       assert(_s);
       int length = (int)strlen(_s);
@@ -369,7 +369,7 @@ namespace ToolChest
 
 
    // Case-insensitive comparison
-   bool String::operator /= (const char * s) const
+   inline bool String::operator /= (const char * s) const
    {
       #ifdef WIN32
       assert(_s);
@@ -391,14 +391,14 @@ namespace ToolChest
    /// string currently is >= w in length, nothing will be done to it.
    /// Returned string is guaranteed to be greater than or equal to w in
    /// length
-   String String::PadToFieldWidth(uint32 w) const
+   inline String String::PadToFieldWidth(uint32 w) const
    {
       uint32 len = (uint32)Length();
       if (len < w) return *this + String::Replicate(w - len, ' ');
       else         return *this;
    }
 
-   String& String::Trim()
+   inline String& String::Trim()
    {
       if (strlen(_s) == 0) return *this;
 
@@ -427,7 +427,7 @@ namespace ToolChest
       return *this;
    }
 
-   void String::RemoveAllWhiteSpace()
+   inline void String::RemoveAllWhiteSpace()
    {
       String result;
       int length = (int)strlen(_s);
@@ -438,7 +438,7 @@ namespace ToolChest
    }
 
    // 'a' is the index of the first character, 'b' is one past the last.
-   String String::SubString(int a, int b) const
+   inline String String::SubString(int a, int b) const
    {
       assert(a >= 0); assert(a <= b);
       assert((unsigned int)b <= strlen(_s));
@@ -452,7 +452,7 @@ namespace ToolChest
    }
 
    // Finds first occurance of character c
-   int String::FindFirst(char c) const
+   inline int String::FindFirst(char c) const
    {
       int length = (int)strlen(_s);
       for (int i = 0; i < length; ++i)
@@ -461,7 +461,7 @@ namespace ToolChest
    }
 
    // Finds first occurance of any character in "set"
-   int String::FindFirst(String set) const
+   inline int String::FindFirst(String set) const
    {
       int length = (int)strlen(_s);
       int length2 = set.Length();
@@ -472,7 +472,7 @@ namespace ToolChest
    }
 
    // Finds last occurance of character c
-   int String::FindLast(char c) const
+   inline int String::FindLast(char c) const
    {
       int length = (int)strlen(_s);
       for (int i = length-1; i >= 0; --i)
@@ -481,7 +481,7 @@ namespace ToolChest
    }
 
    // Finds last occurance of any character in "set"
-   int String::FindLast(String set) const
+   inline int String::FindLast(String set) const
    {
       int length = (int)strlen(_s);
       int length2 = set.Length();
@@ -492,7 +492,7 @@ namespace ToolChest
    }
 
    // converts case
-   void String::ToUpper()
+   inline void String::ToUpper()
    {
       #ifdef ___WINDOWS_NT
       strupr(_s);
@@ -509,22 +509,23 @@ namespace ToolChest
       #endif
    }
 
-void String::ToLower()
-{
-   #ifdef ___WINDOWS_NT
-   strlwr(_s);
-   #else
-
-   int i = 0;
-   while (_s[i] != 0)
+   inline void String::ToLower()
    {
-      if (_s[i] < 91 && _s[i] > 64)
-         _s[i] += (int)('a' - 'A');
-      ++i;
+      #ifdef ___WINDOWS_NT
+      strlwr(_s);
+      #else
+
+      int i = 0;
+      while (_s[i] != 0)
+      {
+         if (_s[i] < 91 && _s[i] > 64)
+            _s[i] += (int)('a' - 'A');
+         ++i;
+      }
+
+      #endif
    }
 
-   #endif
-}
    /////////////////////////
    // Formatting Routines //
    /////////////////////////
