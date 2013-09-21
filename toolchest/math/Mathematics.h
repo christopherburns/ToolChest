@@ -419,14 +419,10 @@ template <class T> inline T EXP (T x)        { return MATHEMATICS<T>::exp(x); }
 template <class T> inline T LOG (T x)        { return MATHEMATICS<T>::log(x); }
 template <class T> inline T LOG2 (T x)       { return MATHEMATICS<T>::log2(x); }
 
-/// Not sure what's going on here, but iOS build gives the error :
-///    "Expected unqualified-id before '{' token".
-/// Renaming "ABS" to something else fixes this...
-#if defined(___IOS)
-template <class T> inline T ABS_ (T x)         { return MATHEMATICS<T>::abs(x); }
-#else
-template <class T> inline T ABS (T x)         { return MATHEMATICS<T>::abs(x); }
+#ifdef ABS
+#undef ABS
 #endif
+template <class T> inline T ABS (T x)         { return MATHEMATICS<T>::abs(x); }
 template <class T> inline T LOG10 (T x)       { return MATHEMATICS<T>::log10(x); }
 template <class T> inline T ACOS (T x)        { return MATHEMATICS<T>::acos(x); }
 template <class T> inline T ASIN (T x)        { return MATHEMATICS<T>::asin(x); }

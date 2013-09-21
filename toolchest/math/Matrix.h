@@ -237,7 +237,7 @@ const Matrix<T,N,N> GaussInvert(const Matrix<T,N,N>& m)
 
 template <class T, uint32 N>
 inline const Matrix<T,N,N> Invert(const Matrix<T,N,N>& m)
-{ return gaussInvert(m); }
+{ return GaussInvert(m); }
 
 ///////////////////////////////
 // 2x2 Matrix specialization //

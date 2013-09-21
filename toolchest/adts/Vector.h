@@ -38,11 +38,11 @@ namespace Collections
    public:
       inline Vector() : _currentSize(0) {}
       inline Vector(const Vector& rhs) 
-         : _currentSize(rhs._currentSize)
-         , Mutable::Array<E>(rhs) { }
+         : Mutable::Array<E>(rhs)
+         , _currentSize(rhs._currentSize) { }
       inline Vector(const Mutable::Array<E>& rhs)
-         : _currentSize(rhs.Size())
-         , Mutable::Array<E>(rhs) { }
+         : Mutable::Array<E>(rhs)
+         , _currentSize(rhs.Size()) { }
 
 
       ///////////////

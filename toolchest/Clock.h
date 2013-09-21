@@ -4,6 +4,8 @@
 #include "System.h"
 #include "String.h"
 
+#include <mach/mach_time.h>
+
 namespace ToolChest
 {
    class TimeStamp;
@@ -60,7 +62,7 @@ namespace ToolChest
 
       inline static uint64 readClockCounter()
       {
-         #if defined(___APPLE)
+         #if defined(___OSX)
          return mach_absolute_time();
          #elif defined(___WINDOWS_NT)
 
@@ -79,7 +81,7 @@ namespace ToolChest
       /// to seconds. This value is the number of ticks per second (Hz)
       inline static double readClockFrequency()
       {
-         #if defined(___APPLE)
+         #if defined(___OSX)
          static bool initialized = false;
          static mach_timebase_info_data_t sTimebaseInfo;
 

@@ -115,8 +115,8 @@ namespace Collections
          int _nextNode;
 
          inline BinaryTreeIterator(const BinaryTree<E>& a) 
-            : _nextNode(a._root) 
-            , _pool(a._pool)
+            : _pool(a._pool)
+            , _nextNode(a._root) 
          {
             /// The initial node should be the left-most node
             /// and the stack should contain the path to get there

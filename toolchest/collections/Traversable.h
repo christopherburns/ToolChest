@@ -66,7 +66,7 @@ namespace Collections
 
          /// Constructor with initial size
          inline InitializedBuffer(int initialCapacity = 0)
-            : _capacity(initialCapacity), _pool(nullptr)
+            : _pool(nullptr), _capacity(initialCapacity)
          {
             if (_capacity > 0) _pool = new E[_capacity];
          }
@@ -142,7 +142,7 @@ namespace Collections
 
          /// Constructor with initial size
          MemoryPool(int initialCapacity)
-            : _capacity(0), _nextFreeIndex(0), _pool(nullptr)
+            : _pool(nullptr), _capacity(0), _nextFreeIndex(0)
          {
             resize(MIN_CAPACITY > initialCapacity ? MIN_CAPACITY : initialCapacity);
             assert(_capacity >= initialCapacity);

@@ -34,17 +34,17 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 
 
-template <class T> inline T& update(const bool mask, T& lhs, const T& rhs)
+template <class T> inline T& Update(const bool mask, T& lhs, const T& rhs)
 { if (mask) lhs = rhs; return lhs; }
 
-template <class T> inline const T blend(const bool mask, const T& tValue, const T& fValue)
+template <class T> inline const T Blend(const bool mask, const T& tValue, const T& fValue)
 { return mask ? tValue : fValue; }
 
 template <class T> class WriteMaskedVector
 {
 public:
    typedef typename TypeInfo<T>::Mask Mask;
-   friend inline T& update(const bool mask, T& lhs, const T& rhs);
+   friend inline T& Update(const bool mask, T& lhs, const T& rhs);
 
 private:
    T& _value;
@@ -55,7 +55,7 @@ public:
    inline WriteMaskedVector(T& value, const Mask& m) : _value(value), _mask(m) {}
 
    inline WriteMaskedVector& operator = (const WriteMaskedVector&);
-   inline T& operator = (const T& i) { return update(_mask, _value, i); }
+   inline T& operator = (const T& i) { return Update(_mask, _value, i); }
 };
 
 
@@ -101,30 +101,30 @@ public:
    inline T& operator [] (int i);
 
    /// Static element accessors
-   template <int I> inline const T& get() const                      { return (I < WA) ? (_a.template get<I>()) : (_b.template get<I-WA>()); }
-   template <int I> inline T& get()                                  { return (I < WA) ? (_a.template get<I>()) : (_b.template get<I-WA>()); }
-   template <int I> inline void set(const T& v)                      { if     (I < WA) _a.set<I>(v); else _b.set<I-WA>(v); }
+   template <int I> inline const T& Get() const                      { return (I < WA) ? (_a.template Get<I>()) : (_b.template Get<I-WA>()); }
+   template <int I> inline T& Get()                                  { return (I < WA) ? (_a.template Get<I>()) : (_b.template Get<I-WA>()); }
+   template <int I> inline void Set(const T& v)                      { if     (I < WA) _a.Set<I>(v); else _b.Set<I-WA>(v); }
 
    /// Convenience static element accessors for Vector 2, 3
-   inline const T& x() const                                         { STATIC_assert(N >= 1); return get<0>(); }
-   inline T& x()                                                     { STATIC_assert(N >= 1); return get<0>(); }
-   inline const T& y() const                                         { STATIC_assert(N >= 2); return get<1>(); }
-   inline T& y()                                                     { STATIC_assert(N >= 2); return get<1>(); }
-   inline const T& z() const                                         { STATIC_assert(N >= 3); return get<2>(); }
-   inline T& z()                                                     { STATIC_assert(N >= 3); return get<2>(); }
-   inline const T& w() const                                         { STATIC_assert(N >= 4); return get<3>(); }
-   inline T& w()                                                     { STATIC_assert(N >= 4); return get<3>(); }
+   inline const T& x() const                                         { STATIC_assert(N >= 1); return Get<0>(); }
+   inline T& x()                                                     { STATIC_assert(N >= 1); return Get<0>(); }
+   inline const T& y() const                                         { STATIC_assert(N >= 2); return Get<1>(); }
+   inline T& y()                                                     { STATIC_assert(N >= 2); return Get<1>(); }
+   inline const T& z() const                                         { STATIC_assert(N >= 3); return Get<2>(); }
+   inline T& z()                                                     { STATIC_assert(N >= 3); return Get<2>(); }
+   inline const T& w() const                                         { STATIC_assert(N >= 4); return Get<3>(); }
+   inline T& w()                                                     { STATIC_assert(N >= 4); return Get<3>(); }
 
    inline const Vector<T, 2> xy()  const { STATIC_assert(N >= 2); return Vector<T, 2>(x(), y()); }
    inline const Vector<T, 3> xyz() const { STATIC_assert(N >= 3); return Vector<T, 3>(x(), y(), z()); }
 
 
-   String toString(int prec) const;
-   String toString() const;
+   String ToString(int prec) const;
+   String ToString() const;
 
    /// Insertion and extraction operators for C++ I/O Streams
    friend inline std::ostream& operator << (std::ostream& stream, const Vector& v)
-   { stream << v.toString(); return stream; }
+   { stream << v.ToString(); return stream; }
    friend inline std::istream& operator >> (std::istream& stream, Vector& v)
    {
       char c;
@@ -143,15 +143,15 @@ public:
    // Loads and Stores //
    //////////////////////
 
-   template <class U> inline static Vector load(U * address);
-   template <class U> inline static Vector loadBroadcast(U * address);
-   template <class U> inline static Vector gather(U * address, const Vector<int32, N>& offsets);
-   template <class U> inline static Vector gather(U * address, const Vector<int32, N>& offsets, const Mask& mask);
+   template <class U> inline static Vector Load(U * address);
+   template <class U> inline static Vector LoadBroadcast(U * address);
+   template <class U> inline static Vector Gather(U * address, const Vector<int32, N>& offsets);
+   template <class U> inline static Vector Gather(U * address, const Vector<int32, N>& offsets, const Mask& mask);
 
-   template <class U> inline void store(U * address) const;
-   template <class U> inline void storeOne(U * address) const;
-   template <class U> inline void scatter(U * address, const Vector<int32, N>& offsets) const;
-   template <class U> inline void scatter(U * address, const Vector<int32, N>& offsets, const Mask& mask) const;
+   template <class U> inline void Store(U * address) const;
+   template <class U> inline void StoreOne(U * address) const;
+   template <class U> inline void Scatter(U * address, const Vector<int32, N>& offsets) const;
+   template <class U> inline void Scatter(U * address, const Vector<int32, N>& offsets, const Mask& mask) const;
 
 
    ////////////////////////////
@@ -241,12 +241,12 @@ public:
    /// Returns a vector blending the values from tValue where m is true with the
    /// values from fValue where m is false:
    ///     blend( (t,t,f,t), (1,2,3,4), (-1,-2,-3,-4) ) ==> (1,2,-3,4)
-   friend inline const Vector blend(const Mask& m, const Vector& tValue, const Vector& fValue)
-   { return Vector(blend(m._a, tValue._a, fValue._a), blend(m._b, tValue._b, fValue._b)); }
+   friend inline const Vector Blend(const Mask& m, const Vector& tValue, const Vector& fValue)
+   { return Vector(Blend(m._a, tValue._a, fValue._a), Blend(m._b, tValue._b, fValue._b)); }
 
    /// Update
-   friend inline Vector& update(const Mask& m, Vector& lhs, const Vector& rhs)
-   { update(m._a, lhs._a, rhs._a); update(m._b, lhs._b, rhs._b); return lhs; }
+   friend inline Vector& Update(const Mask& m, Vector& lhs, const Vector& rhs)
+   { Update(m._a, lhs._a, rhs._a); Update(m._b, lhs._b, rhs._b); return lhs; }
 
    inline WriteMaskedVector<Vector> operator [] (const Mask& m)
    { return WriteMaskedVector<Vector>(*this, m); }
@@ -256,10 +256,10 @@ public:
    // Reduction Operations //
    //////////////////////////
 
-   inline T reduceSum() const;
-   inline T reduceProduct() const;
-   inline T reduceMin() const;
-   inline T reduceMax() const;
+   inline T ReduceSum() const;
+   inline T ReduceProduct() const;
+   inline T ReduceMin() const;
+   inline T ReduceMax() const;
 
 
    //////////////////////////
@@ -268,12 +268,12 @@ public:
 
    /// These are only good for non-integral data
 
-   inline T average() const;         ///< Reduce sum / N
-   inline T length() const;          ///< Euclidean length of the vector
-   inline T lengthSquared() const;   ///< Returns the length squared (avoids sqrt)
-   inline Vector unit() const;       ///< Returns normalized copy (length == 1)
+   inline T Average() const;         ///< Reduce sum / N
+   inline T Length() const;          ///< Euclidean length of the vector
+   inline T LengthSquared() const;   ///< Returns the length squared (avoids sqrt)
+   inline Vector Unit() const;       ///< Returns normalized copy (length == 1)
 
-   static T inline dot(const Vector& v0, const Vector& v1);  ///< Dot product
+   static T inline Dot(const Vector& v0, const Vector& v1);  ///< Dot product
    //static Vector<T, N> cross(const Vector& v0, const Vector& v1); ///< Cross product
 
 
@@ -281,7 +281,7 @@ public:
    // Functional Programming //
    ////////////////////////////
 
-   template <typename Functor> inline Vector map(const Functor& f) const;
+   template <typename Functor> inline Vector Map(const Functor& f) const;
 
 
    ///////////////////////////////////////////////////////////////////////////
@@ -382,10 +382,10 @@ template <class T, int N> inline T& Vector<T, N>::operator [] (int i)
 
 /// Conversion to String
 template <class T, int N>
-inline String Vector<T, N>::toString(int prec) const
+inline String Vector<T, N>::ToString(int prec) const
 { return String("[") + internalToString(prec) + "]"; }
 template <class T, int N>
-inline String Vector<T, N>::toString() const
+inline String Vector<T, N>::ToString() const
 { return String("[") + internalToString() + "]"; }
 
 /// Insertion and extraction operators for C++ I/O Streams
@@ -416,24 +416,24 @@ std::istream& Vector<T, N>::internalStreamIn(std::istream& stream)
 /// The only option, as I see it, is to define these iteratively using [],
 /// rather than recursively.
 
-template <class T, int N> template <class U> inline Vector<T, N> Vector<T, N>::load(U * addr)
+template <class T, int N> template <class U> inline Vector<T, N> Vector<T, N>::Load(U * addr)
 {
    Vector<T, N> v;
-   v._a = Vector<T, N>::VectorA::load(addr);
-   v._b = Vector<T, N>::VectorB::load(addr + Vector<T, N>::WA);
+   v._a = Vector<T, N>::VectorA::Load(addr);
+   v._b = Vector<T, N>::VectorB::Load(addr + Vector<T, N>::WA);
    return v;
 }
 
-template <class T, int N> template <class U> inline Vector<T, N> Vector<T, N>::loadBroadcast(U * addr)
+template <class T, int N> template <class U> inline Vector<T, N> Vector<T, N>::LoadBroadcast(U * addr)
 {
    Vector<T, N> v;
-   v._a = Vector<T, N>::VectorA::loadBroadcast(addr);
-   v._b = Vector<T, N>::VectorB::loadBroadcast(addr);
+   v._a = Vector<T, N>::VectorA::LoadBroadcast(addr);
+   v._b = Vector<T, N>::VectorB::LoadBroadcast(addr);
    return v;
 }
 
 template <class T, int N> template <class U> inline Vector<T, N>
-Vector<T, N>::gather(U * addr, const Vector<int32, N>& offsets)
+Vector<T, N>::Gather(U * addr, const Vector<int32, N>& offsets)
 {
    Vector<T, N> v;
    for (int i = 0; i < N; ++i) v[i] = (T)(*(addr + offsets[i]));
@@ -441,30 +441,29 @@ Vector<T, N>::gather(U * addr, const Vector<int32, N>& offsets)
 }
 
 template <class T, int N> template <class U> inline Vector<T, N>
-Vector<T, N>::gather(U * addr, const Vector<int32, N>& offsets, const Mask& mask)
+Vector<T, N>::Gather(U * addr, const Vector<int32, N>& offsets, const Mask& mask)
 {
    Vector<T, N> v;
    for (int i = 0; i < N; ++i)
-      if (mask[i])
-         v[i] = (T)(*(addr + offsets[i]));
+      if (mask[i]) v[i] = (T)(*(addr + offsets[i]));
    return v;
 }
 
-template <class T, int N> template <class U> inline void Vector<T, N>::store(U * addr) const
-{ _a.store(addr); _b.store(addr + WA); }
+template <class T, int N> template <class U> inline void Vector<T, N>::Store(U * addr) const
+{ _a.Store(addr); _b.Store(addr + WA); }
 
-template <class T, int N> template <class U> inline void Vector<T, N>::storeOne(U * addr) const
-{ _a.storeOne(addr); }
+template <class T, int N> template <class U> inline void Vector<T, N>::StoreOne(U * addr) const
+{ _a.StoreOne(addr); }
 
 template <class T, int N> template <class U> void inline
-Vector<T, N>::scatter(U * addr, const Vector<int32, N>& offsets) const
+Vector<T, N>::Scatter(U * addr, const Vector<int32, N>& offsets) const
 {
    for (int i = 0; i < N; ++i)
       *(addr + offsets[i]) = (U)(operator[](i));
 }
 
 template <class T, int N> template <class U> void inline
-Vector<T, N>::scatter(U * addr, const Vector<int32, N>& offsets, const Mask& mask) const
+Vector<T, N>::Scatter(U * addr, const Vector<int32, N>& offsets, const Mask& mask) const
 {
    for (int i = 0; i < N; ++i)
       if (mask[i])
@@ -477,17 +476,17 @@ Vector<T, N>::scatter(U * addr, const Vector<int32, N>& offsets, const Mask& mas
 // Reduction Operation Definitions //
 /////////////////////////////////////
 
-template <class T, int N> inline T Vector<T, N>::reduceSum() const
-{ return _a.reduceSum() + _b.reduceSum(); }
+template <class T, int N> inline T Vector<T, N>::ReduceSum() const
+{ return _a.ReduceSum() + _b.ReduceSum(); }
 
-template <class T, int N> inline T Vector<T, N>::reduceProduct() const
-{ return _a.reduceProduct() * _b.reduceProduct(); }
+template <class T, int N> inline T Vector<T, N>::ReduceProduct() const
+{ return _a.ReduceProduct() * _b.ReduceProduct(); }
 
-template <class T, int N> inline T Vector<T, N>::reduceMin() const
-{ T m1 = _a.reduceMin(), m2 = _b.reduceMin(); return MIN(m1, m2); }
+template <class T, int N> inline T Vector<T, N>::ReduceMin() const
+{ T m1 = _a.ReduceMin(), m2 = _b.ReduceMin(); return MIN(m1, m2); }
 
-template <class T, int N> inline T Vector<T, N>::reduceMax() const
-{ T m1 = _a.reduceMax(), m2 = _b.reduceMax(); return MAX(m1, m2); }
+template <class T, int N> inline T Vector<T, N>::ReduceMax() const
+{ T m1 = _a.ReduceMax(), m2 = _b.ReduceMax(); return MAX(m1, m2); }
 
 
 //////////////////////////
@@ -496,27 +495,27 @@ template <class T, int N> inline T Vector<T, N>::reduceMax() const
 
 /// These are only good for non-integral data
 
-template <class T, int N> inline T Vector<T, N>::average() const
+template <class T, int N> inline T Vector<T, N>::Average() const
 {
    STATIC_assert(!TypeInfo<T>::Integral);
-   return reduceSum() * RCP((float) N);
+   return ReduceSum() * RCP((float) N);
 }
 
-template <class T, int N> inline T Vector<T, N>::length() const
-{ STATIC_assert(!TypeInfo<T>::Integral); return SQRT(lengthSquared()); }
+template <class T, int N> inline T Vector<T, N>::Length() const
+{ STATIC_assert(!TypeInfo<T>::Integral); return SQRT(LengthSquared()); }
 
-template <class T, int N> inline T Vector<T, N>::lengthSquared() const
-{ STATIC_assert(!TypeInfo<T>::Integral); return dot(*this, *this); }
+template <class T, int N> inline T Vector<T, N>::LengthSquared() const
+{ STATIC_assert(!TypeInfo<T>::Integral); return Dot(*this, *this); }
 
-template <class T, int N> inline Vector<T, N> Vector<T, N>::unit() const
+template <class T, int N> inline Vector<T, N> Vector<T, N>::Unit() const
 {
    STATIC_assert(!TypeInfo<T>::Integral);
-   return (*this) * RCP_SQRT(lengthSquared());
+   return (*this) * RCP_SQRT(LengthSquared());
 }
 
 template <class T, int N> inline T
-Vector<T, N>::dot(const Vector<T, N>& v1, const Vector<T, N>& v2)
-{ STATIC_assert(!TypeInfo<T>::Integral); return (v2 * v1).reduceSum(); }
+Vector<T, N>::Dot(const Vector<T, N>& v1, const Vector<T, N>& v2)
+{ STATIC_assert(!TypeInfo<T>::Integral); return (v2 * v1).ReduceSum(); }
 
 /*template <class T, int N> inline Vector<T, N>
 Vector<T, N>::cross(const Vector<T, N>& v1, const Vector<T, N>& v2)
@@ -538,8 +537,8 @@ Vector<T, N>::cross(const Vector<T, N>& v1, const Vector<T, N>& v2)
 
 template <class T, int N>
 template <typename Functor> inline
-Vector<T, N> Vector<T, N>::map(const Functor& f) const
-{ return Vector<T, N>(_a.map(f), _b.map(f)); }
+Vector<T, N> Vector<T, N>::Map(const Functor& f) const
+{ return Vector<T, N>(_a.Map(f), _b.Map(f)); }
 
 
 /////////////////////////////////
@@ -549,7 +548,7 @@ Vector<T, N> Vector<T, N>::map(const Functor& f) const
 /// Special, for 3-vectors alone! (4-vectors implement as well, ignoring
 /// the fourth component)
 template <class T> inline
-Vector<T, 3> cross(Vector<T, 3> a, Vector<T, 3> b)
+Vector<T, 3> Cross(Vector<T, 3> a, Vector<T, 3> b)
 {
    return
       Vector<T, 3>( a.y()*b.z() - b.y()*a.z(),
@@ -576,7 +575,7 @@ Vector<T, 3> cross(Vector<T, 3> a, Vector<T, 3> b)
 ///   theta = acos(y / R) - PI/2
 ///
 template <class T> inline
-Vector<T, 3> toSphericalCoordinates(const Vector<T, 3>& s)
+Vector<T, 3> ToSphericalCoordinates(const Vector<T, 3>& s)
 {
    STATIC_assert(!TypeInfo<T>::Integral);
    float R = s.length();
@@ -587,7 +586,7 @@ Vector<T, 3> toSphericalCoordinates(const Vector<T, 3>& s)
 }
 
 template <class T> inline
-Vector<T, 3> toRectangularCoordinates(const Vector<T, 3>& s)
+Vector<T, 3> ToRectangularCoordinates(const Vector<T, 3>& s)
 {
    STATIC_assert(!TypeInfo<T>::Integral);
    // Assuming x = R, y = phi, z = theta
@@ -599,7 +598,7 @@ Vector<T, 3> toRectangularCoordinates(const Vector<T, 3>& s)
 
 // Color space conversions
 template <class T> inline
-Vector<T, 3> toHSV(const Vector<T, 3>& rgb)
+Vector<T, 3> ToHSV(const Vector<T, 3>& rgb)
 {
    STATIC_assert(!TypeInfo<T>::Integral);
    // Compute the hue
@@ -621,7 +620,7 @@ Vector<T, 3> toHSV(const Vector<T, 3>& rgb)
 }
 
 template <class T> inline
-Vector<T, 3> toRGB(const Vector<T, 3>& hsv)
+Vector<T, 3> ToRGB(const Vector<T, 3>& hsv)
 {
    STATIC_assert(!TypeInfo<T>::Integral);
    // pull h into range [0, 360)
@@ -668,7 +667,7 @@ Vector<T, 3> toRGB(const Vector<T, 3>& hsv)
 
 /// This is most useful when SOA data needs to be converted to AOS layout, for
 /// output to disk, or printing, etc. at the end of computation
-template <class T, int N, int M> inline Vector<Vector<T, N>, M> transpose(
+template <class T, int N, int M> inline Vector<Vector<T, N>, M> Transpose(
    const Vector<Vector<T, M>, N>& m)
 {
    /// Probably very inefficient, but eh, it seems to work.
@@ -727,9 +726,9 @@ public:
    PREFIX sign(Vec x)           { return Vec(SIGN(x._a), SIGN(x._b)); }
 
    PREFIX min(Vec x, Vec y)
-   { return Vec(blend(x._a < y._a, x._a, y._a), blend(x._b < y._b, x._b, y._b)); }
+   { return Vec(Blend(x._a < y._a, x._a, y._a), Blend(x._b < y._b, x._b, y._b)); }
    PREFIX max(Vec x, Vec y)
-   { return Vec(blend(x._a > y._a, x._a, y._a), blend(x._b > y._b, x._b, y._b)); }
+   { return Vec(Blend(x._a > y._a, x._a, y._a), Blend(x._b > y._b, x._b, y._b)); }
 
    PREFIX min3(Vec x, Vec y, Vec z)  { return min(x, min(y, z)); }
    PREFIX max3(Vec x, Vec y, Vec z)  { return max(x, max(y, z)); }
@@ -804,18 +803,18 @@ public:
    inline T& operator [] (int i)             { assert(i == 0); return _t; }
 
    /// Static element accessors, no references
-   template <int I> inline const T& get() const    { return _t; }
-   template <int I> inline T& get()                { return _t; }
-   template <int I> inline void set(const T& v)    { _t = v; }
+   template <int I> inline const T& Get() const    { return _t; }
+   template <int I> inline T& Get()                { return _t; }
+   template <int I> inline void Set(const T& v)    { _t = v; }
 
 
    /// String I/O representation
-   inline String toString(int prec) const { return String("[") + String(_t, prec) + "]"; }
-   inline String toString() const { return String("[") + String(_t) + "]"; }
+   inline String ToString(int prec) const { return String("[") + String(_t, prec) + "]"; }
+   inline String ToString() const { return String("[") + String(_t) + "]"; }
 
    /// Insertion and extraction operators for C++ I/O Streams
    friend inline std::ostream& operator << (std::ostream& stream, const Vector& v)
-   { stream << v.toString(); return stream; }
+   { stream << v.ToString(); return stream; }
    friend inline std::istream& operator >> (std::istream& stream, Vector& v)
    {
       char c;
@@ -840,14 +839,14 @@ public:
    /// asserted. Gather and Scatter operations are supported in base+offset
    /// format.
 
-   template <class U> inline static Vector load(U * addr)          { return Vector((T)(*addr)); }
-   template <class U> inline static Vector loadBroadcast(U * addr) { return Vector((T)(*addr)); }
-   template <class U> inline static Vector gather(U * addr, const Vector<int32, 1>& offsets)
+   template <class U> inline static Vector Load(U * addr)          { return Vector((T)(*addr)); }
+   template <class U> inline static Vector LoadBroadcast(U * addr) { return Vector((T)(*addr)); }
+   template <class U> inline static Vector Gather(U * addr, const Vector<int32, 1>& offsets)
    { return Vector((T)(*(addr + offsets._t))); }
 
-   template <class U> inline void store(U * addr)    const { (*addr) = (U)_t; }
-   template <class U> inline void storeOne(U * addr) const { (*addr) = (U)_t; }
-   template <class U> inline void scatter(U * addr,  const Vector<int32, 1>& offsets) const
+   template <class U> inline void Store(U * addr)    const { (*addr) = (U)_t; }
+   template <class U> inline void StoreOne(U * addr) const { (*addr) = (U)_t; }
+   template <class U> inline void Scatter(U * addr,  const Vector<int32, 1>& offsets) const
    { *(addr + offsets._t) = (U)_t; }
 
 
@@ -936,11 +935,11 @@ public:
    //////////////////////////
 
    /// Blend (calls blend(T::Mask, T, T)
-   friend inline const Vector blend(const Mask& m, const Vector& tValue, const Vector& fValue)
-   { return Vector(blend(m._t, tValue._t, fValue._t)); }
+   friend inline const Vector Blend(const Mask& m, const Vector& tValue, const Vector& fValue)
+   { return Vector(Blend(m._t, tValue._t, fValue._t)); }
 
    /// Update
-   friend inline Vector& update(const Mask& m, Vector& lhs, const Vector& rhs)
+   friend inline Vector& Update(const Mask& m, Vector& lhs, const Vector& rhs)
    { update(m._t, lhs._t, rhs._t); return lhs; }
 
    inline WriteMaskedVector<Vector> operator [] (const Mask& m)
@@ -951,10 +950,10 @@ public:
    // Reduction Operations //
    //////////////////////////
 
-   inline T reduceSum() const     { return _t; }
-   inline T reduceProduct() const { return _t; }
-   inline T reduceMin() const     { return _t; }
-   inline T reduceMax() const     { return _t; }
+   inline T ReduceSum() const     { return _t; }
+   inline T ReduceProduct() const { return _t; }
+   inline T ReduceMin() const     { return _t; }
+   inline T ReduceMax() const     { return _t; }
 
 
    //////////////////////////
@@ -964,10 +963,10 @@ public:
    /// These are only good for non-integral data
    /// No dot product or cross product for a 1-vector
 
-   inline T average() const { return _t; }                   ///< Reduce sum / N
-   inline T length() const  { return _t; }                   ///< Euclidean length of the vector
-   inline T lengthSquared() const { return _t*_t; }          ///< Returns the length squared (avoids sqrt)
-   inline Vector unit() const { return Vector<T, 1>(ONE<T>()); }  ///< Returns normalized copy (length == 1)
+   inline T Average() const { return _t; }                   ///< Reduce sum / N
+   inline T Length() const  { return _t; }                   ///< Euclidean length of the vector
+   inline T LengthSquared() const { return _t*_t; }          ///< Returns the length squared (avoids sqrt)
+   inline Vector Unit() const { return Vector<T, 1>(ONE<T>()); }  ///< Returns normalized copy (length == 1)
 
 
 
@@ -976,7 +975,7 @@ public:
    ////////////////////////////
 
    template <typename Functor>
-   inline Vector map(const Functor& f) const { return f(_t); }
+   inline Vector Map(const Functor& f) const { return f(_t); }
 };
 
 

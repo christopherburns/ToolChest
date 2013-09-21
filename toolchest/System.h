@@ -14,7 +14,7 @@
 // platform, ISA, etc, begin with THREE UNDERSCORES: "___"
 
 /// Resolve the OS family
-#if defined(__APPLE__)
+/*#if defined(__APPLE__)
    #define ___APPLE
    #include <TargetConditionals.h>
    
@@ -40,13 +40,13 @@
    #define ___GNU_COMPILER
 #elif defined(__clang__)
    #define ___CLANG
-#endif
+#endif*/
 
 /// Resolve microarchitectural details, such as ISA extentions
 
 /// SIMD ISA extentions and APIs here are mutually exclusive, depend on the
 /// available hardware and software environment
-#if defined(AVX)
+/*#if defined(AVX)
    #define ___AVX
 #endif
 
@@ -60,10 +60,10 @@
    #if TARGET_RT_64_BIT
       #define ___X64
    #endif
-#endif
+#endif*/
 
 
-#if defined(___APPLE)
+#if defined(___OSX)
 
    #include <mach/mach_time.h>
    #include <sys/sysctl.h>
@@ -80,46 +80,6 @@
 
 namespace ToolChest
 {
-
-   /// Here we find out which OS symbol is defined, and then we define any other
-   /// symbols which are appropriate for that type of system. Make sure the build
-   /// system defines the appropriate tokens for your system.
-
-   // Beware!! IA64 defines "long int" as 64-bit. int is 32-bit.
-   // Revisit this code later, when needed, to make it more robust. Right now it
-   // is rather ad hoc.
-   #ifdef ___GNU_LINUX  // It is the build script's responsibility to define this
-
-      typedef signed char              int8;
-      typedef short int                int16;
-	   #if defined(___X64)
-      typedef int                      int32;
-	   #else
-      typedef long int                 int32;
-	   #endif
-      typedef long long int            int64;
-
-      typedef unsigned char            uint8;
-      typedef unsigned short int       uint16;
-
-	   #if defined(___X64)
-      typedef unsigned int             uint32;
-	   #else
-      typedef unsigned long int        uint32;
-	   #endif
-      typedef unsigned long long int   uint64;
-
-      typedef float                    float32;
-      typedef double                   float64;
-
-	   #if defined(___X64)
-      typedef long double              float128;
-	   #endif
-
-   #endif // LINUX
-
-   #ifdef ___APPLE /// Not sure if it matters whether OS X or iOS
-
    typedef signed char           int8;
    typedef short                 int16;
    typedef int                   int32;
@@ -132,8 +92,6 @@ namespace ToolChest
 
    typedef float                 float32;
    typedef double                float64;
-
-   #endif // ___APPLE
 }
 
 

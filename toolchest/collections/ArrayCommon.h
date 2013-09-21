@@ -45,8 +45,8 @@ namespace Collections
          int _size;
          ToolChest::Ref<Common::InitializedBuffer<E> > _data;
       
-         inline ArrayIterator(const Mutable::Array<E>& a)   : _size(a._size), _data(a._data), _i(-1) {}
-         inline ArrayIterator(const Immutable::Array<E>& a) : _size(a._size), _data(a._data), _i(-1) {}
+         inline ArrayIterator(const Mutable::Array<E>& a)   : _i(-1), _size(a._size), _data(a._data) {}
+         inline ArrayIterator(const Immutable::Array<E>& a) : _i(-1), _size(a._size), _data(a._data) {}
       
       public:
          inline ArrayIterator(const ArrayIterator& itr) : _i(itr._i), _size(itr._size), _data(itr._data) {}
@@ -82,9 +82,9 @@ namespace Collections
 
          /// The data array's reference counter is automatically incremented
          inline ArrayBuilder(const ArrayBuilder& rhs)
-            : _complete(rhs._complete)
-            , _array(rhs._array) 
-            , _nextEmptyIndex(rhs._nextEmptyIndex) { }
+            : _array(rhs._array) 
+            , _nextEmptyIndex(rhs._nextEmptyIndex)
+            , _complete(rhs._complete) { }
 
          /// Again, Ref<E> handles all the reference counting correctly, even if
          /// _data == rhs._data

@@ -54,7 +54,7 @@ private:
          , int i0, int i1, int i2);
      
       inline bool IsInCircumcircle(Vertex p) const
-      { return (p - center).lengthSquared() <= radiusSq; }
+      { return (p - center).LengthSquared() <= radiusSq; }
       
       inline int operator [] (int i) const { return vIndices[i]; }
 
@@ -162,9 +162,9 @@ private:
 inline Delaunay::Vertex 
 Delaunay::Triangle::circumcenter(Delaunay::Vertex p1, Delaunay::Vertex p2, Delaunay::Vertex p3)
 {
-   float d_ca = Vertex::dot(p3-p1, p2-p1);
-   float d_ba = Vertex::dot(p3-p2, p1-p2);
-   float d_cb = Vertex::dot(p1-p3, p2-p3);
+   float d_ca = Vertex::Dot(p3-p1, p2-p1);
+   float d_ba = Vertex::Dot(p3-p2, p1-p2);
+   float d_cb = Vertex::Dot(p1-p3, p2-p3);
    
    float n1 = d_ba * d_cb;
    float n2 = d_cb * d_ca;
@@ -182,7 +182,7 @@ inline Delaunay::Triangle::Triangle
    vIndices[0] = i0; vIndices[1] = i1; vIndices[2] = i2;
    
    center = circumcenter(v0, v1, v2);
-   radiusSq = (v0 - center).lengthSquared();
+   radiusSq = (v0 - center).LengthSquared();
    radius = SQRT(radiusSq);
 }
 
