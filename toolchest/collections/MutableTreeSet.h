@@ -16,7 +16,7 @@ namespace Collections
 
       template <class E> struct TreeSetTraits
       {
-         typedef Common::BinaryTreeIterator<E, TreeSet<E> > Iterator;
+         typedef Common::MutableBinaryTreeIterator<E, TreeSet<E> > Iterator;
          typedef Common::BinaryTreeBuilder<E, TreeSet<E> > Builder;
       };
 
@@ -26,12 +26,12 @@ namespace Collections
       {
       public:
       
-         friend class Common::BinaryTreeIterator<E, TreeSet<E> >;
+         friend class Common::MutableBinaryTreeIterator<E, TreeSet<E> >;
          friend class Common::BinaryTreeBuilder<E, TreeSet<E> >;
       
          typedef E ElementType;
          typedef Common::BinaryTree<E> Tree;
-         typedef Common::BinaryTreeIterator<E, TreeSet<E> > Iterator;
+         typedef Common::MutableBinaryTreeIterator<E, TreeSet<E> > Iterator;
          typedef Common::BinaryTreeNode<E> Node;
          typedef Common::BinaryTreeBuilder<E, TreeSet<E> > Builder;
 
@@ -142,6 +142,7 @@ namespace Collections
          while (itr.HasNext()) *this -= itr.Next();
          return *this;
       }
+
 
 
       /// Note: Insert and Remove are here and not in Set because of the

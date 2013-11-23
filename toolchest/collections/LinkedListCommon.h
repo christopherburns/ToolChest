@@ -69,8 +69,6 @@ namespace Collections
          }
          inline const E& Peek() const
          { assert(HasNext()); return _nodePool->Index(_next).payload; }
-         inline E& Peek()
-         { assert(HasNext()); return _nodePool->Index(_next).payload; }
 
          friend class Immutable::LinkedList<E>;
          friend class Mutable::LinkedList<E>;

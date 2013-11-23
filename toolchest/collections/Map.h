@@ -88,7 +88,7 @@ namespace Collections
       Iterator iterator = this->GetIterator();
       while (iterator.HasNext())
       {
-         Common::KeyValuePair<K, V>& e = iterator.Next();
+         const Common::KeyValuePair<K, V>& e = iterator.Next();
          if (key == e.key) return e.value;
       }
       return otherwise;
@@ -116,7 +116,7 @@ namespace Collections
       Builder builder  = Builder(this->Size());
       while (iterator.HasNext())
       {
-         Common::KeyValuePair<K, V> e = iterator.Next();
+         const Common::KeyValuePair<K, V>& e = iterator.Next();
          if (p(e.key)) builder.AddElement(e);
       }
       return builder.Result();

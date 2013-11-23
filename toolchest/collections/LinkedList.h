@@ -8,7 +8,6 @@
 // Class LinkedList <- Sequence <- Traversable //
 /////////////////////////////////////////////////
 
-
 // Problem: Mutable::Array<E> uses reference semantics for copy constructor
 // but the _size member in the array is copied. Bug happens here:
 //    list0 = MakeList();

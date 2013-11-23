@@ -99,9 +99,86 @@ namespace Collections
       // Binary Tree Iterator //
       //////////////////////////
 
+
+      /// We are looking for the next-left-most node. The next node is not 
+      /// in our left subtree, but is the left-most node in the right 
+      /// subtree, if we have a right subtree. If we do not have a right 
+      /// subtree, then we pop. 
+      #define TREE_ITERATOR_NEXT() \
+         assert(HasNext()); \
+         E& e = _pool->Index(_nextNode).payload; \
+         BinaryTreeNode<E>& n = _pool->Index(_nextNode); \
+         if (n.right >= 0) \
+         { \
+            _nextNode = n.right; \
+            while (_pool->Index(_nextNode).left != -1) \
+            { \
+               _stack.Push(_nextNode); \
+               _nextNode = _pool->Index(_nextNode).left; \
+            } \
+         } \
+         else if (_stack.Size() > 0) _nextNode = _stack.Pop(); \
+         else _nextNode = -1; \
+         return e; 
+
+
+      template <class E, class C> class MutableBinaryTreeIterator
+      {
+      protected:
+
+         friend class BinaryTree<E>;
+
+         friend class Immutable::TreeSet<E>;
+         friend class Mutable::TreeSet<E>;
+         friend class Immutable::TreeMap<typename C::KeyType, typename C::ValueType>;
+         friend class Mutable::TreeMap<typename C::KeyType, typename C::ValueType>;
+
+         Ref<MemoryPool<BinaryTreeNode<E> > > _pool;
+         Vector<int> _stack;
+         int _nextNode;
+
+         inline MutableBinaryTreeIterator(const BinaryTree<E>& a) 
+            : _pool(a._pool)
+            , _nextNode(a._root) 
+         {
+            /// The initial node should be the left-most node
+            /// and the stack should contain the path to get there
+            if (_nextNode != -1)
+            {
+               while (_pool->Index(_nextNode).left != -1)
+               {
+                  _stack.Push(_nextNode);
+                  _nextNode = _pool->Index(_nextNode).left;
+               }
+            }            
+         }
+
+      public:
+
+         inline MutableBinaryTreeIterator(const MutableBinaryTreeIterator<E, C>& itr)
+            : _pool(itr._pool)
+            , _stack(itr._stack.Copy())  //< Copy to make sure it's not aliased
+            , _nextNode(itr._nextNode) {}
+
+         inline bool HasNext() const { return _nextNode != -1; }
+         inline E& Next() { TREE_ITERATOR_NEXT(); }
+
+         inline const E& Peek() const
+         { assert(HasNext()); return _pool->Index(_nextNode).payload; }
+         inline E& Peek() 
+         { assert(HasNext()); return _pool->Index(_nextNode).payload; }
+
+
+         /// We provide an auto cast to bool operator, which signals if an
+         /// iterator points to a valid item or not. This facility dovetails
+         /// with the design of some container functions such as Contains, which
+         /// returns an iterator but can be used as if if simply returned a bool
+         inline operator bool() const { return HasNext(); }
+      };
+
       template <class E, class C> class BinaryTreeIterator
       {
-      private:
+      protected:
 
          friend class BinaryTree<E>;
 
@@ -132,53 +209,23 @@ namespace Collections
 
       public:
 
-         inline BinaryTreeIterator(const BinaryTreeIterator<E, C>& itr)
+         inline BinaryTreeIterator(const MutableBinaryTreeIterator<E, C>& itr)
             : _pool(itr._pool)
             , _stack(itr._stack.Copy())  //< Copy to make sure it's not aliased
-            , _nextNode(itr._nextNode)
-         {}
+            , _nextNode(itr._nextNode) {}
 
          inline bool HasNext() const { return _nextNode != -1; }
-
-         /// Amortized O(1) i believe
-         inline E& Next()
-         {
-            assert(HasNext());
-
-            E& e = _pool->Index(_nextNode).payload;
-
-            BinaryTreeNode<E>& n = _pool->Index(_nextNode);
-
-            /// We are looking for the next-left-most node. The next node is not
-            /// in our left subtree, but is the left-most node in the right
-            /// subtree, if we have a right subtree. If we do not have a right
-            /// subtree, then we pop.
-            if (n.right >= 0)
-            {
-               _nextNode = n.right;
-               while (_pool->Index(_nextNode).left != -1)
-               {
-                  _stack.Push(_nextNode);
-                  _nextNode = _pool->Index(_nextNode).left;
-               }
-            }
-            else if (/* n.right == -1 && */_stack.Size() > 0) _nextNode = _stack.Pop();
-            else /* n.right == -1 && _stack.Empty() */ _nextNode = -1;
-
-            return e;
-         }
+         inline const E& Next() { TREE_ITERATOR_NEXT(); }
 
          inline const E& Peek() const
-         {
-            assert(HasNext());
-            return _pool->Index(_nextNode).payload;
-         }
+         { assert(HasNext()); return _pool->Index(_nextNode).payload; }
 
-         inline E& Peek() 
-         {
-            assert(HasNext());
-            return _pool->Index(_nextNode).payload;
-         }
+
+         /// We provide an auto cast to bool operator, which signals if an
+         /// iterator points to a valid item or not. This facility dovetails
+         /// with the design of some container functions such as Contains, which
+         /// returns an iterator but can be used as if if simply returned a bool
+         inline operator bool() const { return HasNext(); }
       };
 
 

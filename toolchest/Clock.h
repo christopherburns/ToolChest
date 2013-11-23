@@ -4,8 +4,6 @@
 #include "System.h"
 #include "String.h"
 
-#include <mach/mach_time.h>
-
 namespace ToolChest
 {
    class TimeStamp;

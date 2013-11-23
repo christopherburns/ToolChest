@@ -41,13 +41,13 @@ namespace ToolChest
    class Object
    {
    private:
-      int _refCtr;
+      mutable int _refCtr;
 
    public:
       inline Object() : _refCtr(0) {}
       virtual ~Object() {}
-      inline void AddRef () { ++_refCtr; }
-      inline void Release() { if (--_refCtr <= 0) delete this; }
+      inline void AddRef () const { ++_refCtr; }
+      inline void Release() const { if (--_refCtr <= 0) delete this; }
    };
 }
 

@@ -7,10 +7,10 @@ ASM = asm
 
 CC = clang++ 
 
-CFLAGS = -std=c++11 -O3 -D__APPLE__ -Wunused-value
+CFLAGS = -std=c++11 -O3 -D___OSX -Itoolchest/ -Wunused-value
 LDFLAGS = -lstdc++
 
-EXES = testunit profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
+EXES = testunit profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay 
 
 .PHONY: all $(EXES)
 all: $(EXES)
@@ -18,6 +18,10 @@ all: $(EXES)
 delaunay: test/Delaunay.cpp test/Delaunay.h test/PeriodicDelaunay.h test/Bounds.h
 	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
 	mkdir -vp bin; mv -f $@ $(BIN)/;
+
+#mesh: test/MeshTest.cpp test/Mesh.h
+#	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
+#	mkdir -vp bin; mv -f $@ $(BIN)/;
 
 testunit: test/UnitTests.cpp
 	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<

@@ -21,7 +21,7 @@ namespace Collections
       typedef typename CTraits::Iterator Iterator;
       typedef typename CTraits::Builder Builder;
 
-      virtual bool Contains(const E& element) const;
+      virtual Iterator Contains(const E& element) const;
       virtual bool IsSubsetOf(const C& set) const;
 
       virtual C Union(const C& set) const;
@@ -51,13 +51,16 @@ namespace Collections
    /////////////////////
 
    /// Identical to Sequence::Contains
-   template <class E, class C, class CTraits> bool 
+   template <class E, class C, class CTraits> typename Set<E, C, CTraits>::Iterator 
    Set<E, C, CTraits>::Contains(const E& element) const
    {
       Iterator iterator = this->GetIterator();
       while (iterator.HasNext())
-         if (element == iterator.Next()) return true;
-      return false;
+      {
+         if (element == iterator.Peek()) return iterator;
+         else iterator.Next();
+      }
+      return iterator;
    }
 
    /// O(n log n)
