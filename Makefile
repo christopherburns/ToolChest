@@ -1,53 +1,67 @@
 
-TOP=$(shell pwd)
-
-BIN = bin
-BUILD = build
-ASM = asm
+BIN_DIR = bin
+BUILD_DIR = build
+ASM_DIR = asm
+SRC_DIR = test
 
 CC = clang++ 
 
 CFLAGS = -std=c++11 -O3 -D___OSX -Itoolchest/ -Wunused-value
 LDFLAGS = -lstdc++
 
-EXES = testunit profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay 
+EXES =  profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay mesh
+EXES := $(EXES:%=$(BIN_DIR)/%)
 
 .PHONY: all $(EXES)
 all: $(EXES)
 
-delaunay: test/Delaunay.cpp test/Delaunay.h test/PeriodicDelaunay.h test/Bounds.h
-	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
-	mkdir -vp bin; mv -f $@ $(BIN)/;
+print:
+	@echo "Headers:" $(EXES)
+	@echo "Compile Flags:" $(CFLAGS)
+	@echo "Link Flags:" $(LDFLAGS)
+	
+# Target directory rules
 
-#mesh: test/MeshTest.cpp test/Mesh.h
-#	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
-#	mkdir -vp bin; mv -f $@ $(BIN)/;
+$(BUILD_DIR): 
+	mkdir -p $(BUILD_DIR)
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+$(ASM_DIR):
+	mkdir -p $(ASM_DIR)
 
-testunit: test/UnitTests.cpp
-	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
-	mkdir -vp bin; mv -f $@ $(BIN)/;
+# Object rules
 
-profilelinkedlist: test/ProfileLinkedList.cpp
-	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
-	mkdir -vp bin; mv -f $@ $(BIN)/;
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-profilesort: test/ProfileSort.cpp
-	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
-	mkdir -vp bin; mv -f $@ $(BIN)/;
+# Executable rules
 
-profilearray: test/ProfileArray.cpp
-	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
-	mkdir -vp bin; mv -f $@ $(BIN)/;
+$(BIN_DIR)/delaunay: $(BUILD_DIR)/Delaunay.o test/Delaunay.h test/PeriodicDelaunay.h test/Bounds.h | $(BIN_DIR)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
 
-profiletreemap: test/ProfileTreeMap.cpp
-	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
-	mkdir -vp bin; mv -f $@ $(BIN)/;
+$(BIN_DIR)/mesh: $(BUILD_DIR)/MeshTest.o test/Mesh.h | $(BIN_DIR)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
 
-profiletreeset: test/ProfileTreeSet.cpp
-	${CC} -o $@ ${CFLAGS} ${LDFLAGS} $<
-	mkdir -vp bin; mv -f $@ $(BIN)/;
+$(BIN_DIR)/testunit: $(BUILD_DIR)/UnitTests.o | $(BIN_DIR)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
+
+$(BIN_DIR)/profilelinkedlist: $(BUILD_DIR)/ProfileLinkedList.o | $(BIN_DIR)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
+
+$(BIN_DIR)/profilesort: $(BUILD_DIR)/ProfileSort.o | $(BIN_DIR)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
+
+$(BIN_DIR)/profilearray: $(BUILD_DIR)/ProfileArray.o | $(BIN_DIR)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
+
+$(BIN_DIR)/profiletreemap: $(BUILD_DIR)/ProfileTreeMap.o | $(BIN_DIR)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
+
+$(BIN_DIR)/profiletreeset: $(BUILD_DIR)/ProfileTreeSet.o | $(BIN_DIR)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
 
 
 
 clean:
-	rm -rf $(BIN)/*
+	rm -rf $(BIN_DIR)
+	rm -rf $(BUILD_DIR)
