@@ -715,6 +715,8 @@ lerp(const Vector<T, N>& coord0, const Vector<T, N>& coord1, const Vector<float,
 inline VectorNf lerp(float coord0, float coord1, const VectorNf& t)
 { return (VectorNf(1.0f) - t) * coord0 + t*coord1; }
 
+template <class T> inline T lerp(const T& t0, const T& t1, float f)
+{ return (1.0f-f) * t0 + f * t1; }
 
 
 //////////////////////////////////////////////////////////////////////////////

@@ -14,7 +14,14 @@ using Collections::Mutable::Array;
 class Cube
 {
 public:
-   struct Vertex { Vector4f position, tangent, bitangent; };
+   struct Vertex 
+   { 
+      Vector4f position, tangent, bitangent; 
+      friend inline Vertex operator * (float f, const Vertex& v)
+      { Vertex r; r.position = f * v.position; r.tangent = f * v.tangent; r.bitangent = f * v.bitangent; return r; }
+      friend inline Vertex operator + (const Vertex& l, const Vertex& r)
+      { Vertex v; v.position = l.position + r.position; v.tangent = l.tangent * r.tangent; v.bitangent = l.bitangent * r.bitangent; return v; }
+   };
 
    static const uint32 NumVertices = 24;
    static const uint32 NumTriangles = 12;
@@ -85,7 +92,14 @@ public:
 class LoneTriangle
 {
 public:
-   struct Vertex { Vector4f position; };
+   struct Vertex 
+   { 
+      Vector4f position; 
+      friend inline Vertex operator * (float f, const Vertex& v)
+      { Vertex r; r.position = f * v.position; return r; }
+      friend inline Vertex operator + (const Vertex& l, const Vertex& r)
+      { Vertex v; v.position = l.position + r.position; return v; }
+   };
 
    static const uint32 NumVertices = 3;
    static const uint32 NumTriangles = 1;
@@ -119,9 +133,12 @@ int main(int argc, const char ** argv)
       Ref<Topology<Cube::Vertex> > cubeTopology = new Topology<Cube::Vertex>(cubeTriangleMesh);
       cubeTopology->Print();
 
-      //Ref<TriangleMesh<Cube::Vertex> > subdivided = Subdivider<Cube::Vertex>::Loop(cubeTopology);
+      Ref<TriangleMesh<Cube::Vertex> > subdivided = Subdivider<Cube::Vertex>::Loop(cubeTopology);
+      Ref<Topology<Cube::Vertex> > cubeTopology1 = new Topology<Cube::Vertex>(subdivided);
+      cubeTopology1->Print();
    }
 
+   printf("----------------------------------------------------------------\n");
    {
       Ref<TriangleMesh<LoneTriangle::Vertex> > triMesh = new TriangleMesh<LoneTriangle::Vertex>(LoneTriangle::NumTriangles, LoneTriangle::NumVertices);
       memcpy(triMesh->GetVertices(), LoneTriangle::Vertices(), sizeof(LoneTriangle::Vertex)*LoneTriangle::NumVertices);
@@ -129,6 +146,10 @@ int main(int argc, const char ** argv)
 
       Ref<Topology<LoneTriangle::Vertex> > cubeTopology = new Topology<LoneTriangle::Vertex>(triMesh);
       cubeTopology->Print();
+
+      Ref<TriangleMesh<LoneTriangle::Vertex> > subdivided = Subdivider<LoneTriangle::Vertex>::Loop(cubeTopology);
+      Ref<Topology<LoneTriangle::Vertex> > cubeTopology1 = new Topology<LoneTriangle::Vertex>(subdivided);
+      cubeTopology1->Print();
    }
 
    return 0;

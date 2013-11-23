@@ -147,50 +147,51 @@ public:
       //while (eItr.HasNext())
       for (int e = 0; e < _edges.Size(); ++e)
       {
-         Edge edge = _edges[e];
+         int face0 = _edges[e].f0;
+         int face1 = _edges[e].f1;
 
          /// If we have two triangles, we link them in the triangle adjacency array
-         if (edge.f0 != -1 && edge.f1 != -1)
+         if (face0 != -1 && face1 != -1)
          {
-            //printf("      Edge (%i, %i) has two triangle neighbors (%i, %i)\n", edge.v0, edge.v1, edge.f0, edge.f1);
+            //printf("      Edge (%i, %i) has two triangle neighbors (%i, %i)\n", edge.v0, edge.v1, face0, face1);
             /// This is kind of ugly. For each triangle, iterate over it's 
             /// three adjacency slots looking for an empty one, then fill it
             /// in
             {
                int v = 0;
-               //printf("          adjTris[3*%i] = { %i, %i, %i}\n", edge.f0
-               //   , _adjTriangles[3*edge.f0+0]
-               //   , _adjTriangles[3*edge.f0+1]
-               //   , _adjTriangles[3*edge.f0+2]);
+               //printf("          adjTris[3*%i] = { %i, %i, %i}\n", face0
+               //   , _adjTriangles[3*face0+0]
+               //   , _adjTriangles[3*face0+1]
+               //   , _adjTriangles[3*face0+2]);
 
-               while (_adjTriangles[edge.f0].t[v] != -1 && v < 3) v++;   assert(v < 3);
-               _adjTriangles[edge.f0].t[v] = edge.f1;
+               while (_adjTriangles[face0].t[v] != -1 && v < 3) v++;   assert(v < 3);
+               _adjTriangles[face0].t[v] = face1;
 
             }
             {
                int v = 0;
-               //printf("          adjTris[3*%i] = { %i, %i, %i}\n", edge.f1
-               //   , _adjTriangles[3*edge.f1+0]
-               //   , _adjTriangles[3*edge.f1+1]
-               //   , _adjTriangles[3*edge.f1+2]);
+               //printf("          adjTris[3*%i] = { %i, %i, %i}\n", face1
+               //   , _adjTriangles[3*face1+0]
+               //   , _adjTriangles[3*face1+1]
+               //   , _adjTriangles[3*face1+2]);
 
-               while (_adjTriangles[edge.f1].t[v] != -1 && v < 3) v++;   assert(v < 3);
-               _adjTriangles[edge.f1].t[v] = edge.f0;
+               while (_adjTriangles[face1].t[v] != -1 && v < 3) v++;   assert(v < 3);
+               _adjTriangles[face1].t[v] = face0;
             }
          }
 
-         if (edge.f0 != -1)
+         if (face0 != -1)
          {
             int v = 0;
-            while (_adjTriangles[edge.f0].e[v] != -1 && v < 3) v++;   assert(v < 3);
-            _adjTriangles[edge.f0].e[v] = e;
+            while (_adjTriangles[face0].e[v] != -1 && v < 3) v++;   assert(v < 3);
+            _adjTriangles[face0].e[v] = e;
          }
 
-         if (edge.f1 != -1)
+         if (face1 != -1)
          {
             int v = 0;
-            while (_adjTriangles[edge.f1].e[v] != -1 && v < 3) v++;   assert(v < 3);
-            _adjTriangles[edge.f1].e[v] = e;
+            while (_adjTriangles[face1].e[v] != -1 && v < 3) v++;   assert(v < 3);
+            _adjTriangles[face1].e[v] = e;
          }
       }
 
@@ -232,8 +233,8 @@ public:
 
    /// Accessors
    inline Ref<TriangleMesh<V> > GetMesh() const { return _mesh; }
-   inline Collections::Mutable::TreeSet<Edge> GetEdges() const { return _edges; }
-   inline Collections::Mutable::Array<int> GetAdjacency() const { return _adjTriangles; }
+   inline Collections::Mutable::Array<Edge> GetEdges() const { return _edges; }
+   inline Collections::Mutable::Array<TriAdjacency> GetAdjacency() const { return _adjTriangles; }
 
 private:
    Ref<TriangleMesh<V> > _mesh;
@@ -252,7 +253,7 @@ private:
 /// .JMMmmmmMMM  `Ybmd9'   `Ybmd9'  MMbmmd'      P"Ybmmd"  `Mbod"YML.P^YbmdP'   `Wbmd"MML..JMML.    W     .JMML.M9mmmP' .JMML.`Ybmd9'.JMML  JMML.
 ///                                 MM                                                                                                           
 ///                               .JMML.                                                                                                         
-#if 0
+#if 1
 template <class V> class Subdivider : public ToolChest::Object
 {
 public:
@@ -291,7 +292,7 @@ public:
             auto edge = eItr.Next(); 
             assert(edge.v0 >= 0 && edge.v0 < NUM_OLD_VERTICES && edge.v1 >= 0 && edge.v1 < NUM_OLD_VERTICES);
             assert(NUM_OLD_VERTICES + e < NUM_NEW_VERTICES);
-            vertices[NUM_OLD_VERTICES + e] = lerp(edge.v0, edge.v1, 0.5f);
+            vertices[NUM_OLD_VERTICES + e] = lerp(vertices[edge.v0], vertices[edge.v1], 0.5f);
             e++;
          }
       }
@@ -301,35 +302,123 @@ public:
          bool * tMask = new bool[NUM_OLD_TRIANGLES];
          for (int i = 0; i < NUM_OLD_TRIANGLES; ++i) tMask[i] = true;
 
-         int e = 0, t = 0;
-
-         auto eItr = edges.GetIterator();
-         while (eItr.HasNext())
+         int t = 0; // New triangle count
+         for (int e = 0; e < edges.Size(); ++e)
          {
-            auto edge = eItr.Next();
-            if (edge.f0 != -1 && tMask[edge.f0])
+            int f0 = edges[e].f0;
+            int f1 = edges[e].f1;
+
+            //std::cout << "   Attacking edge " << edges[e] << "\n";
+
+
+            ///////////////////////
+            // Tessellate Face 0 //
+            ///////////////////////
+
+            if (f0 != -1 && tMask[f0])
             {
-               /// We need to collect all the vertices
-               Triangle oldT = oldTriangles[edge.f0];
-               int midPoint0 = 
+               //std::cout << "      Tessellating face " << f0 << "\n";
 
+               // Gather the 6 vertices and get them sorted simply
+               auto v0 = oldTriangles[f0].i;
+               auto v2 = oldTriangles[f0].j;
+               auto v4 = oldTriangles[f0].k;
 
-               newTriangles[t] =  ... ;
-               tMask[edge.f0] = false;
-               t++;
+               /// Locate v1, v3, v5 via edge links. The difficulty here is that the edges do
+               /// not orient themselves w.r. to the triangle's winding, because they are not
+               /// half edges. 
+
+               int e0 = adj[f0].e[0], e1 = adj[f0].e[1], e2 = adj[f0].e[2];
+
+               typename Topology<V>::Edge eA; eA.v0 = v0; eA.v1 = v2;
+               typename Topology<V>::Edge eB; eB.v0 = v2; eB.v1 = v4;
+               typename Topology<V>::Edge eC; eC.v0 = v4; eC.v1 = v0;
+
+               /// Comparisons would be 2x faster if the edge's vertex indices were always sorted
+               auto v1 
+                  = NUM_OLD_VERTICES
+                  + (eA == edges[e0] ? e0 
+                  : (eA == edges[e1] ? e1
+                  : e2));
+               auto v3
+                  = NUM_OLD_VERTICES
+                  + (eB == edges[e0] ? e0 
+                  : (eB == edges[e1] ? e1
+                  : e2));
+               auto v5
+                  = NUM_OLD_VERTICES
+                  + (eC == edges[e0] ? e0 
+                  : (eC == edges[e1] ? e1
+                  : e2));
+
+               //printf("      Vertex ordering: %i %i %i %i %i %i\n", v0, v1, v2, v3, v4, v5);
+
+               { Triangle& tri = newTriangles[t++]; tri.i = v5; tri.j = v0; tri.k = v1; }
+               { Triangle& tri = newTriangles[t++]; tri.i = v1; tri.j = v2; tri.k = v3; }
+               { Triangle& tri = newTriangles[t++]; tri.i = v3; tri.j = v4; tri.k = v5; }
+               { Triangle& tri = newTriangles[t++]; tri.i = v1; tri.j = v3; tri.k = v5; }
+
+               tMask[f0] = false;
             }
 
-            if (edge.f1 != -1 && tMask[edge.f1])
+            ///////////////////////
+            // Tessellate Face 1 //
+            ///////////////////////
+
+            if (f1 != -1 && tMask[f1])
             {
-               
-               newTriangles[t] =  ... ;
-               tMask[edge.f1] = false;
-               t++;
+               //std::cout << "      Tessellating face " << f0 << "\n";
+
+               // Gather the 6 vertices and get them sorted simply
+               auto v0 = oldTriangles[f1].i;
+               auto v2 = oldTriangles[f1].j;
+               auto v4 = oldTriangles[f1].k;
+
+               /// Locate v1, v3, v5 via edge links. The difficulty here is that the edges do
+               /// not orient themselves w.r. to the triangle's winding, because they are not
+               /// half edges. 
+
+               int e0 = adj[f1].e[0], e1 = adj[f1].e[1], e2 = adj[f1].e[2];
+
+               typename Topology<V>::Edge eA; eA.v0 = v0; eA.v1 = v2;
+               typename Topology<V>::Edge eB; eB.v0 = v2; eB.v1 = v4;
+               typename Topology<V>::Edge eC; eC.v0 = v4; eC.v1 = v0;
+
+               /// Comparisons would be 2x faster if the edge's vertex indices were always sorted
+               auto v1 
+                  = NUM_OLD_VERTICES
+                  + (eA == edges[e0] ? e0 
+                  : (eA == edges[e1] ? e1
+                  : e2));
+               auto v3
+                  = NUM_OLD_VERTICES
+                  + (eB == edges[e0] ? e0 
+                  : (eB == edges[e1] ? e1
+                  : e2));
+               auto v5
+                  = NUM_OLD_VERTICES
+                  + (eC == edges[e0] ? e0 
+                  : (eC == edges[e1] ? e1
+                  : e2));
+
+               //printf("      Vertex ordering: %i %i %i %i %i %i\n", v0, v1, v2, v3, v4, v5);
+
+               Triangle& tri = newTriangles[t++];
+               tri.i = v5; tri.j = v0; tri.k = v1; 
+               tri.i = v1; tri.j = v2; tri.k = v3; 
+               tri.i = v3; tri.j = v4; tri.k = v5; 
+               tri.i = v1; tri.j = v3; tri.k = v5; 
+
+               tMask[f1] = false;
             }
          }
 
          delete [] tMask;
       }
+
+
+      /// Last step is to apply the mask to the vertex positions, smoothing, etc.
+
 
 
       return newMesh;   /// silently wrapped in a reference counter
