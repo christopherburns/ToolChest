@@ -6,10 +6,10 @@ SRC_DIR = test
 
 CC = clang++ 
 
-CFLAGS = -std=c++11 -O3 -D___OSX -Itoolchest/ -Wunused-value
+CFLAGS = -std=c++11 -O0 -g -D___OSX -Itoolchest/ -Wunused-value
 LDFLAGS = -lstdc++
 
-EXES =  profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay mesh
+EXES =  testunit mesh profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
 EXES := $(EXES:%=$(BIN_DIR)/%)
 
 .PHONY: all $(EXES)
