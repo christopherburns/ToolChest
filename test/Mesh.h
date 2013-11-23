@@ -49,6 +49,8 @@ private:
 };
 
 
+
+
 ///                                      ,,                                
 /// MMP""MM""YMM                       `7MM                                
 /// P'   MM   `7                         MM                                
@@ -79,17 +81,32 @@ public:
 
       inline friend std::ostream& operator << (std::ostream& s, const Edge& e) 
       { return s << "[" << e.v0 << " " << e.v1 << " " << e.f0 << " " << e.f1 << "]"; }
-       
+   };
+
+   struct TriAdjacency
+   {
+      int t[3]; int e[3];
+      inline void Clear() { t[0] = t[1] = t[2] = e[0] = e[1] = e[2] = -1; }
+      inline bool operator == (const TriAdjacency& rhs) const
+      { bool r = true; for (int i = 0; i < 3; ++i) r &= t[i] == rhs.t[i] && e[i] == rhs.e[i]; return r; }
+      inline bool operator < (const TriAdjacency& rhs) const
+      {
+         if (MIN(t[0], MIN(t[1], t[2])) < MIN(rhs.t[0], MIN(rhs.t[1], rhs.t[2]))) return true;
+         else if (MIN(t[0], MIN(t[1], t[2])) == MIN(rhs.t[0], MIN(rhs.t[1], rhs.t[2]))) 
+            return (MAX(t[0], MAX(t[1], t[2])) < MAX(rhs.t[0], MAX(rhs.t[1], rhs.t[2])));
+         else return false;
+      }
    };
 
    inline Topology(Ref<TriangleMesh<V> > mesh) 
       : _mesh(mesh)
-      , _adjTriangles(Collections::Mutable::Array<int>(mesh->NumTriangles()*3))
+      , _adjTriangles(Collections::Mutable::Array<TriAdjacency>(mesh->NumTriangles()))
    {
       //printf("Topology():\n");
       //printf("   AdjList Size: %i\n", _adjTriangles.Size());
       //printf("   Building Edge list...\n");
 
+      Collections::Mutable::TreeSet<Edge> edgeSet;
 
       const Triangle * tris = mesh->GetTriangles();
       for (int t = 0; t < mesh->NumTriangles(); ++t)
@@ -101,26 +118,38 @@ public:
 
          for (int c = 0; c < 3; c++)
          {
-            auto edge = _edges.Contains(e[c]);
+            auto edge = edgeSet.Contains(e[c]);
 
             //if (edge.HasNext()) { auto e_ = edge.Peek(); std::cout << "   Edge " << e_ << " already in set\n"; }
             //else std::cout << "   Adding edge " << e[c] << "to set\n";
 
             if (edge.HasNext()) edge.Next().f1 = t;
-            else _edges += e[c];
+            else edgeSet += e[c];
          }
+      }
+
+
+      /// Task: Copy the edges into the array that we've allocated for them, so they
+      /// can be random accessed in constant time
+      _edges = Collections::Mutable::Array<Edge>(edgeSet.Size());
+      {
+         auto eItr = edgeSet.GetIterator(); int e = 0;
+         while (eItr.HasNext()) _edges[e++] = eItr.Next();
       }
 
       //printf("   Built %i edges\n", (int)_edges.Size());
 
       // Iterate over edges, and for the triangles we can set their
       // adjacency bits. First, initialize the adj list
-      for (int i = 0; i < _adjTriangles.Size(); ++i) _adjTriangles[i] = -1;
+      for (int i = 0; i < _adjTriangles.Size(); ++i) _adjTriangles[i].Clear();
       //printf("   Initialized %i triangle adjacency indices...\n", _adjTriangles.Size());
-      auto eItr = _edges.GetIterator();
-      while (eItr.HasNext())
+      //auto eItr = _edges.GetIterator();
+      //while (eItr.HasNext())
+      for (int e = 0; e < _edges.Size(); ++e)
       {
-         auto edge = eItr.Next();
+         Edge edge = _edges[e];
+
+         /// If we have two triangles, we link them in the triangle adjacency array
          if (edge.f0 != -1 && edge.f1 != -1)
          {
             //printf("      Edge (%i, %i) has two triangle neighbors (%i, %i)\n", edge.v0, edge.v1, edge.f0, edge.f1);
@@ -134,9 +163,8 @@ public:
                //   , _adjTriangles[3*edge.f0+1]
                //   , _adjTriangles[3*edge.f0+2]);
 
-               while (_adjTriangles[3*edge.f0+v] != -1 && v < 3) v++;
-               assert(v < 3);
-               _adjTriangles[3*edge.f0+v] = edge.f1;
+               while (_adjTriangles[edge.f0].t[v] != -1 && v < 3) v++;   assert(v < 3);
+               _adjTriangles[edge.f0].t[v] = edge.f1;
 
             }
             {
@@ -146,10 +174,23 @@ public:
                //   , _adjTriangles[3*edge.f1+1]
                //   , _adjTriangles[3*edge.f1+2]);
 
-               while (_adjTriangles[3*edge.f1+v] != -1 && v < 3) v++;
-               assert(v < 3);
-               _adjTriangles[3*edge.f1+v] = edge.f0;
+               while (_adjTriangles[edge.f1].t[v] != -1 && v < 3) v++;   assert(v < 3);
+               _adjTriangles[edge.f1].t[v] = edge.f0;
             }
+         }
+
+         if (edge.f0 != -1)
+         {
+            int v = 0;
+            while (_adjTriangles[edge.f0].e[v] != -1 && v < 3) v++;   assert(v < 3);
+            _adjTriangles[edge.f0].e[v] = e;
+         }
+
+         if (edge.f1 != -1)
+         {
+            int v = 0;
+            while (_adjTriangles[edge.f1].e[v] != -1 && v < 3) v++;   assert(v < 3);
+            _adjTriangles[edge.f1].e[v] = e;
          }
       }
 
@@ -171,8 +212,10 @@ public:
       printf("\nAdjacency: \n");
       for (int i = 0; i < _mesh->NumTriangles(); ++i)
       {
-         printf(" [%3i %3i %3i]", _adjTriangles[3*i + 0], _adjTriangles[3*i + 1], _adjTriangles[3*i + 2]);
-         if ((i+1) % 6 == 0) printf("\n");
+         printf(" [%3it %3it %3it | %3ie %3ie %3ie]"
+            , _adjTriangles[i].t[0], _adjTriangles[i].t[1], _adjTriangles[i].t[2]
+            , _adjTriangles[i].e[0], _adjTriangles[i].e[1], _adjTriangles[i].e[2]);
+         if ((i+1) % 3 == 0) printf("\n");
       }
 
       printf("\nEdges: %i\n", _edges.Size());
@@ -187,13 +230,136 @@ public:
       printf("\n");
    }
 
+   /// Accessors
+   inline Ref<TriangleMesh<V> > GetMesh() const { return _mesh; }
+   inline Collections::Mutable::TreeSet<Edge> GetEdges() const { return _edges; }
+   inline Collections::Mutable::Array<int> GetAdjacency() const { return _adjTriangles; }
 
 private:
    Ref<TriangleMesh<V> > _mesh;
-   Collections::Mutable::TreeSet<Edge> _edges;
-   Collections::Mutable::Array<int> _adjTriangles;
+   Collections::Mutable::Array<Edge> _edges;
+   Collections::Mutable::Array<TriAdjacency> _adjTriangles;
 };
 
 
+///                                                                  ,,               ,,    ,,              ,,            ,,                     
+/// `7MMF'                                        .M"""bgd          *MM             `7MM    db              db            db                     
+///   MM                                         ,MI    "Y           MM               MM                                                         
+///   MM         ,pW"Wq.   ,pW"Wq.`7MMpdMAo.     `MMb.   `7MM  `7MM  MM,dMMb.    ,M""bMM  `7MM `7M'   `MF'`7MM  ,pP"Ybd `7MM  ,pW"Wq.`7MMpMMMb.  
+///   MM        6W'   `Wb 6W'   `Wb MM   `Wb       `YMMNq. MM    MM  MM    `Mb ,AP    MM    MM   VA   ,V    MM  8I   `"   MM 6W'   `Wb MM    MM  
+///   MM      , 8M     M8 8M     M8 MM    M8     .     `MM MM    MM  MM     M8 8MI    MM    MM    VA ,V     MM  `YMMMa.   MM 8M     M8 MM    MM  
+///   MM     ,M YA.   ,A9 YA.   ,A9 MM   ,AP     Mb     dM MM    MM  MM.   ,M9 `Mb    MM    MM     VVV      MM  L.   I8   MM YA.   ,A9 MM    MM  
+/// .JMMmmmmMMM  `Ybmd9'   `Ybmd9'  MMbmmd'      P"Ybmmd"  `Mbod"YML.P^YbmdP'   `Wbmd"MML..JMML.    W     .JMML.M9mmmP' .JMML.`Ybmd9'.JMML  JMML.
+///                                 MM                                                                                                           
+///                               .JMML.                                                                                                         
+#if 0
+template <class V> class Subdivider : public ToolChest::Object
+{
+public:
+
+   static Ref<TriangleMesh<V> > Loop(Ref<Topology<V> > topology)
+   {
+      auto mesh = topology->GetMesh();
+      auto edges = topology->GetEdges();
+      auto adj = topology->GetAdjacency();
+
+      /// 1. Allocate new vertex storage, copy old verts over
+      /// 2. Iterate over edges, create new midpoint vertices
+      /// 3. allocate new triangle storage, do NOT copy
+      /// 4. iterate over edges, add four new faces for each adj face if
+      ///        the face is not already been processed, and mark the ones added
+
+      const int NUM_OLD_VERTICES = mesh->NumVertices();
+      const int NUM_OLD_TRIANGLES = mesh->NumTriangles();
+
+      const int NUM_NEW_VERTICES = NUM_OLD_VERTICES + edges.Size();
+      const int NUM_NEW_TRIANGLES = NUM_OLD_TRIANGLES * 4;
+
+      TriangleMesh<V> * newMesh = new TriangleMesh<V>(NUM_NEW_TRIANGLES, NUM_NEW_VERTICES);
+
+      memcpy(newMesh->GetVertices(), mesh->GetVertices(), sizeof(V) * mesh->NumVertices());
+
+      V * vertices = newMesh->GetVertices();
+      Triangle * newTriangles = newMesh->GetTriangles();
+      Triangle * oldTriangles = mesh->GetTriangles();
+
+      {
+         int e = 0;
+         auto eItr = edges.GetIterator();
+         while (eItr.HasNext())
+         {
+            auto edge = eItr.Next(); 
+            assert(edge.v0 >= 0 && edge.v0 < NUM_OLD_VERTICES && edge.v1 >= 0 && edge.v1 < NUM_OLD_VERTICES);
+            assert(NUM_OLD_VERTICES + e < NUM_NEW_VERTICES);
+            vertices[NUM_OLD_VERTICES + e] = lerp(edge.v0, edge.v1, 0.5f);
+            e++;
+         }
+      }
+
+      /// We got our midpoints, now we retessellate
+      {
+         bool * tMask = new bool[NUM_OLD_TRIANGLES];
+         for (int i = 0; i < NUM_OLD_TRIANGLES; ++i) tMask[i] = true;
+
+         int e = 0, t = 0;
+
+         auto eItr = edges.GetIterator();
+         while (eItr.HasNext())
+         {
+            auto edge = eItr.Next();
+            if (edge.f0 != -1 && tMask[edge.f0])
+            {
+               /// We need to collect all the vertices
+               Triangle oldT = oldTriangles[edge.f0];
+               int midPoint0 = 
+
+
+               newTriangles[t] =  ... ;
+               tMask[edge.f0] = false;
+               t++;
+            }
+
+            if (edge.f1 != -1 && tMask[edge.f1])
+            {
+               
+               newTriangles[t] =  ... ;
+               tMask[edge.f1] = false;
+               t++;
+            }
+         }
+
+         delete [] tMask;
+      }
+
+
+      return newMesh;   /// silently wrapped in a reference counter
+   }
+
+};
+#endif
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

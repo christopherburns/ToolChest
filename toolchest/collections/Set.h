@@ -51,6 +51,8 @@ namespace Collections
    /////////////////////
 
    /// Identical to Sequence::Contains
+   /// Sub classes will want to re-implement this using their unique sub-linear search
+   /// traveral algorithms
    template <class E, class C, class CTraits> typename Set<E, C, CTraits>::Iterator 
    Set<E, C, CTraits>::Contains(const E& element) const
    {
