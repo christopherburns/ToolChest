@@ -129,13 +129,15 @@ int main(int argc, const char ** argv)
       Ref<TriangleMesh<Cube::Vertex> > cubeTriangleMesh = new TriangleMesh<Cube::Vertex>(Cube::NumTriangles, Cube::NumVertices);
       memcpy(cubeTriangleMesh->GetVertices(), Cube::Vertices(), sizeof(Cube::Vertex)*Cube::NumVertices);
       memcpy(cubeTriangleMesh->GetTriangles(), Cube::Triangles(), sizeof(Triangle)*Cube::NumTriangles);
+      Ref<HalfEdgeStructure<Cube::Vertex> > hEdge0 = new HalfEdgeStructure<Cube::Vertex>(cubeTriangleMesh);
+      hEdge0->Print();
+      assert(hEdge0->Invariant());
 
-      Ref<Topology<Cube::Vertex> > cubeTopology = new Topology<Cube::Vertex>(cubeTriangleMesh);
-      cubeTopology->Print();
 
-      Ref<TriangleMesh<Cube::Vertex> > subdivided = Subdivider<Cube::Vertex>::Loop(cubeTopology);
-      Ref<Topology<Cube::Vertex> > cubeTopology1 = new Topology<Cube::Vertex>(subdivided);
-      cubeTopology1->Print();
+      Ref<TriangleMesh<Cube::Vertex> > subdivided = Subdivider<Cube::Vertex>::Loop(hEdge0);
+      Ref<HalfEdgeStructure<Cube::Vertex> > hEdge1 = new HalfEdgeStructure<Cube::Vertex>(subdivided);
+      hEdge1->Print();
+      assert(hEdge1->Invariant());
    }
 
    printf("----------------------------------------------------------------\n");
@@ -143,13 +145,14 @@ int main(int argc, const char ** argv)
       Ref<TriangleMesh<LoneTriangle::Vertex> > triMesh = new TriangleMesh<LoneTriangle::Vertex>(LoneTriangle::NumTriangles, LoneTriangle::NumVertices);
       memcpy(triMesh->GetVertices(), LoneTriangle::Vertices(), sizeof(LoneTriangle::Vertex)*LoneTriangle::NumVertices);
       memcpy(triMesh->GetTriangles(), LoneTriangle::Triangles(), sizeof(Triangle)*LoneTriangle::NumTriangles);
+      Ref<HalfEdgeStructure<LoneTriangle::Vertex> > hEdge0 = new HalfEdgeStructure<LoneTriangle::Vertex>(triMesh);
+      hEdge0->Print();
+      assert(hEdge0->Invariant());
 
-      Ref<Topology<LoneTriangle::Vertex> > cubeTopology = new Topology<LoneTriangle::Vertex>(triMesh);
-      cubeTopology->Print();
-
-      Ref<TriangleMesh<LoneTriangle::Vertex> > subdivided = Subdivider<LoneTriangle::Vertex>::Loop(cubeTopology);
-      Ref<Topology<LoneTriangle::Vertex> > cubeTopology1 = new Topology<LoneTriangle::Vertex>(subdivided);
-      cubeTopology1->Print();
+      Ref<TriangleMesh<LoneTriangle::Vertex> > subdivided = Subdivider<LoneTriangle::Vertex>::Loop(hEdge0);
+      Ref<HalfEdgeStructure<LoneTriangle::Vertex> > hEdge1 = new HalfEdgeStructure<LoneTriangle::Vertex>(subdivided);
+      hEdge1->Print();
+      assert(hEdge1->Invariant());
    }
 
    return 0;
