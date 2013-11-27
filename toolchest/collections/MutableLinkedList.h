@@ -46,20 +46,16 @@ namespace Collections
 
       private:
 
-         int _head, _tail, _size; 
          mutable Ref<Common::MemoryPool<Node> > _nodePool;
+         int _head, _tail, _size; 
 
          // Used for creating new lists which alias the node array with 
          // an existing list
          inline LinkedList
-            ( int size
-            , int head
-            , int tail
+            ( int size, int head, int tail
             , Ref<Common::MemoryPool<Node> > m)
-            : _size(size)
-            , _head(head)
-            , _tail(tail)
-            , _nodePool(m) {}
+            : _nodePool(m)
+            , _head(head), _tail(tail), _size(size) {}
       
       public:
 
@@ -70,15 +66,13 @@ namespace Collections
          /// The data array's reference counter is automatically incremented
          /// Question: should we allocate a node pool in this constructor?
          inline LinkedList(int reserve = 4) 
-            : _size(0), _head(-1), _tail(-1)
-            , _nodePool(new Common::MemoryPool<Node>(reserve)) { }
+            : _nodePool(new Common::MemoryPool<Node>(reserve)) 
+            , _head(-1), _tail(-1), _size(0) { }
       
          /// The data array's reference counter is automatically incremented
          inline LinkedList(const LinkedList& rhs)
-            : _size(rhs._size)
-            , _head(rhs._head)
-            , _tail(rhs._tail)
-            , _nodePool(rhs._nodePool) { }
+            : _nodePool(rhs._nodePool)
+            , _head(rhs._head), _tail(rhs._tail), _size(rhs._size) { }
 
          //////////////////////////////////////////////
          // Assignment Operator, Reference Semantics //

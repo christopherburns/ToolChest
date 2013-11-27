@@ -81,11 +81,11 @@ namespace Collections
          int _current, _next, _last;
 
          inline MutableLinkedListIterator(const C& a) 
-            : _current(-1), _next(a._head), _last(a._tail), _nodePool(a._nodePool) {}
+            : _nodePool(a._nodePool), _current(-1), _next(a._head), _last(a._tail) {}
 
       public:
          inline MutableLinkedListIterator(const MutableLinkedListIterator& itr)
-            : _current(itr._current), _next(itr._next), _last(itr._last), _nodePool(itr._nodePool) {}
+            : _nodePool(itr._nodePool), _current(itr._current), _next(itr._next), _last(itr._last) {}
          inline bool HasNext() const 
          {
             assert( _next != -1 ? _last != -1 : true );

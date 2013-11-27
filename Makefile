@@ -9,8 +9,7 @@ CC = clang++
 CFLAGS = -std=c++11 -O0 -g -D___OSX -Itoolchest/ -Wunused-value
 LDFLAGS = -lstdc++
 
-EXES =  mesh 
-#testunit profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
+EXES = testunit profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
 EXES := $(EXES:%=$(BIN_DIR)/%)
 
 .PHONY: all $(EXES)
@@ -32,15 +31,12 @@ $(ASM_DIR):
 
 # Object rules
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp test/Mesh.h | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 # Executable rules
 
 $(BIN_DIR)/delaunay: $(BUILD_DIR)/Delaunay.o test/Delaunay.h test/PeriodicDelaunay.h test/Bounds.h | $(BIN_DIR)
-	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
-
-$(BIN_DIR)/mesh: $(BUILD_DIR)/MeshTest.o test/Mesh.h | $(BIN_DIR)
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
 
 $(BIN_DIR)/testunit: $(BUILD_DIR)/UnitTests.o | $(BIN_DIR)
