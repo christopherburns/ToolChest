@@ -36,8 +36,8 @@ public:
 
    inline OrthogonalFrame() { *this = ONE<OrthogonalFrame>(); }
    inline OrthogonalFrame(const Rotation& r) : origin(ZERO<Vector3>()), rotation(r) {}
-   inline OrthogonalFrame(const Rotation& r, const Vector3& o) : origin(o), rotation(r) {}
-   inline OrthogonalFrame(const Quaternion& q, const Vector3& o) : origin(o), rotation(q) {}
+   inline OrthogonalFrame(const Rotation& r, const Vector3& o) : rotation(r), origin(o) {}
+   inline OrthogonalFrame(const Quaternion& q, const Vector3& o) : rotation(q), origin(o) {}
 
    static inline OrthogonalFrame OrthogonalFrameLH(const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_);
    static inline OrthogonalFrame OrthogonalFrameRH(const Vector3& lookDir_, const Vector3& origin_, const Vector3& up_);
@@ -50,8 +50,8 @@ public:
    inline String ToString(int prec = 3) const
    {
       return String("OrthogonalFrame = { ") +
-         "rotation = " + rotation.toString(prec) + ", " +
-         "origin = "   + origin.toString(prec)   + " }";
+         "rotation = " + rotation.ToString(prec) + ", " +
+         "origin = "   + origin.ToString(prec)   + " }";
    }
 };
 
