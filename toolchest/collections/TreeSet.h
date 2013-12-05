@@ -86,6 +86,7 @@ namespace Collections
          // Inherited From Set //
          ////////////////////////
 
+         virtual Iterator Contains(const E& element) const;
          virtual TreeSet<E> Insert(const E& element) const;
          virtual TreeSet<E> Remove(const E& element) const;
 
@@ -96,6 +97,15 @@ namespace Collections
          void PrintGraph(const char * fileName) const;     
       };
 
+
+      template <class E> typename TreeSet<E>::Iterator 
+      TreeSet<E>::Contains(const E& element) const
+      {
+         int parent;
+         Iterator itr(this->_tree);
+         _tree.Find(element, parent, itr._nextNode);
+         return itr;
+      }
 
       /// Note: Insert and Remove are here and not in Set because of the
       /// "return *this" statements, which do not work in the abstract

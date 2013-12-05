@@ -79,6 +79,9 @@ namespace Collections
          virtual int Size() const { return _size; }
          virtual Iterator GetIterator() const { return Iterator(this->_tree); }
 
+         virtual bool Contains(const K& key) const;
+         virtual const V& GetOrElse(const K& key, const V& otherwise) const;
+
 
          ////////////////////////
          // Inherited From Map //
@@ -104,6 +107,23 @@ namespace Collections
          while (iterator.HasNext())
             builder.AddElement(iterator.Next().key);
          return builder.Result();
+      }
+
+      template <class K, class V> bool
+      TreeMap<K, V>::Contains(const K& key) const
+      {
+         int parent, target;
+         _tree.Find(Common::KeyValuePair<K, V>(key), parent, target);
+         return target != -1;
+      }
+
+      template <class K, class V> const V& 
+      TreeMap<K, V>::GetOrElse(const K& key, const V& otherwise) const
+      {
+         int parent, target;
+         _tree.Find(Common::KeyValuePair<K, V>(key), parent, target);
+         if (target == -1) return otherwise;
+         else return _tree._pool->Index(target).payload.value;
       }
 
       /// Note: Insert and Remove are here and not in Map because of the

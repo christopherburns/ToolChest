@@ -88,6 +88,9 @@ namespace Collections
          virtual TreeMap<K, V> Remove(const K& key) const;
          virtual SetType Keys() const;
 
+         virtual bool Contains(const K& key) const;
+         virtual const V& GetOrElse(const K& key, const V& otherwise) const;
+
 
          ///////////////////
          // Miscellaneous //
@@ -114,6 +117,33 @@ namespace Collections
          while (iterator.HasNext())
             builder.AddElement(iterator.Next().key);
          return builder.Result();
+      }
+
+      template <class K, class V> bool
+      TreeMap<K, V>::Contains(const K& key) const
+      {
+         int parent, target;
+         _tree.Find(Common::KeyValuePair<K, V>(key), parent, target);
+         return target != -1;
+      }
+
+      template <class K, class V> const V& 
+      TreeMap<K, V>::GetOrElse(const K& key, const V& otherwise) const
+      {
+         #if 1
+         int parent, target;
+         _tree.Find(Common::KeyValuePair<K, V>(key), parent, target);
+         if (target == -1) return otherwise;
+         else return _tree._pool->Index(target).payload.value;
+         #else
+         Iterator iterator = this->GetIterator();
+         while (iterator.HasNext())
+         {
+            const Common::KeyValuePair<K, V>& e = iterator.Next();
+            if (key == e.key) return e.value;
+         }
+         return otherwise;
+         #endif
       }
 
       /// Note: Insert and Remove are here and not in Map because of the
