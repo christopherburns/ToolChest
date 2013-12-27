@@ -83,7 +83,8 @@ namespace Collections
          inline const E& operator [] (int i) const { return _data->Index(i); }
       
          virtual Array<E> Reverse() const;
-         virtual Array<E> Sorted() const;
+
+         friend Array<E> Sorted(const Array<E>& a);
       };
 
 
@@ -92,11 +93,11 @@ namespace Collections
       ///////////////////////
 
       /// O(1)
-      template <class E> E Array<E>::Last() const
+      template <class E> inline E Array<E>::Last() const
       { assert(_size > 0); return ((E*)*_data)[_size-1]; }
 
       /// O(1)
-      template <class E> Array<E> Array<E>::Init() const                              
+      template <class E> inline Array<E> Array<E>::Init() const                              
       {                                                                               
          Array<E> copy = *this;
          copy._size = ToolChest::MAX(0, copy._size-1);
@@ -104,7 +105,7 @@ namespace Collections
       }                                                                               
               
       /// O(1)                                                                        
-      template <class E> Array<E> Array<E>::Take(int n) const                         
+      template <class E> inline Array<E> Array<E>::Take(int n) const                         
       {                                                                               
          Array<E> copy = *this;                                                       
          copy._size = ToolChest::MIN(n, copy._size);                                             
@@ -112,7 +113,7 @@ namespace Collections
       }     
 
       /// O(n)                                                                        
-      template <class E> Array<E> Array<E>::Reverse() const                           
+      template <class E> inline Array<E> Array<E>::Reverse() const                           
       {                                                                               
          Array<E> newArray(Size());                                                   
          for (int i = 0; i < Size(); ++i) 
@@ -120,14 +121,13 @@ namespace Collections
          return newArray;                                                             
       }  
 
-      template <class E> 
-      Array<E> Array<E>::Sorted() const
+      template <class E> inline Array<E> Sorted(const Array<E>& a)
       {
          /// 1. Make a copy
          /// 2. In-place quicksort the copy
-         Builder builder = this->clone(this->Size(), this->Size()); 
+         typename Array<E>::Builder builder = a._clone(a.Size(), a.Size()); 
          Array<E> sorted = builder.Result();
-         Common::SortInPlace(((E*)*sorted._data), 0, Size()-1);
+         Common::SortInPlace(((E*)*sorted._data), 0, a.Size()-1);
          return sorted;
       }                                                                             
    } // namespace Immutable

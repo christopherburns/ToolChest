@@ -12,6 +12,8 @@ namespace Collections
       template <class E> class TreeSet;
       template <class E> class Array;
       template <class E> class LinkedList;
+
+      template <class E> Immutable::Array<E> Sorted(const Immutable::Array<E>& a);
    }
 
    namespace Mutable
@@ -19,6 +21,8 @@ namespace Collections
       template <class E> class TreeSet;
       template <class E> class Array;
       template <class E> class LinkedList;
+
+      template <class E> Mutable::Array<E> Sorted(const Mutable::Array<E>& a);
    }
 
 	namespace Common
@@ -56,6 +60,9 @@ namespace Collections
          friend class Mutable::Array<E>;
          friend class Immutable::Array<E>;
          friend class Vector<E>;
+
+         friend Immutable::Array<E> Immutable::Sorted(const Immutable::Array<E>& a);
+         friend Mutable::Array<E> Mutable::Sorted(const Mutable::Array<E>& a);
       };
 
 
@@ -69,6 +76,12 @@ namespace Collections
          /// Flag goes true when the result has been returned and the 
          /// builder can no longer be used (it is disposable)
          bool _complete;
+
+         friend class Mutable::Array<E>;
+         friend class Immutable::Array<E>;
+         
+         friend Immutable::Array<E> Immutable::Sorted(const Immutable::Array<E>& a);
+         friend Mutable::Array<E> Mutable::Sorted(const Mutable::Array<E>& a);
 
       public:
          inline ArrayBuilder(int expectedSize = 1) 

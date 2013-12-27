@@ -6,7 +6,7 @@ SRC_DIR = test
 
 CC = clang++ 
 
-CFLAGS = -std=c++11 -O3 -g -D___OSX -Itoolchest/ -Wunused-value
+CFLAGS = -std=c++11 -O3 -g -D___OSX -Iinclude/toolchest -Wunused-value
 LDFLAGS = -lstdc++
 
 EXES = testunit profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay

@@ -125,7 +125,8 @@ namespace Collections
          virtual LinkedList<E> Append(const E& e) const;
          virtual LinkedList<E> Prepend(const E& e) const;
          virtual LinkedList<E> Reverse() const;
-         virtual LinkedList<E> Sorted() const;
+
+         friend LinkedList<E> Sorted(const LinkedList<E>& list);
       };
 
 
@@ -214,7 +215,7 @@ namespace Collections
       {
          if (_size <= 1) return *this;
       
-         Builder builder = this->clone(_size, _size);
+         Builder builder = this->_clone(_size, _size);
          LinkedList newList = builder.Result();
       
          int n = newList._head;
@@ -237,10 +238,10 @@ namespace Collections
          return newList;
       }
 
-      template <class E> LinkedList<E> LinkedList<E>::Sorted() const
+      template <class E> LinkedList<E> Sorted(const LinkedList<E>& list)
       {
-         Builder builder = this->clone(_size, _size);
-         LinkedList newList = builder.Result();
+         typename LinkedList<E>::Builder builder = list._clone(list._size, list._size);
+         LinkedList<E> newList = builder.Result();
 
          /// SORT HERE
          assert(false);

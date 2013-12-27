@@ -56,11 +56,11 @@ void Profile_MutableArraySort
    auto burnsArray = Mutable::Array<int>::Construct(N, &stlArray[0]);
 
    watch.Start();
-   Mutable::Array<int> sorted = burnsArray.Sorted();
+   Mutable::Array<int> sorted = Mutable::Sorted(burnsArray);
    watch.Stop(); sortedTime = watch.ReadTime().ToMilliseconds();
 
    watch.Start();
-   burnsArray.SortInPlace();
+   Mutable::SortInPlace(burnsArray);
    watch.Stop(); inPlaceSortTime = watch.ReadTime().ToMilliseconds();
 
    watch.Start();

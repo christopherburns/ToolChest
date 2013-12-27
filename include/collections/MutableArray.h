@@ -76,13 +76,14 @@ namespace Collections
          inline const E& operator [] (int i) const { return _data->Index(i); }
 
          virtual Array<E> Reverse() const;
-         Array<E> Sorted() const;
+         friend Array<E> Sorted(const Array<E>& a);
+
 
          ////////////////////////
          // Mutable Array Only //
          ////////////////////////
 
-         Array<E>& SortInPlace();
+         friend Array<E>& SortInPlace(Array<E>& a);
       };
 
 
@@ -91,31 +92,37 @@ namespace Collections
       ///////////////////////
 
       /// O(1)
-      template <class E> E Array<E>::Last() const
+      template <class E> inline E Array<E>::Last() const
       { return ((E*)*_data)[Size()-1]; }
 
-      template <class E> Array<E> Array<E>::Reverse() const                           
+      template <class E> inline Array<E> Array<E>::Reverse() const                           
       {                                                                               
          Array<E> newArray(Size());                                                   
          for (int i = 0; i < Size(); ++i)                                             
             ((E*)*newArray._data)[i] = (*this)[Size()-i-1];                            
-         return newArray;                                                             
+         return newArray;
       } 
 
-      template <class E> Array<E> Array<E>::Sorted() const
+      template <class E> inline Array<E> Sorted(const Array<E>& a)
       {
          /// 1. Make a copy
          /// 2. In-place quicksort the copy
-         Builder builder = this->clone(this->Size(), this->Size()); 
-         Array<E> sorted = builder.Result();
-         Common::SortInPlace<E>(((E*)*sorted._data), 0, Size()-1);
-         return sorted;
-      }
+         
+         //typename Array<E>::Builder builder = a._clone(a.Size(), a.Size()); 
+         //Array<E> sorted = builder.Result();
+         Array<E> sorted = a.Copy();
 
-      template <class E> Array<E>& Array<E>::SortInPlace()
+         //Common::SortInPlace(((E*)*sorted._data), 0, a.Size()-1);
+         Common::SortInPlace(((E*)&sorted[0]), 0, a.Size()-1);
+         
+         return sorted;
+      } 
+
+      template <class E> inline Array<E>& SortInPlace(Array<E>& a)
       {
-         Common::SortInPlace<E>(((E*)*_data), 0, Size()-1);
-         return *this;
+         Common::SortInPlace<E>((E*)&a[0], 0, a.Size()-1);
+         //Common::SortInPlace<E>(((E*)*a._data), 0, a.Size()-1);
+         return a;
       }
 
    } // namespace Mutable
