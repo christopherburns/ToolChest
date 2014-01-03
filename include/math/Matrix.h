@@ -155,7 +155,7 @@ template <class T, uint32 ROWS, uint32 COLS> inline bool operator  <(const Matri
 /* transpose Matrix */
 template <class T, uint32 ROWS, uint32 COLS>
 inline const Matrix<T,COLS,ROWS> Transpose(const Matrix<T,ROWS,COLS>& m)
-{ Matrix<T,COLS,ROWS> mt; for (int i = 0; i < ROWS; i++) mt[i] = m.row(i); return mt; }
+{ Matrix<T,COLS,ROWS> mt; for (int i = 0; i < ROWS; i++) mt[i] = m.Row(i); return mt; }
 
 /* Matrix with Column vector multiplication */
 template <class T, uint32 ROWS, uint32 COLS>
@@ -165,7 +165,7 @@ inline const Vector<T,ROWS> operator*(const Matrix<T,ROWS,COLS>& m, const Vector
 /* row vector with Matrix multiplication */
 template <class T, uint32 ROWS, uint32 COLS>
 inline const Vector<T,COLS> operator*(const Vector<T,ROWS>& v, const Matrix<T,ROWS,COLS>& m)
-{ Vector<T,COLS> r; for (int i = 0; i < COLS; i++) r[i] = Vector<T,ROWS>::dot(v, m[i]); return r; }
+{ Vector<T,COLS> r; for (int i = 0; i < COLS; i++) r[i] = Vector<T,ROWS>::Dot(v, m[i]); return r; }
 
 /* Matrix Matrix multiplication */
 template <class T, uint32 ROWS, uint32 COLS1, uint32 COLS2>

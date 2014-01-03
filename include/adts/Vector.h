@@ -62,6 +62,13 @@ namespace Collections
          return Vector(builder.Result());
       }
 
+      static Vector ConstructWithElement(const E& initialValue)
+      {
+         typename Mutable::Array<E>::Builder builder(1);
+         builder.AddElement(initialValue);
+         return Vector(builder.Result());
+      }
+
       inline int Capacity() const { return Mutable::Array<E>::Size(); }
       virtual int Size() const { return _currentSize; }
 
