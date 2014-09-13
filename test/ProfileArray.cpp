@@ -3,7 +3,7 @@
 #include <list>
 #include <vector>
 
-#include "../toolchest/ToolChest.h"
+#include <ToolChest.h>
 
 using namespace std;
 using namespace ToolChest;

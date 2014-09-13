@@ -6,10 +6,10 @@ SRC_DIR = test
 
 CC = clang++ 
 
-CFLAGS = -std=c++11 -O3 -g -D___OSX -Iinclude/toolchest -Wunused-value
+CFLAGS = -std=c++11 -O3 -g -D___OSX -Iinclude/ -Wunused-value
 LDFLAGS = -lstdc++
 
-EXES = testunit profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
+EXES = testunitcollections profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
 EXES := $(EXES:%=$(BIN_DIR)/%)
 
 .PHONY: all $(EXES)
@@ -39,8 +39,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 $(BIN_DIR)/delaunay: $(BUILD_DIR)/Delaunay.o test/Delaunay.h test/PeriodicDelaunay.h test/Bounds.h | $(BIN_DIR)
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
 
-$(BIN_DIR)/testunit: $(BUILD_DIR)/UnitTests.o | $(BIN_DIR)
+$(BIN_DIR)/testunitcollections: $(BUILD_DIR)/UnitTestCollections.o | $(BIN_DIR)
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
+
+#$(BIN_DIR)/testunitmath: $(BUILD_DIR)/UnitTestMath.o | $(BIN_DIR)
+#	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<
 
 $(BIN_DIR)/profilelinkedlist: $(BUILD_DIR)/ProfileLinkedList.o | $(BIN_DIR)
 	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $<

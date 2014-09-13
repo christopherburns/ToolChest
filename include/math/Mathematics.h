@@ -2,8 +2,9 @@
 #define MATHEMATICS_H
 
 #include <math.h>
+#include <limits>
 
-#include "../System.h"
+//#include "../System.h"
 
 
 ////////////////////////////
@@ -19,33 +20,29 @@ namespace ToolChest
 namespace FLOAT32
 {
    /// Constants
-   static const float _INF    = cast<float>(0xff800000);
-   static const float INF     = cast<float>(0x7f800000);
-   static const float MAXV    = cast<float>(0x7f7fffff);
-   static const float EPSILON = cast<float>(0x34000000);
-   static const float NORM    = cast<float>(0x00800000);
-   static const float DENORM  = cast<float>(0x00000001);
-   static const float E       = 2.7182818284590452353602875f;
-   static const float PI      = 3.1415926535897932384626433832795f;
-   static const float RCP_PI  = 0.31830988618379067154f;
-   static const float PHI     = 1.6180339887498948482045868343656f;
-   static const float SQRT_2  = 1.4142135623730950488016887242097f;
+   static const float _INF    = -std::numeric_limits<float>::infinity();
+   static const float INF     =  std::numeric_limits<float>::infinity();
+   static const float MAXV    =  std::numeric_limits<float>::max();
+   static const float EPSILON =  std::numeric_limits<float>::epsilon();
+   static const float E       =  2.7182818284590452353602875f;
+   static const float PI      =  3.1415926535897932384626433832795f;
+   static const float RCP_PI  =  0.31830988618379067154f;
+   static const float PHI     =  1.6180339887498948482045868343656f;
+   static const float SQRT_2  =  1.4142135623730950488016887242097f;
 };
 
 namespace FLOAT64
 {
    /// Constants
-   static const double _INF    = cast<double>(0xfff0000000000000ULL);
-   static const double INF     = cast<double>(0x7ff0000000000000ULL);
-   static const double MAXV    = cast<double>(0x7fefffffffffffffULL);
-   static const double EPSILON = cast<double>(0x3cb0000000000000ULL);
-   static const double NORM    = cast<double>(0x0010000000000000ULL);
-   static const double DENORM  = cast<double>(0x0000000000000001ULL);
-   static const double E       = 2.7182818284590452353602875;
-   static const double PI      = 3.1415926535897932384626433832795;
-   static const double RCP_PI  = 0.31830988618379067154;
-   static const double PHI     = 1.6180339887498948482045868343656;
-   static const double SQRT_2  = 1.4142135623730950488016887242097;
+   static const double _INF    = -std::numeric_limits<double>::infinity();
+   static const double INF     =  std::numeric_limits<double>::infinity();
+   static const double MAXV    =  std::numeric_limits<double>::max();
+   static const double EPSILON =  std::numeric_limits<double>::epsilon();
+   static const double E       =  2.7182818284590452353602875;
+   static const double PI      =  3.1415926535897932384626433832795;
+   static const double RCP_PI  =  0.31830988618379067154;
+   static const double PHI     =  1.6180339887498948482045868343656;
+   static const double SQRT_2  =  1.4142135623730950488016887242097;
 };
 
 ///////////////////

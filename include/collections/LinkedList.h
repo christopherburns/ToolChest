@@ -215,7 +215,7 @@ namespace Collections
       {
          if (_size <= 1) return *this;
       
-         Builder builder = this->_clone(_size, _size);
+         Builder builder = this->clone(_size, _size);
          LinkedList newList = builder.Result();
       
          int n = newList._head;
@@ -240,7 +240,7 @@ namespace Collections
 
       template <class E> LinkedList<E> Sorted(const LinkedList<E>& list)
       {
-         typename LinkedList<E>::Builder builder = list._clone(list._size, list._size);
+         typename LinkedList<E>::Builder builder = list.clone(list._size, list._size);
          LinkedList<E> newList = builder.Result();
 
          /// SORT HERE

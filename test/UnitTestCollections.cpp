@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "../toolchest/ToolChest.h"
+#include <ToolChest.h>
 
 using namespace std;
 using namespace ToolChest;
