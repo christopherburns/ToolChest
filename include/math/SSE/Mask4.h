@@ -20,11 +20,11 @@ namespace ToolChest
       inline Mask(const SSERegister& r) : _m(r) {}
 
       /// Mask<4> is a base case, no more recursion
-      inline String internalToString() const
+      inline std::string internalTostd::string() const
       {
          int mask = bitMask();
          return
-            String((mask & 1) ? "1" : "0") + ", " +
+            std::string((mask & 1) ? "1" : "0") + ", " +
                   ((mask & 2) ? "1" : "0") + ", " +
                   ((mask & 4) ? "1" : "0") + ", " +
                   ((mask & 8) ? "1" : "0");
@@ -49,12 +49,12 @@ namespace ToolChest
       /// Does this work??? we'll have to test it
       inline Mask(uint64 bitField) : _m(_mm_set_epi32(!(bitField & 0x1), !((bitField >> 1) & 0x1), !((bitField >> 2) & 0x1), !((bitField >> 3) & 0x1))) {}
 
-      /// Conversion to String
-      inline String ToString() const
-      { return String("[") + internalToString() + "]"; }
+      /// Conversion to std::string
+      inline std::string Tostd::string() const
+      { return std::string("[") + internalTostd::string() + "]"; }
 
       /// Generate a bitmask, the low four bits corrspond to the 4 Mask components
-      inline uint32 BitMask() const { return _m.signMask(); }
+      inline uint32_t BitMask() const { return _m.signMask(); }
 
       /// Access a single element
       inline bool operator [] (int i) const

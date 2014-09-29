@@ -100,7 +100,7 @@ namespace Collections
       template <class E> inline Array<E> Array<E>::Init() const                              
       {                                                                               
          Array<E> copy = *this;
-         copy._size = ToolChest::MAX(0, copy._size-1);
+         copy._size = max(0, copy._size-1);
          return copy;
       }                                                                               
               
@@ -108,7 +108,7 @@ namespace Collections
       template <class E> inline Array<E> Array<E>::Take(int n) const                         
       {                                                                               
          Array<E> copy = *this;                                                       
-         copy._size = ToolChest::MIN(n, copy._size);                                             
+         copy._size = min(n, copy._size);                                             
          return copy;                                                                 
       }     
 

@@ -15,7 +15,7 @@ public:
    // Interface //
    ///////////////
 
-   typedef Vector2f Vertex;
+   typedef Mathematics::Vector2f Vertex;
 
    /// Constructor generates delaunay mesh
    inline PeriodicDelaunay
@@ -39,7 +39,7 @@ private:
    ////////////////////////
 
    Collections::Vector<Vertex> _points;
-   Collections::Vector<int32> _indices;
+   Collections::Vector<int32_t> _indices;
 };
 
 
@@ -86,15 +86,15 @@ inline PeriodicDelaunay::PeriodicDelaunay
    Collections::Mutable::Array<Vertex> rPoints(9*NUM_POINTS);
    for (int i = 0; i < NUM_POINTS; i++)
    {
-      rPoints[9*i+0] = points[i] + Vector2f(-1.0f, -1.0f);
-      rPoints[9*i+1] = points[i] + Vector2f( 0.0f, -1.0f);
-      rPoints[9*i+2] = points[i] + Vector2f( 1.0f, -1.0f);
-      rPoints[9*i+3] = points[i] + Vector2f(-1.0f,  0.0f);
-      rPoints[9*i+4] = points[i] + Vector2f( 0.0f,  0.0f);
-      rPoints[9*i+5] = points[i] + Vector2f( 1.0f,  0.0f);
-      rPoints[9*i+6] = points[i] + Vector2f(-1.0f,  1.0f);
-      rPoints[9*i+7] = points[i] + Vector2f( 0.0f,  1.0f);
-      rPoints[9*i+8] = points[i] + Vector2f( 1.0f,  1.0f);
+      rPoints[9*i+0] = points[i] + Mathematics::Vector2f(-1.0f, -1.0f);
+      rPoints[9*i+1] = points[i] + Mathematics::Vector2f( 0.0f, -1.0f);
+      rPoints[9*i+2] = points[i] + Mathematics::Vector2f( 1.0f, -1.0f);
+      rPoints[9*i+3] = points[i] + Mathematics::Vector2f(-1.0f,  0.0f);
+      rPoints[9*i+4] = points[i] + Mathematics::Vector2f( 0.0f,  0.0f);
+      rPoints[9*i+5] = points[i] + Mathematics::Vector2f( 1.0f,  0.0f);
+      rPoints[9*i+6] = points[i] + Mathematics::Vector2f(-1.0f,  1.0f);
+      rPoints[9*i+7] = points[i] + Mathematics::Vector2f( 0.0f,  1.0f);
+      rPoints[9*i+8] = points[i] + Mathematics::Vector2f( 1.0f,  1.0f);
    }
 
    /// Now we build the delaunay from these points
@@ -124,8 +124,8 @@ inline PeriodicDelaunay::PeriodicDelaunay
 
 
    /// Ok, now we need to rip out redundant triangles
-   AABBox2f UnitCube(Vector2f(1.0f), Vector2f(0.0f));
-   _indices = Collections::Vector<int32>::Construct(dt.GetNumTriangles()/4);
+   AABBox2f UnitCube(Mathematics::Vector2f(1.0f), Mathematics::Vector2f(0.0f));
+   _indices = Collections::Vector<int32_t>::Construct(dt.GetNumTriangles()/4);
    for (int i = 0; i < dt.GetNumTriangles(); ++i)
    {
       /// Gather the triangle, compute the bounds, check the lower corner
@@ -133,7 +133,7 @@ inline PeriodicDelaunay::PeriodicDelaunay
       Vertex v1 = tPoints[triangulation[3*i+1]];
       Vertex v2 = tPoints[triangulation[3*i+2]];
 
-      Vertex lower = MIN(v0, MIN(v1, v2));  /// Per component 3-way min
+      Vertex lower = Mathematics::MIN(v0, Mathematics::MIN(v1, v2));  /// Per component 3-way min
       if (UnitCube.Inside(lower))
       {
          _indices.Push(triangulation[3*i+0]);
@@ -145,7 +145,7 @@ inline PeriodicDelaunay::PeriodicDelaunay
    /// Now we have a reduced set of triangles.  We have to filter out the vertices
    /// from the vertex list that are no longer referenced. This is irritating. 
    /// First, compute vertex valences, then compute the adjacency graph
-   Collections::Mutable::Array<uint8> valences(rPoints.Size());
+   Collections::Mutable::Array<uint8_t> valences(rPoints.Size());
    memset(&valences[0], 0, rPoints.Size());
    for (int i = 0; i < _indices.Size(); ++i)
       valences[_indices[i]]++;

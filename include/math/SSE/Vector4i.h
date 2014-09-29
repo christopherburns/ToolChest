@@ -47,9 +47,9 @@ public:
    inline Vector(const Vector<int32, 3>& v, int32 w) : _r(v.x(), v.y(), v.z(), w) {}
 
    /// Conversion from arbitrary (but cast-able) base type
-   template <class S> explicit Vector(const Vector<S, 4>& v) :
+   template <class S> inline explicit Vector(const Vector<S, 4>& v) :
       _r((int32)v.x(), (int32)v.y(), (int32)v.z(), (int32)v.w()) {}
-   template <> explicit Vector(const Vector<float, 4>& v);  /// Specialization
+   template <> inline explicit Vector(const Vector<float, 4>& v);  /// Specialization
 
    /// Subscript accessors (introduces aliasing)
    inline const int32& operator [] (int i) const
@@ -68,10 +68,10 @@ public:
    template <int I> inline float Get() const { return _r.i32Extract<I>(); }
    template <int I> inline void Set(const int32& v) { _r = _r.i32Insert<I>(v); }
 
-   /// Conversion to String (introduces aliasing)
-   /// Conversion to String
-   inline String ToString(int prec = 3) const
-   { return String("[") + internalToString(prec) + "]"; }
+   /// Conversion to std::string (introduces aliasing)
+   /// Conversion to std::string
+   inline std::string Tostd::string(int prec = 3) const
+   { return std::string("[") + internalTostd::string(prec) + "]"; }
 
 
    /// Type cast operators, defined in SSE.h
@@ -86,16 +86,16 @@ public:
    /// asserted. Gather and Scatter operations are supported in base+offset
    /// format.
 
-   template <class U> static Vector Load(U * addr);
-   template <class U> static Vector Loadu(U * addr);
-   template <class U> static Vector LoadBroadcast(U * addr);
-   template <class U> static Vector Gather(U * addr, const Vector<int32, 4>& offsets);
-   template <class U> static Vector Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m);
+   template <class U> static inline Vector Load(U * addr);
+   template <class U> static inline Vector Loadu(U * addr);
+   template <class U> static inline Vector LoadBroadcast(U * addr);
+   template <class U> static inline Vector Gather(U * addr, const Vector<int32, 4>& offsets);
+   template <class U> static inline Vector Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m);
 
-   template <class U> void Store(U * addr) const;
-   template <class U> void StoreOne(U * addr) const;
-   template <class U> void Scatter(U * addr, const Vector<int32, 4>& offsets) const;
-   template <class U> void Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const;
+   template <class U> inline void Store(U * addr) const;
+   template <class U> inline void StoreOne(U * addr) const;
+   template <class U> inline void Scatter(U * addr, const Vector<int32, 4>& offsets) const;
+   template <class U> inline void Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const;
 
    ////////////////////////////
    // Mathematical Operators //
@@ -237,13 +237,13 @@ private:
    /// Make friends with all generic Vector types
    template <class U, int M> friend class Vector;
 
-   inline String internalToString(int prec = 3) const
+   inline std::string internalTostd::string(int prec = 3) const
    {
       return
-         String((int32)((int32*)&_r)[0], prec) + ", " +
-         String((int32)((int32*)&_r)[1], prec) + ", " +
-         String((int32)((int32*)&_r)[2], prec) + ", " +
-         String((int32)((int32*)&_r)[3], prec);
+         std::string((int32)((int32*)&_r)[0], prec) + ", " +
+         std::string((int32)((int32*)&_r)[1], prec) + ", " +
+         std::string((int32)((int32*)&_r)[2], prec) + ", " +
+         std::string((int32)((int32*)&_r)[3], prec);
    }
 };
 
@@ -287,10 +287,10 @@ inline Vector<int32, 4> Vector<int32, 4>::LogicalRightShift(const Vector<int32, 
 {
    /// This is the slowest possible way to do this
    Vector<int32, 4> r;
-   r._r = r._r.i32Insert<0>((uint32)x() >> bits.x());
-   r._r = r._r.i32Insert<1>((uint32)y() >> bits.y());
-   r._r = r._r.i32Insert<2>((uint32)z() >> bits.z());
-   r._r = r._r.i32Insert<3>((uint32)w() >> bits.w());
+   r._r = r._r.i32Insert<0>((uint32_t)x() >> bits.x());
+   r._r = r._r.i32Insert<1>((uint32_t)y() >> bits.y());
+   r._r = r._r.i32Insert<2>((uint32_t)z() >> bits.z());
+   r._r = r._r.i32Insert<3>((uint32_t)w() >> bits.w());
 
    return r;
 }
@@ -362,7 +362,7 @@ Vector<int32, 4>::Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& 
 {
    Vector v;
    for (int i = 0; i < 4; ++i)
-      if (m.BitMask() & (1 << i)) { /*printf("  Ouch! (mask = %s)\n", *m.ToString());*/ v[i] = (int32)(*(addr + offsets[i])); }
+      if (m.BitMask() & (1 << i)) { /*printf("  Ouch! (mask = %s)\n", *m.Tostd::string());*/ v[i] = (int32)(*(addr + offsets[i])); }
    return v;
 }
 

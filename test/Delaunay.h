@@ -21,7 +21,7 @@ public:
    // Interface //
    ///////////////
 
-   typedef Vector2f Vertex;
+   typedef Mathematics::Vector2f Vertex;
 
    /// Constructor generates delaunay mesh
    inline Delaunay(const Vertex * points, const int NUM_POINTS)
@@ -58,12 +58,12 @@ private:
       
       inline int operator [] (int i) const { return vIndices[i]; }
 
-      inline String ToString() const
+      inline ToolChest::String ToString() const
       { 
-         return String("[ (") 
-                    + String(vIndices[0]) 
-            + ") (" + String(vIndices[1]) 
-            + ") (" + String(vIndices[2]) + ") ]"; 
+         return ToolChest::String("[ (") 
+                    + ToolChest::String(vIndices[0]) 
+            + ") (" + ToolChest::String(vIndices[1]) 
+            + ") (" + ToolChest::String(vIndices[2]) + ") ]"; 
       }
 
       inline bool operator == (const Triangle& rhs) const
@@ -90,13 +90,13 @@ private:
       inline Edge(int p0, int p1) // : i0(p0), i1(p1) {}
       {
          /// Store these in sorted order, to make comparisons cheaper
-         i0 = MIN(p0, p1); 
-         i1 = MAX(p0, p1);
+         i0 = Mathematics::MIN(p0, p1); 
+         i1 = Mathematics::MAX(p0, p1);
          assert(p0 != p1); /// Degenerate edges not allowed
       }
 
-      inline String ToString() const
-      { return String("[ (") + String(i0) + ") (" + String(i1) + ") ]"; }
+      inline ToolChest::String ToString() const
+      { return ToolChest::String("[ (") + ToolChest::String(i0) + ") (" + ToolChest::String(i1) + ") ]"; }
 
       inline bool operator == (const Edge& rhs) const
       { return (i0 == rhs.i0 && i1 == rhs.i1); }
@@ -134,7 +134,7 @@ private:
    enum Compare { LESS_THAN, EQUAL, GREATER_THAN };
    inline static Compare compareVertices(Vertex p0, Vertex p1)
    {
-      for (int i = 0; i < TypeInfo<Vertex>::Width; ++i)
+      for (int i = 0; i < Mathematics::TypeInfo<Vertex>::Width; ++i)
       {
               if (p0[i] == p1[i]) continue;
          else if (p0[i] >  p1[i]) return GREATER_THAN;
@@ -170,7 +170,7 @@ Delaunay::Triangle::circumcenter(Delaunay::Vertex p1, Delaunay::Vertex p2, Delau
    float n2 = d_cb * d_ca;
    float n3 = d_ca * d_ba;
    
-   float invBottom = RCP(2.0f * (n1 + n2 + n3));
+   float invBottom = Mathematics::RCP(2.0f * (n1 + n2 + n3));
    return ((n2+n3) * p1 + (n3+n1) * p2 + (n1+n2) * p3) * invBottom;
 }
 
@@ -183,12 +183,12 @@ inline Delaunay::Triangle::Triangle
    
    center = circumcenter(v0, v1, v2);
    radiusSq = (v0 - center).LengthSquared();
-   radius = SQRT(radiusSq);
+   radius = Mathematics::SQRT(radiusSq);
 }
 
 inline void Delaunay::generateSuperTriangle(AABBox2f bounds, Delaunay::Vertex verts[3])
 {
-   static const float sqrt3 = SQRT<float>(3.0f);
+   static const float sqrt3 = Mathematics::SQRT<float>(3.0f);
 
    auto delta = bounds.ur - bounds.ll;
 

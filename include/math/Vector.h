@@ -5,7 +5,7 @@
 #include "Mathematics.h"
 #include "Mask.h"
 
-namespace ToolChest
+namespace Mathematics
 {
 
 template <class T, int N> class Vector;
@@ -101,26 +101,26 @@ public:
    inline T& operator [] (int i);
 
    /// Static element accessors
-   template <int I> inline const T& Get() const                      { return (I < WA) ? (_a.template Get<I>()) : (_b.template Get<I-WA>()); }
-   template <int I> inline T& Get()                                  { return (I < WA) ? (_a.template Get<I>()) : (_b.template Get<I-WA>()); }
-   template <int I> inline void Set(const T& v)                      { if     (I < WA) _a.Set<I>(v); else _b.Set<I-WA>(v); }
+   template <int I> inline const T& Get() const { return (I < WA) ? (_a.template Get<I>()) : (_b.template Get<I-WA>()); }
+   template <int I> inline T& Get()             { return (I < WA) ? (_a.template Get<I>()) : (_b.template Get<I-WA>()); }
+   template <int I> inline void Set(const T& v) { if     (I < WA) _a.Set<I>(v); else _b.Set<I-WA>(v); }
 
    /// Convenience static element accessors for Vector 2, 3
-   inline const T& x() const                                         { STATIC_assert(N >= 1); return Get<0>(); }
-   inline T& x()                                                     { STATIC_assert(N >= 1); return Get<0>(); }
-   inline const T& y() const                                         { STATIC_assert(N >= 2); return Get<1>(); }
-   inline T& y()                                                     { STATIC_assert(N >= 2); return Get<1>(); }
-   inline const T& z() const                                         { STATIC_assert(N >= 3); return Get<2>(); }
-   inline T& z()                                                     { STATIC_assert(N >= 3); return Get<2>(); }
-   inline const T& w() const                                         { STATIC_assert(N >= 4); return Get<3>(); }
-   inline T& w()                                                     { STATIC_assert(N >= 4); return Get<3>(); }
+   inline const T& x() const { /*STATIC_assert(N >= 1);*/ return Get<0>(); }
+   inline T& x()             { /*STATIC_assert(N >= 1);*/ return Get<0>(); }
+   inline const T& y() const { /*STATIC_assert(N >= 2);*/ return Get<1>(); }
+   inline T& y()             { /*STATIC_assert(N >= 2);*/ return Get<1>(); }
+   inline const T& z() const { /*STATIC_assert(N >= 3);*/ return Get<2>(); }
+   inline T& z()             { /*STATIC_assert(N >= 3);*/ return Get<2>(); }
+   inline const T& w() const { /*STATIC_assert(N >= 4);*/ return Get<3>(); }
+   inline T& w()             { /*STATIC_assert(N >= 4);*/ return Get<3>(); }
 
-   inline const Vector<T, 2> xy()  const { STATIC_assert(N >= 2); return Vector<T, 2>(x(), y()); }
-   inline const Vector<T, 3> xyz() const { STATIC_assert(N >= 3); return Vector<T, 3>(x(), y(), z()); }
+   inline const Vector<T, 2> xy()  const { /*STATIC_assert(N >= 2);*/ return Vector<T, 2>(x(), y()); }
+   inline const Vector<T, 3> xyz() const { /*STATIC_assert(N >= 3);*/ return Vector<T, 3>(x(), y(), z()); }
 
 
-   String ToString(int prec) const;
-   String ToString() const;
+   std::string ToString(int prec) const;
+   std::string ToString() const;
 
    /// Insertion and extraction operators for C++ I/O Streams
    friend inline std::ostream& operator << (std::ostream& stream, const Vector& v)
@@ -145,13 +145,13 @@ public:
 
    template <class U> inline static Vector Load(U * address);
    template <class U> inline static Vector LoadBroadcast(U * address);
-   template <class U> inline static Vector Gather(U * address, const Vector<int32, N>& offsets);
-   template <class U> inline static Vector Gather(U * address, const Vector<int32, N>& offsets, const Mask& mask);
+   template <class U> inline static Vector Gather(U * address, const Vector<int32_t, N>& offsets);
+   template <class U> inline static Vector Gather(U * address, const Vector<int32_t, N>& offsets, const Mask& mask);
 
    template <class U> inline void Store(U * address) const;
    template <class U> inline void StoreOne(U * address) const;
-   template <class U> inline void Scatter(U * address, const Vector<int32, N>& offsets) const;
-   template <class U> inline void Scatter(U * address, const Vector<int32, N>& offsets, const Mask& mask) const;
+   template <class U> inline void Scatter(U * address, const Vector<int32_t, N>& offsets) const;
+   template <class U> inline void Scatter(U * address, const Vector<int32_t, N>& offsets, const Mask& mask) const;
 
 
    ////////////////////////////
@@ -192,15 +192,15 @@ public:
    /////////////////////////////
 
    /// Bit shifting
-   inline friend Vector operator >> (const Vector& a, uint32 bits)                  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a >> bits),    VectorB(a._b >> bits)); }
-   inline friend Vector operator << (const Vector& a, uint32 bits)                  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a << bits),    VectorB(a._b << bits)); }
-   inline friend Vector operator << (const Vector& a, const Vector& bits)           { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a << bits._a), VectorB(a._b << bits._b)); }
-   inline friend Vector operator >> (const Vector& a, const Vector& bits)           { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a >> bits._a), VectorB(a._b >> bits._b)); }
+   inline friend Vector operator >> (const Vector& a, uint32_t bits)      { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(VectorA(a._a >> bits),    VectorB(a._b >> bits)); }
+   inline friend Vector operator << (const Vector& a, uint32_t bits)      { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(VectorA(a._a << bits),    VectorB(a._b << bits)); }
+   inline friend Vector operator << (const Vector& a, const Vector& bits) { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(VectorA(a._a << bits._a), VectorB(a._b << bits._b)); }
+   inline friend Vector operator >> (const Vector& a, const Vector& bits) { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(VectorA(a._a >> bits._a), VectorB(a._b >> bits._b)); }
 
 
    /// Integer Modulus
-   inline friend Vector operator %  (const Vector& a, const Vector& b)     { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a % b._a), VectorB(a._b % b._b)); }
-   inline friend Vector operator %  (const Vector& a, const T& b)          { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a % b), VectorB(a._b % b)); }
+   inline friend Vector operator %  (const Vector& a, const Vector& b)     { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(VectorA(a._a % b._a), VectorB(a._b % b._b)); }
+   inline friend Vector operator %  (const Vector& a, const T& b)          { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(VectorA(a._a % b), VectorB(a._b % b)); }
 
    inline Vector& operator <<= (const int bits)                            { return *this = *this << bits; }
    inline Vector& operator >>= (const int bits)                            { return *this = *this >> bits; }
@@ -212,10 +212,10 @@ public:
    // Bitwise Operators //
    ///////////////////////
 
-   inline Vector& operator ~ () const                                     { STATIC_assert(TypeInfo<T>::Integral); return Vector(~_a, ~_b); }
-   inline friend Vector operator & (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a & bits._a), VectorB(a._b & bits._b)); }
-   inline friend Vector operator | (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a | bits._a), VectorB(a._b | bits._b)); }
-   inline friend Vector operator ^ (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(VectorA(a._a ^ bits._a), VectorB(a._b ^ bits._b)); }
+   inline Vector& operator ~ () const                                     { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(~_a, ~_b); }
+   inline friend Vector operator & (const Vector& a, const Vector& bits)  { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(VectorA(a._a & bits._a), VectorB(a._b & bits._b)); }
+   inline friend Vector operator | (const Vector& a, const Vector& bits)  { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(VectorA(a._a | bits._a), VectorB(a._b | bits._b)); }
+   inline friend Vector operator ^ (const Vector& a, const Vector& bits)  { /*STATIC_assert(TypeInfo<T>::Integral);*/ return Vector(VectorA(a._a ^ bits._a), VectorB(a._b ^ bits._b)); }
 
    inline Vector& operator &= (const Vector& b)                           { return *this = *this & b; }
    inline Vector& operator |= (const Vector& b)                           { return *this = *this | b; }
@@ -303,9 +303,9 @@ private:
    inline Vector(const VectorA& a, const VectorB& b) : _a(a), _b(b) {}
 
    /// Private string I/O, necessary to make use of recursion
-   inline String internalToString(int prec) const
+   inline std::string internalToString(int prec) const
    { return _a.internalToString(prec) + ", " + _b.internalToString(prec); }
-   inline String internalToString() const
+   inline std::string internalToString() const
    { return _a.internalToString() + ", " + _b.internalToString(); }
 
    /// Befriend the mathematics structure that corresponds with each kind of
@@ -337,18 +337,18 @@ inline Vector<T, N>::Vector(const Vector<S, N>& v) : _a(v._a), _b(v._b) {}
 /// Constructors for common partial specializations
 template <class T, int N> inline
 Vector<T, N>::Vector(const T& t0, const T& t1)
- : _a(t0), _b(t1) { STATIC_assert(N == 2); }
+ : _a(t0), _b(t1) { /*STATIC_assert(N == 2);*/ }
 template <class T, int N> inline
 Vector<T, N>::Vector(const T& t0, const T& t1, const T& t2)
- : _a(t0, t1), _b(t2) { STATIC_assert(N == 3); }
+ : _a(t0, t1), _b(t2) { /*STATIC_assert(N == 3);*/ }
 template <class T, int N> inline
 Vector<T, N>::Vector(const T& t0, const T& t1, const T& t2, const T& t3)
- : _a(t0, t1), _b(t2, t3) { STATIC_assert(N == 4); }
+ : _a(t0, t1), _b(t2, t3) { /*STATIC_assert(N == 4);*/ }
 template <class T, int N> inline
 Vector<T, N>::Vector(
    const T& t0,  const T& t1,  const T& t2,  const T& t3,
    const T& t4,  const T& t5,  const T& t6,  const T& t7)
- : _a(t0, t1, t2, t3), _b(t4, t5, t6, t7) { STATIC_assert(N == 8); }
+ : _a(t0, t1, t2, t3), _b(t4, t5, t6, t7) { /*STATIC_assert(N == 8);*/ }
 template <class T, int N> inline
 Vector<T, N>::Vector(
    const T& t0,  const T& t1,  const T& t2,  const T& t3,
@@ -356,7 +356,7 @@ Vector<T, N>::Vector(
    const T& t8,  const T& t9,  const T& t10, const T& t11,
    const T& t12, const T& t13, const T& t14, const T& t15)
  : _a(t0, t1, t2, t3, t4, t5, t6, t7), _b(t8, t9, t10, t11, t12, t13, t14, t15)
-{ STATIC_assert(N == 16); }
+{ /*STATIC_assert(N == 16);*/ }
 
 
 // Expansions
@@ -380,18 +380,18 @@ Vector<T, N>::operator [] (int i) const
 template <class T, int N> inline T& Vector<T, N>::operator [] (int i)
 { assert(i >= 0 && i < N); return (i < WA) ? (_a[i]) : (_b[i-WA]); }
 
-/// Conversion to String
+/// Conversion to std::string
 template <class T, int N>
-inline String Vector<T, N>::ToString(int prec) const
-{ return String("[") + internalToString(prec) + "]"; }
+inline std::string Vector<T, N>::ToString(int prec) const
+{ return std::string("[") + internalToString(prec) + "]"; }
 template <class T, int N>
-inline String Vector<T, N>::ToString() const
-{ return String("[") + internalToString() + "]"; }
+inline std::string Vector<T, N>::ToString() const
+{ return std::string("[") + internalToString() + "]"; }
 
 /// Insertion and extraction operators for C++ I/O Streams
 /*template <class T, int N> inline
 std::ostream& operator << (std::ostream& stream, const Vector<T, N>& v)
-{ stream << toString(); }*/
+{ stream << tostd::string(); }*/
 
 template <class T, int N> inline
 std::istream& Vector<T, N>::internalStreamIn(std::istream& stream)
@@ -408,9 +408,9 @@ std::istream& Vector<T, N>::internalStreamIn(std::istream& stream)
 // Loads and Stores //
 //////////////////////
 
-/// We have a problem here.  When (T != int32, float) and (N == 4, 16), then
-/// we get the SIMD specialization of Vector<int32, N> but the generalization
-/// of Vector<T, N>.  Vector<int32, N> specilizations do not support the recursive
+/// We have a problem here.  When (T != int32_t, float) and (N == 4, 16), then
+/// we get the SIMD specialization of Vector<int32_t, N> but the generalization
+/// of Vector<T, N>.  Vector<int32_t, N> specilizations do not support the recursive
 /// definition employed in the generalization, and fails to compile.
 ///
 /// The only option, as I see it, is to define these iteratively using [],
@@ -433,7 +433,7 @@ template <class T, int N> template <class U> inline Vector<T, N> Vector<T, N>::L
 }
 
 template <class T, int N> template <class U> inline Vector<T, N>
-Vector<T, N>::Gather(U * addr, const Vector<int32, N>& offsets)
+Vector<T, N>::Gather(U * addr, const Vector<int32_t, N>& offsets)
 {
    Vector<T, N> v;
    for (int i = 0; i < N; ++i) v[i] = (T)(*(addr + offsets[i]));
@@ -441,7 +441,7 @@ Vector<T, N>::Gather(U * addr, const Vector<int32, N>& offsets)
 }
 
 template <class T, int N> template <class U> inline Vector<T, N>
-Vector<T, N>::Gather(U * addr, const Vector<int32, N>& offsets, const Mask& mask)
+Vector<T, N>::Gather(U * addr, const Vector<int32_t, N>& offsets, const Mask& mask)
 {
    Vector<T, N> v;
    for (int i = 0; i < N; ++i)
@@ -456,14 +456,14 @@ template <class T, int N> template <class U> inline void Vector<T, N>::StoreOne(
 { _a.StoreOne(addr); }
 
 template <class T, int N> template <class U> void inline
-Vector<T, N>::Scatter(U * addr, const Vector<int32, N>& offsets) const
+Vector<T, N>::Scatter(U * addr, const Vector<int32_t, N>& offsets) const
 {
    for (int i = 0; i < N; ++i)
       *(addr + offsets[i]) = (U)(operator[](i));
 }
 
 template <class T, int N> template <class U> void inline
-Vector<T, N>::Scatter(U * addr, const Vector<int32, N>& offsets, const Mask& mask) const
+Vector<T, N>::Scatter(U * addr, const Vector<int32_t, N>& offsets, const Mask& mask) const
 {
    for (int i = 0; i < N; ++i)
       if (mask[i])
@@ -502,20 +502,20 @@ template <class T, int N> inline T Vector<T, N>::Average() const
 }
 
 template <class T, int N> inline T Vector<T, N>::Length() const
-{ STATIC_assert(!TypeInfo<T>::Integral); return SQRT(LengthSquared()); }
+{ /*STATIC_assert(!TypeInfo<T>::Integral);*/ return SQRT(LengthSquared()); }
 
 template <class T, int N> inline T Vector<T, N>::LengthSquared() const
-{ STATIC_assert(!TypeInfo<T>::Integral); return Dot(*this, *this); }
+{ /*STATIC_assert(!TypeInfo<T>::Integral);*/ return Dot(*this, *this); }
 
 template <class T, int N> inline Vector<T, N> Vector<T, N>::Unit() const
 {
-   STATIC_assert(!TypeInfo<T>::Integral);
+   /*STATIC_assert(!TypeInfo<T>::Integral);*/
    return (*this) * RCP_SQRT(LengthSquared());
 }
 
 template <class T, int N> inline T
 Vector<T, N>::Dot(const Vector<T, N>& v1, const Vector<T, N>& v2)
-{ STATIC_assert(!TypeInfo<T>::Integral); return (v2 * v1).ReduceSum(); }
+{ /*STATIC_assert(!TypeInfo<T>::Integral);*/ return (v2 * v1).ReduceSum(); }
 
 /*template <class T, int N> inline Vector<T, N>
 Vector<T, N>::cross(const Vector<T, N>& v1, const Vector<T, N>& v2)
@@ -774,8 +774,8 @@ private:
    T _t;
 
    /// Private string I/O, necessary to make use of recursion
-   inline String internalToString()         const { return String(_t); }
-   inline String internalToString(int prec) const { return String(_t, prec); }
+   inline std::string internalToString()         const { return std::to_string(_t); }
+   //inline std::string internalToString(int prec) const { return std::to_string(_t); }
 
 public:
 
@@ -808,9 +808,9 @@ public:
    template <int I> inline void Set(const T& v)    { _t = v; }
 
 
-   /// String I/O representation
-   inline String ToString(int prec) const { return String("[") + String(_t, prec) + "]"; }
-   inline String ToString() const { return String("[") + String(_t) + "]"; }
+   /// std::string I/O representation
+   //inline std::string ToString(int prec) const { return std::string("[") + std::to_string(_t) + "]"; }
+   inline std::string ToString() const { return std::string("[") + std::to_string(_t) + "]"; }
 
    /// Insertion and extraction operators for C++ I/O Streams
    friend inline std::ostream& operator << (std::ostream& stream, const Vector& v)
@@ -841,12 +841,12 @@ public:
 
    template <class U> inline static Vector Load(U * addr)          { return Vector((T)(*addr)); }
    template <class U> inline static Vector LoadBroadcast(U * addr) { return Vector((T)(*addr)); }
-   template <class U> inline static Vector Gather(U * addr, const Vector<int32, 1>& offsets)
+   template <class U> inline static Vector Gather(U * addr, const Vector<int32_t, 1>& offsets)
    { return Vector((T)(*(addr + offsets._t))); }
 
    template <class U> inline void Store(U * addr)    const { (*addr) = (U)_t; }
    template <class U> inline void StoreOne(U * addr) const { (*addr) = (U)_t; }
-   template <class U> inline void Scatter(U * addr,  const Vector<int32, 1>& offsets) const
+   template <class U> inline void Scatter(U * addr,  const Vector<int32_t, 1>& offsets) const
    { *(addr + offsets._t) = (U)_t; }
 
 
@@ -883,14 +883,14 @@ public:
    // Integer-Only Arithmetic //
    /////////////////////////////
 
-   //inline friend Vector operator >> (const Vector& a, uint32 bits)         { STATIC_assert(TypeInfo<T>::Integral); return a._t >> bits; }
-   //inline friend Vector operator << (const Vector& a, uint32 bits)         { STATIC_assert(TypeInfo<T>::Integral); return a._t << bits; }
-   inline friend Vector operator << (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t << bits._t); }
-   inline friend Vector operator >> (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t >> bits._t); }
+   //inline friend Vector operator >> (const Vector& a, uint32_t bits)         { /*STATIC_assert(TypeInfo<T>::Integral);*/ return a._t >> bits; }
+   //inline friend Vector operator << (const Vector& a, uint32_t bits)         { /*STATIC_assert(TypeInfo<T>::Integral);*/ return a._t << bits; }
+   inline friend Vector operator << (const Vector& a, const Vector& bits)  { /*STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t << bits._t);*/ }
+   inline friend Vector operator >> (const Vector& a, const Vector& bits)  { /*STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t >> bits._t);*/ }
 
    /// Integer Modulus
-   inline friend Vector operator %  (const Vector& a, const Vector& b)     { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t % b._t); }
-   //inline friend Vector operator %  (const Vector& a, const T& b)          { STATIC_assert(TypeInfo<T>::Integral); return a._t % b; }
+   inline friend Vector operator %  (const Vector& a, const Vector& b)     { /*STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t % b._t);*/ }
+   //inline friend Vector operator %  (const Vector& a, const T& b)          { /*STATIC_assert(TypeInfo<T>::Integral);*/ return a._t % b; }
 
    //inline Vector& operator <<= (const int bits)                            { return *this = *this << bits; }
    //inline Vector& operator >>= (const int bits)                            { return *this = *this >> bits; }
@@ -902,10 +902,10 @@ public:
    // Bitwise Operators //
    ///////////////////////
 
-   inline Vector operator ~ () const                                      { STATIC_assert(TypeInfo<T>::Integral); return Vector(~_t); }
-   inline friend Vector operator & (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t & bits._t); }
-   inline friend Vector operator | (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t | bits._t); }
-   inline friend Vector operator ^ (const Vector& a, const Vector& bits)  { STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t ^ bits._t); }
+   inline Vector operator ~ () const                                      { /*STATIC_assert(TypeInfo<T>::Integral); return Vector(~_t);*/ }
+   inline friend Vector operator & (const Vector& a, const Vector& bits)  { /*STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t & bits._t);*/ }
+   inline friend Vector operator | (const Vector& a, const Vector& bits)  { /*STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t | bits._t);*/ }
+   inline friend Vector operator ^ (const Vector& a, const Vector& bits)  { /*STATIC_assert(TypeInfo<T>::Integral); return Vector(a._t ^ bits._t);*/ }
 
    inline Vector& operator &= (const Vector& b)                           { return *this = *this & b; }
    inline Vector& operator |= (const Vector& b)                           { return *this = *this | b; }
@@ -1054,7 +1054,7 @@ public:
    //static inline Vec bitCount(Vec a);
 };
 
-}; // namespace ToolChest
+}; // namespace Mathematics
 
 #endif // MATH_VECTOR_H
 

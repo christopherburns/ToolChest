@@ -95,7 +95,7 @@ namespace Collections
    template <class E, class C, class CTraits> C 
    Set<E, C, CTraits>::Intersection(const C& set) const
    {
-      Builder builder = Builder(ToolChest::MAX(this->Size(), set.Size()));
+      Builder builder = Builder(max(this->Size(), set.Size()));
 
       /// Iterate over elements in 'this', insert if also found in set
       Iterator iterator = this->GetIterator();

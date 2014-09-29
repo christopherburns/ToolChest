@@ -85,7 +85,7 @@ namespace Collections
 
       public:
          inline ArrayBuilder(int expectedSize = 1) 
-            : _array(ToolChest::MAX(expectedSize, 1)), _nextEmptyIndex(0), _complete(false)
+            : _array(max(expectedSize, 1)), _nextEmptyIndex(0), _complete(false)
          { }
 
 

@@ -47,15 +47,15 @@ public:
    /// Construct from data
    inline SSERegister(float f) : data(_mm_set1_ps(f)) {}
    inline SSERegister(int32 i) : data(_mm_castsi128_ps(_mm_set1_epi32(i))) {}
-   inline SSERegister(uint32 i) : data(_mm_castsi128_ps(_mm_set1_epi32(i))) {}
+   inline SSERegister(uint32_t i) : data(_mm_castsi128_ps(_mm_set1_epi32(i))) {}
    inline SSERegister(const uint64 i0, const uint64 i1) :
-      data(_mm_castsi128_ps(_mm_set_epi32((uint32)i0, (uint32)(i0 >> 32),
-                                          (uint32)i1, (uint32)(i1 >> 32)))) {}
+      data(_mm_castsi128_ps(_mm_set_epi32((uint32_t)i0, (uint32_t)(i0 >> 32),
+                                          (uint32_t)i1, (uint32_t)(i1 >> 32)))) {}
    inline SSERegister(const float f0, const float f1,
                       const float f2, const float f3)
                       : data(_mm_set_ps(f3, f2, f1, f0)) {}
-   inline SSERegister(const uint32 i0, const uint32 i1,
-                      const uint32 i2, const uint32 i3)
+   inline SSERegister(const uint32_t i0, const uint32_t i1,
+                      const uint32_t i2, const uint32_t i3)
                       : data(_mm_castsi128_ps(_mm_set_epi32(i3, i2, i1, i0))) {}
    inline SSERegister(const int32 i0, const int32 i1,
                       const int32 i2, const int32 i3)
@@ -386,7 +386,7 @@ public:
 
    /// Creates a 4-bit mask from the most significant bits of the four
    /// single-precision, floating-point values. Look to the low four bits.
-   inline uint32 signMask() const { return _mm_movemask_ps(m128()); }
+   inline uint32_t signMask() const { return _mm_movemask_ps(m128()); }
 
 
    /// Blend operation, very similar to a selection operation (cond ? a : b).

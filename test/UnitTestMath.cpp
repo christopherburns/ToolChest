@@ -4,7 +4,7 @@
 #include <math/Mathematics.h>
 
 using namespace std;
-using namespace ToolChest;
+using namespace Mathematics;
 //using namespace Collections;
 
 ///////////////////////

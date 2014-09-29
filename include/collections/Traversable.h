@@ -28,16 +28,6 @@
  *          TreeMap (SortedMap)
  */
 
-/* Temporary ... until we add our math library */
-/*namespace Math
-{
-   template <class T> inline T MAX(T a, T b) { return (a > b ? a : b); }
-   template <class T> inline T MIN(T a, T b) { return (a < b ? a : b); }
-}*/
-
-//using namespace Math;
-
-
 namespace Collections
 {
    /// The following reference class is for internal use by collections classes,
@@ -185,6 +175,9 @@ namespace Collections
    class EmptyCollectionException {};
    class NoElementFoundException {};
 
+   // This is convenient
+   template <typename T> T min(T a, T b) { return a < b ? a : b; }
+   template <typename T> T max(T a, T b) { return a > b ? a : b; }
 
    /* What's the "CTraits" parameter for?
 
@@ -312,8 +305,8 @@ namespace Collections
       {
          /// We will not copy more elements than exist, nor reserve
          /// less space than we are about to copy
-         const int N = ToolChest::MIN(numElementsToCopy, Size());
-         const int R = ToolChest::MAX(reservedSpace, N);
+         const int N = min(numElementsToCopy, Size());
+         const int R = max(reservedSpace, N);
          Builder builder(R);
          Iterator itr = GetIterator();
          for (int i = 0; i < N; ++i) 
@@ -371,7 +364,7 @@ namespace Collections
 
    template <class E, class C, class CTraits> 
    C Traversable<E, C, CTraits>::Init() const                              
-   { return Take(ToolChest::MAX(0, Size()-1)); }                                                                               
+   { return Take(max(0, Size()-1)); }                                                                               
 
    template <class E, class C, class CTraits> 
    C Traversable<E, C, CTraits>::Take(int n) const                         

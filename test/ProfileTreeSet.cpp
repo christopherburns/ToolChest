@@ -54,10 +54,10 @@ template <class C> void performanceTestTreeSet()
    const int THEIRS = 1;
 
    StopWatch watch;
-   double orderedConstructionTimes[2];
-   double randomConstructionTimes[2];
-   double removalTimes[2];
-   double reductionTimes[2];
+   double orderedConstructionTimes[2] = { 0.0, 0.0 };
+   double randomConstructionTimes[2] = { 0.0, 0.0 };
+   double removalTimes[2] = { 0.0, 0.0 };
+   double reductionTimes[2] = { 0.0, 0.0 };
 
 
    //////////////////////////////////
@@ -71,6 +71,11 @@ template <class C> void performanceTestTreeSet()
    watch.Stop();
    orderedConstructionTimes[MINE] = watch.ReadTime().ToMilliseconds();
 
+   watch.Start();
+   std::set<int> uglySTLSet;
+   for (int i = 0; i < N; ++i) uglySTLSet.insert(orderedPool[i]);
+   watch.Stop();
+   orderedConstructionTimes[THEIRS] = watch.ReadTime().ToMilliseconds();
 
 
    /////////////////////////////////
@@ -87,6 +92,13 @@ template <class C> void performanceTestTreeSet()
 
    }
 
+   {
+      watch.Start();
+      std::set<int> randomSTLSet;
+      for (int i = 0; i < N; ++i) randomSTLSet.insert(randomPool[i]);
+      watch.Stop();
+      randomConstructionTimes[THEIRS] = watch.ReadTime().ToMilliseconds();
+   }
 
    /////////////////////
    // TreeSet Removal //
@@ -100,13 +112,17 @@ template <class C> void performanceTestTreeSet()
       removalTimes[MINE] = watch.ReadTime().ToMilliseconds();
    }
    //denseSet.PrintGraph("HalfGraph.dot");
-
+   {
+      watch.Start();
+      for (int i = 0; i < N; i += 2) uglySTLSet.erase(orderedPool[i]);
+      watch.Stop();
+      removalTimes[THEIRS] = watch.ReadTime().ToMilliseconds();
+   }
 
    ///////////////////////
    // TreeSet Reduction //
    ///////////////////////
 
-   
 
    {
       watch.Start();
@@ -115,18 +131,28 @@ template <class C> void performanceTestTreeSet()
       while (itr.HasNext()) sum += 1.0f / float(itr.Next());
       watch.Stop();
       reductionTimes[MINE] = watch.ReadTime().ToMilliseconds();
+      if (sum < 0.0f) printf("sum = %.2f\n", sum);
    }
 
+   {
+      watch.Start();
+      float sum = 0;
+      for (std::set<int>::iterator i = uglySTLSet.begin(); i != uglySTLSet.end(); ++i)
+         sum += 1.0f / float(*i);
+      watch.Stop();
+      reductionTimes[THEIRS] = watch.ReadTime().ToMilliseconds();
+      if (sum < 0.0f) printf("sum = %.2f\n", sum);
+   }
 
    delete [] orderedPool;
    delete [] randomPool;
 
    // Report results...
    printf("                                Burns          STL   \n");
-   printf("TreeSet Ordered Construction:   %8.2f ms  %8.2f ms\n", (float)orderedConstructionTimes[MINE], orderedConstructionTimes[THEIRS]);
-   printf("TreeSet Random  Construction:   %8.2f ms  %8.2f ms\n", (float)randomConstructionTimes[MINE], randomConstructionTimes[THEIRS]);
-   printf("TreeSet Item Removal:           %8.2f ms  %8.2f ms\n", (float)removalTimes[MINE], removalTimes[THEIRS]);
-   printf("TreeSet Reduction:              %8.2f ms  %8.2f ms\n", (float)reductionTimes[MINE]   , reductionTimes[THEIRS]);
+   printf("TreeSet Ordered Construction:   %8.2f ms  %8.2f ms\n", (float)orderedConstructionTimes[MINE], (float)orderedConstructionTimes[THEIRS]);
+   printf("TreeSet Random  Construction:   %8.2f ms  %8.2f ms\n", (float)randomConstructionTimes[MINE], (float)randomConstructionTimes[THEIRS]);
+   printf("TreeSet Item Removal:           %8.2f ms  %8.2f ms\n", (float)removalTimes[MINE], (float)removalTimes[THEIRS]);
+   printf("TreeSet Reduction:              %8.2f ms  %8.2f ms\n", (float)reductionTimes[MINE]   , (float)reductionTimes[THEIRS]);
 
    printf("Exiting profiling routine...\n");
 }

@@ -143,13 +143,13 @@ namespace Collections
       /// O(n)
       /// Returns a new container without the *last* element
       template <class E> LinkedList<E> LinkedList<E>::Init() const
-      { return Take(ToolChest::MAX(0, Size()-1)); }
+      { return Take(max(0, Size()-1)); }
 
       /// O(n)
       /// Returns a container without the first n elements
       template <class E> LinkedList<E> LinkedList<E>::Drop(int n) const
       {
-         const int N = ToolChest::MIN(n, _size);
+         const int N = min(n, _size);
          if (N == _size) return LinkedList<E>();
          else
          {
@@ -163,7 +163,7 @@ namespace Collections
       /// Returns a container with only the first n elements
       template <class E> LinkedList<E> LinkedList<E>::Take(int n) const
       {
-         const int N = ToolChest::MIN(n, _size);
+         const int N = min(n, _size);
          if (N == 0) return LinkedList<E>();
          else
          {

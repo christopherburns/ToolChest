@@ -3,7 +3,7 @@
 
 #include "Quaternion.h"
 
-namespace ToolChest
+namespace Mathematics
 {
 
 /// \class Rotation represents an rotation in 3D vector space. It is little
@@ -77,8 +77,8 @@ public:
 
    inline Quaternion q() const { return _q; }
 
-   inline String ToString(int prec = 3) const
-   { return String("Rotation = { q = ") + _q.toString(prec) + " }"; }
+   inline std::string ToString(int prec = 3) const
+   { return std::string("Rotation = { q = ") + _q.tostd::string(prec) + " }"; }
 };
 
 
@@ -102,6 +102,6 @@ typedef Rotation<Vector<float, 4> > Rotation4f;
 typedef Rotation<Vector<float, 8> > Rotation8f;
 typedef Rotation<Vector<float, 16> > Rotation16f;
 
-}; // namespace ToolChest
+}; // namespace Mathematics
 
 #endif // ROTATION_H

@@ -64,9 +64,9 @@ public:
    template <int I> inline void Set(const float& v) { _r = _r.fpInsert<I>(v); }
 
 
-   /// Conversion to String
-   inline String ToString(int prec = 3) const
-   { return String("[") + internalToString(prec) + "]"; }
+   /// Conversion to std::string
+   inline std::string Tostd::string(int prec = 3) const
+   { return std::string("[") + internalTostd::string(prec) + "]"; }
 
    /// Type cast operators, defined in SSE.h
    operator Vector<int32, 4>() const;
@@ -81,16 +81,16 @@ public:
    /// format.
 
 
-   template <class U> static Vector Load(U * addr);      /// Aligned load
-   template <class U> static Vector Loadu(U * addr);     /// Unaligned load
-   template <class U> static Vector LoadBroadcast(U * addr);
-   template <class U> static Vector Gather(U * addr, const Vector<int32, 4>& offsets);
-   template <class U> static Vector Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m);
+   template <class U> static inline Vector Load(U * addr);      /// Aligned load
+   template <class U> static inline Vector Loadu(U * addr);     /// Unaligned load
+   template <class U> static inline Vector LoadBroadcast(U * addr);
+   template <class U> static inline Vector Gather(U * addr, const Vector<int32, 4>& offsets);
+   template <class U> static inline Vector Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m);
 
-   template <class U> void Store(U * addr) const;
-   template <class U> void StoreOne(U * addr) const;
-   template <class U> void Scatter(U * addr, const Vector<int32, 4>& offsets) const;
-   template <class U> void Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const;
+   template <class U> inline void Store(U * addr) const;
+   template <class U> inline void StoreOne(U * addr) const;
+   template <class U> inline void Scatter(U * addr, const Vector<int32, 4>& offsets) const;
+   template <class U> inline void Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const;
 
 
    ////////////////////////////
@@ -210,12 +210,12 @@ private:
    inline SSERegister getRegister() const { return _r; }
 
    /// Vector<float, 4> is a base case, no more recursion
-   inline String internalToString(int prec = 3) const
+   inline std::string internalTostd::string(int prec = 3) const
    {
       //int prec = 8;
       return
-         String((*this)[0], prec) + ", " + String((*this)[1], prec) + ", " +
-         String((*this)[2], prec) + ", " + String((*this)[3], prec);
+         std::string((*this)[0], prec) + ", " + std::string((*this)[1], prec) + ", " +
+         std::string((*this)[2], prec) + ", " + std::string((*this)[3], prec);
    }
 
    friend struct MATHEMATICS<Vector<float, 4> >;
@@ -379,10 +379,10 @@ public:
       Vec4 r = ZERO<Vec4>();
       r[x < ZERO<Vec4>()] = MINUS_ONE<Vec4>();
       r[x > ZERO<Vec4>()] = ONE<Vec4>();
-      /*printf("   x = %s\n", *x.ToString());
-      printf("   r < ZERO<Vec4>() = %s\n", *(x < ZERO<Vec4>()).ToString());
-      printf("   r > ZERO<Vec4>() = %s\n", *(x > ZERO<Vec4>()).ToString());
-      printf("   r = %s\n", *r.ToString());*/
+      /*printf("   x = %s\n", *x.Tostd::string());
+      printf("   r < ZERO<Vec4>() = %s\n", *(x < ZERO<Vec4>()).Tostd::string());
+      printf("   r > ZERO<Vec4>() = %s\n", *(x > ZERO<Vec4>()).Tostd::string());
+      printf("   r = %s\n", *r.Tostd::string());*/
       return r;
    }
 

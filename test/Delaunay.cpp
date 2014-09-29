@@ -4,11 +4,12 @@
 
 #include <ToolChest.h>
 
-using namespace ToolChest;
 
 #include "Delaunay.h"
 #include "PeriodicDelaunay.h"
 
+using namespace Mathematics;
+using namespace ToolChest;
 using Collections::Mutable::Array;
 
 template <class T, class U> struct Pair
@@ -29,7 +30,7 @@ void GeneratePeriodicPatch(const int32 N)
    #define TRIANGULATOR PeriodicDelaunay
 
    /// Generate Point Set
-   uint32 seed = 2342342; // 304820; //
+   uint32_t seed = 2342342; // 304820; //
    Array<Vector2f> pointSet(N);
    srand(seed);
    for (int i = 0; i < N; ++i) 
