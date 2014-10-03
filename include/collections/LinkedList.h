@@ -4,6 +4,8 @@
 #include "Sequence.h"
 #include "LinkedListCommon.h"
 
+#include <stdio.h>
+
 /////////////////////////////////////////////////
 // Class LinkedList <- Sequence <- Traversable //
 /////////////////////////////////////////////////
@@ -18,7 +20,7 @@ namespace Collections
 {
    namespace Immutable
    {
-      using ToolChest::Ref;
+      // using Ref;
 
       template <class E> class LinkedList;
 

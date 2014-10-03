@@ -33,9 +33,9 @@ namespace Collections
 
       protected:
          int _size;
-         ToolChest::Ref<Common::InitializedBuffer<E> > _data;
+         Ref<Common::InitializedBuffer<E> > _data;
 
-         inline Array(int size, ToolChest::Ref<Common::InitializedBuffer<E> > data)
+         inline Array(int size, Ref<Common::InitializedBuffer<E> > data)
             : _size(size), _data(data) {}
 
       public:

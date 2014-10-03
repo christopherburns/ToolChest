@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <ToolChest.h>
+#include <Mathematics.h>
+#include <Collections.h>
 
 using namespace std;
-using namespace ToolChest;
+using namespace Mathematics;
 using namespace Collections;
 
 bool gt4(int i) { return i > 4; }

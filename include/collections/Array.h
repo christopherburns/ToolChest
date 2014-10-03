@@ -31,7 +31,7 @@ namespace Collections
       {
       protected:
          int _size;
-         ToolChest::Ref<Common::InitializedBuffer<E> > _data;
+         Ref<Common::InitializedBuffer<E> > _data;
 
          
 

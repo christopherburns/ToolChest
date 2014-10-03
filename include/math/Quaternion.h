@@ -17,7 +17,7 @@ namespace Mathematics
       Vector4 _q;   // This should always be normalized...
 
       inline Quaternion(const T& f0, const T& f1, const T& f2, const T& f3)
-         : _q(f0, f1, f2, f3) { STATIC_assert(!TypeInfo<T>::Integral); }
+         : _q(f0, f1, f2, f3) { /*STATIC_assert(!TypeInfo<T>::Integral);*/ }
 
    public:
 

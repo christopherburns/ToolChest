@@ -2,14 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <ToolChest.h>
-
+#include <Mathematics.h>
+#include <Collections.h>
 
 #include "Delaunay.h"
 #include "PeriodicDelaunay.h"
 
 using namespace Mathematics;
-using namespace ToolChest;
 using Collections::Mutable::Array;
 
 template <class T, class U> struct Pair
@@ -21,7 +20,7 @@ public:
 };
 
 
-void GeneratePeriodicPatch(const int32 N)
+void GeneratePeriodicPatch(const int32_t N)
 {
    ////////////////////////
    // Create a Point Set //

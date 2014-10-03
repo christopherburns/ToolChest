@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <math/Mathematics.h>
+#include <Mathematics.h>
 
 using namespace std;
 using namespace Mathematics;

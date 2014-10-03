@@ -2,10 +2,12 @@
 #include <iostream>
 #include <set>
 
-#include <ToolChest.h>
+#include <Collections.h>
+#include "Strings.h"
+#include "Clock.h"
 
 using namespace std;
-using namespace ToolChest;
+using namespace Mathematics;
 using namespace Collections;
 
 class Printer 

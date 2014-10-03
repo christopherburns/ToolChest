@@ -1,7 +1,7 @@
 #ifndef TREE_COMMON_H
 #define TREE_COMMON_H
 
-#include "../adts/Vector.h"
+#include "Vector.h"
 
 namespace Collections
 {
@@ -23,7 +23,7 @@ namespace Collections
 
 	namespace Common
 	{
-      using ToolChest::Ref;
+      // using Ref;
 
       /////////////////////////////////////
       // Structures For Tree Collections //

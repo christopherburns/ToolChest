@@ -6,32 +6,35 @@
 #include "../Mathematics.h"
 #include "../Vector.h"
 
-namespace ToolChest
+namespace Mathematics
 {
    template <> class Vector<float, 4>;
-   template <> class Vector<int32, 4>;
-}; // namespace ToolChest
+   template <> class Vector<int32_t, 4>;
+}; // namespace Mathematics
 
+template <typename T, typename U> inline const T& cast(const U& from) { return *(T*)(&from); }
+template <typename T, typename U> inline       T& cast(      U& from) { return *(T*)(&from); }
 
 #include "Vector4i.h"
 #include "Vector4f.h"
 
-namespace ToolChest
+namespace Mathematics
 {
    /// Casting operators
-   inline Vector<int32, 4>::operator Vector<float, 4>() const
+   inline Vector<int32_t, 4>::operator Vector<float, 4>() const
    { return Vector<float, 4>(_mm_cvtepi32_ps(_r.m128i())); }
 
-   inline Vector<float, 4>::operator Vector<int32, 4>() const
-   { return Vector<int32, 4>(_mm_cvttps_epi32(_r.m128())); }
+   inline Vector<float, 4>::operator Vector<int32_t, 4>() const
+   { return Vector<int32_t, 4>(_mm_cvttps_epi32(_r.m128())); }
 
    /// Conversion constructors
-   template <> inline Vector<int32, 4>::Vector(const Vector<float, 4>& v) :
+   template <> inline Vector<int32_t, 4>::Vector(const Vector<float, 4>& v) :
       _r(_mm_cvttps_epi32(v._r.m128())) {}
 
-   template <> inline Vector<float, 4>::Vector(const Vector<int32, 4>& v) :
+   template <> inline Vector<float, 4>::Vector(const Vector<int32_t, 4>& v) :
       _r(_mm_cvtepi32_ps(v._r.m128i())) {}
-}; // namespace ToolChest
+}; // namespace Mathematics
+
 
 #endif // ___SSE
 

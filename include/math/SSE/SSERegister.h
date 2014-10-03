@@ -13,7 +13,7 @@
 #endif
 
 
-namespace ToolChest
+namespace Mathematics
 {
 
 /// Class to encapsulate and abstract a SIMD 4-wide SSE register. It is
@@ -36,7 +36,7 @@ public:
 public:
 
    /// Define the type which fits in the immediate field of the instruction set
-   typedef uint8 Imm8;
+   typedef uint8_t Imm8;
 
    /// Constructors
    inline SSERegister() {}
@@ -46,9 +46,9 @@ public:
 
    /// Construct from data
    inline SSERegister(float f) : data(_mm_set1_ps(f)) {}
-   inline SSERegister(int32 i) : data(_mm_castsi128_ps(_mm_set1_epi32(i))) {}
+   inline SSERegister(int32_t i) : data(_mm_castsi128_ps(_mm_set1_epi32(i))) {}
    inline SSERegister(uint32_t i) : data(_mm_castsi128_ps(_mm_set1_epi32(i))) {}
-   inline SSERegister(const uint64 i0, const uint64 i1) :
+   inline SSERegister(const uint64_t i0, const uint64_t i1) :
       data(_mm_castsi128_ps(_mm_set_epi32((uint32_t)i0, (uint32_t)(i0 >> 32),
                                           (uint32_t)i1, (uint32_t)(i1 >> 32)))) {}
    inline SSERegister(const float f0, const float f1,
@@ -57,8 +57,8 @@ public:
    inline SSERegister(const uint32_t i0, const uint32_t i1,
                       const uint32_t i2, const uint32_t i3)
                       : data(_mm_castsi128_ps(_mm_set_epi32(i3, i2, i1, i0))) {}
-   inline SSERegister(const int32 i0, const int32 i1,
-                      const int32 i2, const int32 i3)
+   inline SSERegister(const int32_t i0, const int32_t i1,
+                      const int32_t i2, const int32_t i3)
                       : data(_mm_castsi128_ps(_mm_set_epi32(i3, i2, i1, i0))) {}
 
 
@@ -77,12 +77,12 @@ public:
    // Insertion and Extraction //
    //////////////////////////////
 
-   // Extracts a value from the __m128() type and casts it to float or int32
+   // Extracts a value from the __m128() type and casts it to float or int32_t
    template <Imm8 i> inline float fpExtract() const;
-   template <Imm8 i> inline int32 i32Extract() const;
+   template <Imm8 i> inline int32_t i32Extract() const;
 
    template <Imm8 idx> inline SSERegister fpInsert(float v) const;
-   template <Imm8 idx> inline SSERegister i32Insert(int32 v) const;
+   template <Imm8 idx> inline SSERegister i32Insert(int32_t v) const;
 
 
    ////////////////////
@@ -118,11 +118,11 @@ public:
    { return _mm_srai_epi32(m128i(), bits); }
 
    /// Dynamic shifting operations
-   inline SSERegister shiftLeft32(const uint8 bits) const
+   inline SSERegister shiftLeft32(const uint8_t bits) const
    { return _mm_slli_epi32(m128i(), bits); }
-   inline SSERegister shiftRightL32(const uint8 bits) const
+   inline SSERegister shiftRightL32(const uint8_t bits) const
    { return _mm_srli_epi32(m128i(), bits); }
-   inline SSERegister shiftRightA32(const uint8 bits) const
+   inline SSERegister shiftRightA32(const uint8_t bits) const
    { return _mm_srai_epi32(m128i(), bits); }
 
    /// Static rotate operations
@@ -132,9 +132,9 @@ public:
    { return _mm_or_si128(_mm_slli_epi32(m128i(), 32-bits), _mm_srli_epi32(m128i(), bits)); }
 
    /// Dynamic rotate operations
-   inline SSERegister rotateLeft32(const uint8 bits) const
+   inline SSERegister rotateLeft32(const uint8_t bits) const
    { return _mm_or_si128(_mm_slli_epi32(m128i(), bits), _mm_srli_epi32(m128i(), 32-bits)); }
-   inline SSERegister rotateRight32(const uint8 bits) const
+   inline SSERegister rotateRight32(const uint8_t bits) const
    { return _mm_or_si128(_mm_slli_epi32(m128i(), 32-bits), _mm_srli_epi32(m128i(), bits)); }
 
 
@@ -149,11 +149,11 @@ public:
    //{ return _mm_srai_epi64(m128i(), bits); }
 
    /// Dynamic shifting operations
-   inline SSERegister shiftLeft64(const uint8 bits) const
+   inline SSERegister shiftLeft64(const uint8_t bits) const
    { return _mm_slli_epi64(m128i(), bits); }
-   inline SSERegister shiftRightL64(const uint8 bits) const
+   inline SSERegister shiftRightL64(const uint8_t bits) const
    { return _mm_srli_epi64(m128i(), bits); }
-   //inline SSERegister shiftRightA64(const uint8 bits) const
+   //inline SSERegister shiftRightA64(const uint8_t bits) const
    //{ return _mm_srai_epi64(m128i(), bits); }
 
    /// Static rotate operations
@@ -163,9 +163,9 @@ public:
    { return _mm_or_si128(_mm_slli_epi64(m128i(), 64-bits), _mm_srli_epi64(m128i(), bits)); }
 
    /// Dynamic rotate operations
-   inline SSERegister rotateLeft64(const uint8 bits) const
+   inline SSERegister rotateLeft64(const uint8_t bits) const
    { return _mm_or_si128(_mm_slli_epi64(m128i(), bits), _mm_srli_epi64(m128i(), 64-bits)); }
-   inline SSERegister rotateRight64(const uint8 bits) const
+   inline SSERegister rotateRight64(const uint8_t bits) const
    { return _mm_or_si128(_mm_slli_epi64(m128i(), 64-bits), _mm_srli_epi64(m128i(), bits)); }
 
 
@@ -582,40 +582,45 @@ template<> inline SSERegister SSERegister::shuffle32<3, 3, 0, 1>() const { retur
 /// specialized definitions before the specializations have been formally
 /// defined in the file, even if the general definition/decl has been given.
 
-template <uint8 i> inline SSERegister SSERegister::broadcast32() const { return shuffle32<i, i, i, i>(); }
+template <uint8_t i> inline SSERegister SSERegister::broadcast32() const { return shuffle32<i, i, i, i>(); }
 
 
 // Static Extractors
-template <>        inline float SSERegister::fpExtract<0>() const { return _mm_cvtss_f32(m128()); }
-template <uint8 i> inline float SSERegister::fpExtract   () const { return _mm_cvtss_f32(broadcast32<i>().m128()); }
+template <>          inline float SSERegister::fpExtract<0>() const { return _mm_cvtss_f32(m128()); }
+template <uint8_t i> inline float SSERegister::fpExtract   () const { return _mm_cvtss_f32(broadcast32<i>().m128()); }
 
 #ifdef ___SSE4
-template <uint8 i> inline int32 SSERegister::i32Extract() const { return _mm_extract_epi32(m128i(), i); }
+template <uint8_t i> inline int32_t SSERegister::i32Extract() const { return _mm_extract_epi32(m128i(), i); }
 #else
-template <>        inline int32 SSERegister::i32Extract<0>() const { return _mm_cvtsi128_si32(m128i()); }
-template <uint8 i> inline int32 SSERegister::i32Extract   () const { return _mm_cvtsi128_si32(broadcast32<i>().m128i()); }
+template <>          inline int32_t SSERegister::i32Extract<0>() const { return _mm_cvtsi128_si32(m128i()); }
+template <uint8_t i> inline int32_t SSERegister::i32Extract   () const { return _mm_cvtsi128_si32(broadcast32<i>().m128i()); }
 #endif
 
+
+// clang++ on OS X 10.9 says:
+//   ./src/utility/math/SSE/SSERegister.h:604:10: error: conversion from '__v4si' to 'Mathematics::SSERegister' is ambiguous
+//   { return _mm_insert_epi32(m128i(), v, idx); }
+//
 // Static insertions
-#ifdef ___SSE4
-template <uint8 idx> inline SSERegister SSERegister::fpInsert(float v) const
-{ return _mm_insert_ps(m128(), SSERegister(v).m128(), (idx << 4)); }
-template <uint8 idx> inline SSERegister SSERegister::i32Insert(int32 v) const
-{ return _mm_insert_epi32(m128i(), v, idx); }
-#else // ___SSE4
-template <uint8 idx> inline SSERegister SSERegister::fpInsert(float v) const
+//#ifdef ___SSE4
+//template <uint8_t idx> inline SSERegister SSERegister::fpInsert(float v) const
+//{ return _mm_insert_ps(m128(), SSERegister(v).m128(), (idx << 4)); }
+//template <uint8_t idx> inline SSERegister SSERegister::i32Insert(int32_t v) const
+//{ return _mm_insert_epi32(m128i(), v, idx); }
+//#else // ___SSE4
+template <uint8_t idx> inline SSERegister SSERegister::fpInsert(float v) const
 {
    SSERegister r = *this;
    *(((float*)&r.data)+idx) = v;
    return r;
 }
-template <uint8 idx> inline SSERegister SSERegister::i32Insert(int32 v) const
+template <uint8_t idx> inline SSERegister SSERegister::i32Insert(int32_t v) const
 {
    SSERegister r = *this;
-   *(((int32*)&r.data)+idx) = v;
+   *(((int32_t*)&r.data)+idx) = v;
    return r;
 }
-#endif
+//#endif
 
 
 
@@ -635,7 +640,7 @@ inline SSERegister SSERegister::i32Mul(const SSERegister& lhs, const SSERegister
 /// Reductions, fills all four components of the register with the result
 inline SSERegister SSERegister::fpReduceAdd() const
 {
-#if 0
+#if 1
    __m128 t = _mm_hadd_ps(m128(), m128()); return _mm_hadd_ps(t, t);
 #else
    return _mm_dp_ps(m128(), _mm_set_ps(1.0f, 1.0f, 1.0f, 1.0f), 0xff);
@@ -659,7 +664,7 @@ inline SSERegister SSERegister::i32ReduceMax() const
 { SSERegister r = i32Max(*this, shuffle32<1,0,3,2>()); return i32Max(r, r.shuffle32<2,3,0,1>()); }
 
 
-}; // namespace ToolChest
+}; // namespace Mathematics
 
 
 

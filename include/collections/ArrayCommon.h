@@ -47,7 +47,7 @@ namespace Collections
 
          int _i;      
          int _size;
-         ToolChest::Ref<Common::InitializedBuffer<E> > _data;
+         Ref<Common::InitializedBuffer<E> > _data;
       
          inline ArrayIterator(const Mutable::Array<E>& a)   : _i(-1), _size(a._size), _data(a._data) {}
          inline ArrayIterator(const Immutable::Array<E>& a) : _i(-1), _size(a._size), _data(a._data) {}

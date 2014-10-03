@@ -5,11 +5,11 @@ ASM_DIR = asm
 SRC_DIR = test
 
 CC = clang++ 
-
-CFLAGS = -std=c++11 -O3 -g -D___OSX -Iinclude/ -Wunused-value
+ARCH := -arch x86_64 -msse4
+CFLAGS = -std=c++11 -O3 -g -D___OSX  -D___SSE -D___SSE4 $(ARCH) -Iinclude/math/ -Iinclude/collections -Iinclude/ -Wunused-value
 LDFLAGS = -lstdc++
 
-EXES = testunitmath testunitcollections profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
+EXES = testunitcollections profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
 EXES := $(EXES:%=$(BIN_DIR)/%)
 
 .PHONY: all $(EXES)

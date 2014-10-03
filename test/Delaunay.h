@@ -1,9 +1,19 @@
 #ifndef DELAUNAY_H
 #define DELAUNAY_H
 
-#include "Bounds.h"
-
 #include <sstream>
+
+#include "Bounds.h"
+#include "Strings.h"
+#include "Clock.h"
+
+/// Unfortunate...this seems necessary
+#ifdef MIN
+#undef MIN
+#endif
+#ifdef MAX
+#undef MAX
+#endif
 
 class PeriodicDelaunay;
 
@@ -58,12 +68,12 @@ private:
       
       inline int operator [] (int i) const { return vIndices[i]; }
 
-      inline ToolChest::String ToString() const
+      inline String ToString() const
       { 
-         return ToolChest::String("[ (") 
-                    + ToolChest::String(vIndices[0]) 
-            + ") (" + ToolChest::String(vIndices[1]) 
-            + ") (" + ToolChest::String(vIndices[2]) + ") ]"; 
+         return String("[ (") 
+                    + String(vIndices[0]) 
+            + ") (" + String(vIndices[1]) 
+            + ") (" + String(vIndices[2]) + ") ]"; 
       }
 
       inline bool operator == (const Triangle& rhs) const
@@ -95,8 +105,8 @@ private:
          assert(p0 != p1); /// Degenerate edges not allowed
       }
 
-      inline ToolChest::String ToString() const
-      { return ToolChest::String("[ (") + ToolChest::String(i0) + ") (" + ToolChest::String(i1) + ") ]"; }
+      inline String ToString() const
+      { return String("[ (") + String(i0) + ") (" + String(i1) + ") ]"; }
 
       inline bool operator == (const Edge& rhs) const
       { return (i0 == rhs.i0 && i1 == rhs.i1); }

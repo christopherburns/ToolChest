@@ -1,7 +1,8 @@
 #ifndef BOUNDS_H
 #define BOUNDS_H
 
-#include <ToolChest.h>
+#include <Mathematics.h>
+#include <Collections.h>
 
 
 /// For an AABBox3f, use T = Vector3f,

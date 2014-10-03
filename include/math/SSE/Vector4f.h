@@ -3,7 +3,7 @@
 
 #include "Mask4.h"
 
-namespace ToolChest
+namespace Mathematics
 {
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,11 +65,11 @@ public:
 
 
    /// Conversion to std::string
-   inline std::string Tostd::string(int prec = 3) const
-   { return std::string("[") + internalTostd::string(prec) + "]"; }
+   inline std::string ToString(int prec = 3) const
+   { return std::string("[") + internalToString(prec) + "]"; }
 
    /// Type cast operators, defined in SSE.h
-   operator Vector<int32, 4>() const;
+   operator Vector<int32_t, 4>() const;
 
 
    //////////////////////
@@ -84,13 +84,13 @@ public:
    template <class U> static inline Vector Load(U * addr);      /// Aligned load
    template <class U> static inline Vector Loadu(U * addr);     /// Unaligned load
    template <class U> static inline Vector LoadBroadcast(U * addr);
-   template <class U> static inline Vector Gather(U * addr, const Vector<int32, 4>& offsets);
-   template <class U> static inline Vector Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m);
+   template <class U> static inline Vector Gather(U * addr, const Vector<int32_t, 4>& offsets);
+   template <class U> static inline Vector Gather(U * addr, const Vector<int32_t, 4>& offsets, const Mask& m);
 
    template <class U> inline void Store(U * addr) const;
    template <class U> inline void StoreOne(U * addr) const;
-   template <class U> inline void Scatter(U * addr, const Vector<int32, 4>& offsets) const;
-   template <class U> inline void Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const;
+   template <class U> inline void Scatter(U * addr, const Vector<int32_t, 4>& offsets) const;
+   template <class U> inline void Scatter(U * addr, const Vector<int32_t, 4>& offsets, const Mask& m) const;
 
 
    ////////////////////////////
@@ -161,7 +161,7 @@ public:
 
 
    /// Shuffle
-   template<uint8 i0, uint8 i1, uint8 i2, uint8 i3> inline Vector Shuffle() const
+   template<uint8_t i0, uint8_t i1, uint8_t i2, uint8_t i3> inline Vector Shuffle() const
    { return _r.shuffle32<i0, i1, i2, i3>(); }
 
 
@@ -210,7 +210,7 @@ private:
    inline SSERegister getRegister() const { return _r; }
 
    /// Vector<float, 4> is a base case, no more recursion
-   inline std::string internalTostd::string(int prec = 3) const
+   inline std::string internalToString(int prec = 3) const
    {
       //int prec = 8;
       return
@@ -250,7 +250,7 @@ template <class U> inline Vector<float, 4> Vector<float, 4>::LoadBroadcast(U * a
 { return Vector<float, 4>((float)(*addr)); }
 
 template <class U> inline Vector<float, 4>
-Vector<float, 4>::Gather(U * addr, const Vector<int32, 4>& offsets)
+Vector<float, 4>::Gather(U * addr, const Vector<int32_t, 4>& offsets)
 {
 #if 1
    return
@@ -267,11 +267,11 @@ Vector<float, 4>::Gather(U * addr, const Vector<int32, 4>& offsets)
 }
 
 template <class U> inline Vector<float, 4>
-Vector<float, 4>::Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m)
+Vector<float, 4>::Gather(U * addr, const Vector<int32_t, 4>& offsets, const Mask& m)
 {
    Vector v;
    for (int i = 0; i < 4; ++i)
-      if (m.bitMask() & (1 << i)) v[i] = (float)(*(addr + offsets[i]));
+      if (m.BitMask() & (1 << i)) v[i] = (float)(*(addr + offsets[i]));
    return v;
 }
 
@@ -288,7 +288,7 @@ template <class U> inline void Vector<float, 4>::StoreOne(U * addr) const
 { *addr = (U)x(); }
 
 template <class U> inline void
-Vector<float, 4>::Scatter(U * addr, const Vector<int32, 4>& offsets) const
+Vector<float, 4>::Scatter(U * addr, const Vector<int32_t, 4>& offsets) const
 {
    *(addr + offsets[0]) = (U)x();
    *(addr + offsets[1]) = (U)y();
@@ -297,9 +297,9 @@ Vector<float, 4>::Scatter(U * addr, const Vector<int32, 4>& offsets) const
 }
 
 template <class U> inline void
-Vector<float, 4>::Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const
+Vector<float, 4>::Scatter(U * addr, const Vector<int32_t, 4>& offsets, const Mask& m) const
 {
-   int mask = m.bitMask();
+   int mask = m.BitMask();
    if (mask & 0x1) *(addr + offsets[0]) = (U)x();
    if (mask & 0x2) *(addr + offsets[1]) = (U)y();
    if (mask & 0x4) *(addr + offsets[2]) = (U)z();
@@ -372,7 +372,7 @@ public:
    static inline Vec4 ceil(Vec4 x)           { return x._r.fpCeiling(); }
 
    static inline Vec4 clampz(Vec4 x, Vec4 u)
-   { return blend(x < ZERO<Vec4>(), ZERO<Vec4>(), blend(x > u, u, x)); }
+   { return Blend(x < ZERO<Vec4>(), ZERO<Vec4>(), Blend(x > u, u, x)); }
 
    static inline Vec4 sign(Vec4 x)
    {
@@ -393,7 +393,7 @@ public:
    static inline Vec4 max3(Vec4 x, Vec4 y, Vec4 z)  { return max(x, max(y, z)); }
 };
 
-}; // namespace ToolChest
+}; // namespace Mathematics
 
 
 #endif // VECTOR4F_H

@@ -1,7 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include "../collections/MutableArray.h"
+#include "MutableArray.h"
 
 namespace Collections
 {
@@ -16,7 +16,7 @@ namespace Collections
       {
          if (newCapacity <= Capacity()) return;
 
-         ToolChest::Ref<Common::InitializedBuffer<E> > newData 
+         Ref<Common::InitializedBuffer<E> > newData 
             = new Common::InitializedBuffer<E>(newCapacity);
          for (int i = 0; i < Size(); ++i)
             ((E*)*newData)[i] = ((E*)(*Mutable::Array<E>::_data))[i];

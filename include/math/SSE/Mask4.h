@@ -3,7 +3,7 @@
 
 #include "SSERegister.h"
 
-namespace ToolChest
+namespace Mathematics
 {
 
    template <> class Mask<bool, 4>
@@ -12,17 +12,20 @@ namespace ToolChest
       //                      Private Data And Methods                         //
       ///////////////////////////////////////////////////////////////////////////
 
-     /// This shit should be private... why is it not ?
-   public:
+      /// This shit should be private... why is it not ?
       SSERegister _m;
+
+      friend class Vector<int32_t, 4>;
+      friend class Vector<float  , 4>;
+
    private:
 
       inline Mask(const SSERegister& r) : _m(r) {}
 
       /// Mask<4> is a base case, no more recursion
-      inline std::string internalTostd::string() const
+      inline std::string internalToString() const
       {
-         int mask = bitMask();
+         int mask = BitMask();
          return
             std::string((mask & 1) ? "1" : "0") + ", " +
                   ((mask & 2) ? "1" : "0") + ", " +
@@ -47,18 +50,18 @@ namespace ToolChest
          SSERegister::zeroes().m128i())) {}
 
       /// Does this work??? we'll have to test it
-      inline Mask(uint64 bitField) : _m(_mm_set_epi32(!(bitField & 0x1), !((bitField >> 1) & 0x1), !((bitField >> 2) & 0x1), !((bitField >> 3) & 0x1))) {}
+      inline Mask(uint64_t bitField) : _m(_mm_set_epi32(!(bitField & 0x1), !((bitField >> 1) & 0x1), !((bitField >> 2) & 0x1), !((bitField >> 3) & 0x1))) {}
 
       /// Conversion to std::string
-      inline std::string Tostd::string() const
-      { return std::string("[") + internalTostd::string() + "]"; }
+      inline std::string ToString() const
+      { return std::string("[") + internalToString() + "]"; }
 
       /// Generate a bitmask, the low four bits corrspond to the 4 Mask components
       inline uint32_t BitMask() const { return _m.signMask(); }
 
       /// Access a single element
       inline bool operator [] (int i) const
-      { assert(i >= 0 && i < 4); return bitMask() & (0x1 << i); }
+      { assert(i >= 0 && i < 4); return BitMask() & (0x1 << i); }
 
 
       ////////////////////////////
@@ -94,7 +97,7 @@ namespace ToolChest
 
       inline bool ReduceAnd() const { return _m.signMask() == 0xf; }
       inline bool ReduceOr()  const { return _m.signMask() != 0x0; }
-      inline bool All() const       { return reduceAnd(); }
+      inline bool All() const       { return ReduceAnd(); }
       inline bool None() const      { return _m.signMask() == 0x0; }
       inline bool Any() const       { return _m.signMask() != 0x0; }
 
@@ -113,7 +116,7 @@ namespace ToolChest
       { return f(*this); }
    };
 
-}; // namespace ToolChest
+}; // namespace Mathematics
 
 
 #endif // MASK4_H

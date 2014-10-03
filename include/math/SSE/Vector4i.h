@@ -6,7 +6,7 @@
 #include "Mask4.h"
 
 
-namespace ToolChest
+namespace Mathematics
 {
 
 ///////////////////////////////////////////////////////////////////////////
@@ -14,19 +14,19 @@ namespace ToolChest
 ///////////////////////////////////////////////////////////////////////////
 
 
-template <> class TypeInfo<Vector<int32, 4> >
+template <> class TypeInfo<Vector<int32_t, 4> >
 {
 public:
-   static const bool Integral = TypeInfo<int32>::Integral;
-   static const bool Unsigned = TypeInfo<int32>::Unsigned;
+   static const bool Integral = TypeInfo<int32_t>::Integral;
+   static const bool Unsigned = TypeInfo<int32_t>::Unsigned;
    static const int  Rank = 1;
    static const int  Width = 4;
 
-   typedef int32 ElementType;
+   typedef int32_t ElementType;
    typedef Mask<bool, 4> Mask;
 };
 
-template <> class Vector<int32, 4>
+template <> class Vector<int32_t, 4>
 {
    ///////////////////////////////////////////////////////////////////////////
    //                           Public Interface                            //
@@ -39,39 +39,39 @@ public:
 
    /// Constructors
    inline Vector() {}
-   inline explicit Vector(const int32& t) : _r(t) {}
-   inline explicit Vector(const int32 t[4]) : _r(t[0], t[1], t[2], t[3]) { }
-   inline Vector(int32 i0, int32 i1, int32 i2, int32 i3) : _r(i0, i1, i2, i3) {}
+   inline explicit Vector(const int32_t& t) : _r(t) {}
+   inline explicit Vector(const int32_t t[4]) : _r(t[0], t[1], t[2], t[3]) { }
+   inline Vector(int32_t i0, int32_t i1, int32_t i2, int32_t i3) : _r(i0, i1, i2, i3) {}
 
    /// Construction from Vector3f + float
-   inline Vector(const Vector<int32, 3>& v, int32 w) : _r(v.x(), v.y(), v.z(), w) {}
+   inline Vector(const Vector<int32_t, 3>& v, int32_t w) : _r(v.x(), v.y(), v.z(), w) {}
 
    /// Conversion from arbitrary (but cast-able) base type
    template <class S> inline explicit Vector(const Vector<S, 4>& v) :
-      _r((int32)v.x(), (int32)v.y(), (int32)v.z(), (int32)v.w()) {}
-   template <> inline explicit Vector(const Vector<float, 4>& v);  /// Specialization
+      _r((int32_t)v.x(), (int32_t)v.y(), (int32_t)v.z(), (int32_t)v.w()) {}
+   //template <> inline explicit Vector(const Vector<float, 4>& v);  /// Specialization
 
    /// Subscript accessors (introduces aliasing)
-   inline const int32& operator [] (int i) const
-   { assert(i < 4); return ((int32*)&_r)[i]; }
-   inline int32& operator [] (int i) { assert(i < 4); return ((int32*)&_r)[i]; }
+   inline const int32_t& operator [] (int i) const
+   { assert(i < 4); return ((int32_t*)&_r)[i]; }
+   inline int32_t& operator [] (int i) { assert(i < 4); return ((int32_t*)&_r)[i]; }
 
    /// Convenient static, non-aliased element accessors for Vector2, 3, 4
-   inline const int32 x() const { return _r.i32Extract<0>(); }
-   inline const int32 y() const { return _r.i32Extract<1>(); }
-   inline const int32 z() const { return _r.i32Extract<2>(); }
-   inline const int32 w() const { return _r.i32Extract<3>(); }
+   inline const int32_t x() const { return _r.i32Extract<0>(); }
+   inline const int32_t y() const { return _r.i32Extract<1>(); }
+   inline const int32_t z() const { return _r.i32Extract<2>(); }
+   inline const int32_t w() const { return _r.i32Extract<3>(); }
 
-   inline const Vector<int32, 2> xy() const { return cast<Vector<int32, 2>>(*this); } //{ return Vector2i(x(), y()); }
-   inline const Vector<int32, 3> xyz() const { return cast<Vector<int32, 3>>(*this); } //{ return Vector3i(x(), y(), z()); }
+   inline const Vector<int32_t, 2> xy() const { return cast<Vector<int32_t, 2>>(*this); } //{ return Vector2i(x(), y()); }
+   inline const Vector<int32_t, 3> xyz() const { return cast<Vector<int32_t, 3>>(*this); } //{ return Vector3i(x(), y(), z()); }
 
    template <int I> inline float Get() const { return _r.i32Extract<I>(); }
-   template <int I> inline void Set(const int32& v) { _r = _r.i32Insert<I>(v); }
+   template <int I> inline void Set(const int32_t& v) { _r = _r.i32Insert<I>(v); }
 
    /// Conversion to std::string (introduces aliasing)
    /// Conversion to std::string
-   inline std::string Tostd::string(int prec = 3) const
-   { return std::string("[") + internalTostd::string(prec) + "]"; }
+   inline std::string ToString(int prec = 3) const
+   { return std::string("[") + internalToString(prec) + "]"; }
 
 
    /// Type cast operators, defined in SSE.h
@@ -89,13 +89,13 @@ public:
    template <class U> static inline Vector Load(U * addr);
    template <class U> static inline Vector Loadu(U * addr);
    template <class U> static inline Vector LoadBroadcast(U * addr);
-   template <class U> static inline Vector Gather(U * addr, const Vector<int32, 4>& offsets);
-   template <class U> static inline Vector Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m);
+   template <class U> static inline Vector Gather(U * addr, const Vector<int32_t, 4>& offsets);
+   template <class U> static inline Vector Gather(U * addr, const Vector<int32_t, 4>& offsets, const Mask& m);
 
    template <class U> inline void Store(U * addr) const;
    template <class U> inline void StoreOne(U * addr) const;
-   template <class U> inline void Scatter(U * addr, const Vector<int32, 4>& offsets) const;
-   template <class U> inline void Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const;
+   template <class U> inline void Scatter(U * addr, const Vector<int32_t, 4>& offsets) const;
+   template <class U> inline void Scatter(U * addr, const Vector<int32_t, 4>& offsets, const Mask& m) const;
 
    ////////////////////////////
    // Mathematical Operators //
@@ -109,41 +109,41 @@ public:
    inline friend Vector operator - (const Vector& a, const Vector& b)      { return SSERegister::i32Sub(a._r, b._r); }
    inline friend Vector operator * (const Vector& a, const Vector& b)      { return SSERegister::i32Mul(a._r, b._r); }
    inline friend Vector operator / (const Vector& a, const Vector& b)      { return SSERegister::i32Div(a._r, b._r); }
-   inline friend Vector operator + (const Vector& a, const int32& b)       { return a + Vector(b); }
-   inline friend Vector operator - (const Vector& a, const int32& b)       { return a - Vector(b); }
-   inline friend Vector operator * (const Vector& a, const int32& b)       { return a * Vector(b); }
-   inline friend Vector operator / (const Vector& a, const int32& b)       { return a / Vector(b); }
-   inline friend Vector operator + (const int32& a, const Vector& b)       { return b + a; }
-   inline friend Vector operator - (const int32& a, const Vector& b)       { return Vector(a) - b; }
-   inline friend Vector operator * (const int32& a, const Vector& b)       { return b * a; }
-   inline friend Vector operator / (const int32& a, const Vector& b)       { return Vector(a) / b; }
+   inline friend Vector operator + (const Vector& a, const int32_t& b)       { return a + Vector(b); }
+   inline friend Vector operator - (const Vector& a, const int32_t& b)       { return a - Vector(b); }
+   inline friend Vector operator * (const Vector& a, const int32_t& b)       { return a * Vector(b); }
+   inline friend Vector operator / (const Vector& a, const int32_t& b)       { return a / Vector(b); }
+   inline friend Vector operator + (const int32_t& a, const Vector& b)       { return b + a; }
+   inline friend Vector operator - (const int32_t& a, const Vector& b)       { return Vector(a) - b; }
+   inline friend Vector operator * (const int32_t& a, const Vector& b)       { return b * a; }
+   inline friend Vector operator / (const int32_t& a, const Vector& b)       { return Vector(a) / b; }
 
    /// Accumulation operators
    inline Vector& operator += (const Vector& b)                            { return *this = *this + b; }
    inline Vector& operator -= (const Vector& b)                            { return *this = *this - b; }
    inline Vector& operator *= (const Vector& b)                            { return *this = *this * b; }
    inline Vector& operator /= (const Vector& b)                            { return *this = *this / b; }
-   inline Vector& operator += (const int32& b)                             { return *this += Vector(b); }
-   inline Vector& operator -= (const int32& b)                             { return *this -= Vector(b); }
-   inline Vector& operator *= (const int32& b)                             { return *this *= Vector(b); }
-   inline Vector& operator /= (const int32& b)                             { return *this /= Vector(b); }
+   inline Vector& operator += (const int32_t& b)                             { return *this += Vector(b); }
+   inline Vector& operator -= (const int32_t& b)                             { return *this -= Vector(b); }
+   inline Vector& operator *= (const int32_t& b)                             { return *this *= Vector(b); }
+   inline Vector& operator /= (const int32_t& b)                             { return *this /= Vector(b); }
 
 
    ////////////////////////
    // Bitshift Operators //
    ////////////////////////
 
-   inline Vector operator << (const int bits) const                        { return _r.shiftLeft32((uint8)bits); }
-   inline Vector operator >> (const int bits) const                        { return _r.shiftRightA32((uint8)bits); }
-   inline Vector LogicalRightShift(const int bits) const                   { return _r.shiftRightL32((uint8)bits); }
+   inline Vector operator << (const int bits) const                        { return _r.shiftLeft32((uint8_t)bits); }
+   inline Vector operator >> (const int bits) const                        { return _r.shiftRightA32((uint8_t)bits); }
+   inline Vector LogicalRightShift(const int bits) const                   { return _r.shiftRightL32((uint8_t)bits); }
    inline Vector operator << (const Vector& bits) const;
    inline Vector operator >> (const Vector& bits) const;
    inline Vector LogicalRightShift(const Vector& bits) const;
 
    /// Integer Modulus
    friend Vector operator %  (const Vector& a, const Vector& b);
-   friend Vector operator %  (const Vector& a, const int32& b);
-   //friend Vector operator %  (const int32& a, const Vector& b);
+   friend Vector operator %  (const Vector& a, const int32_t& b);
+   //friend Vector operator %  (const int32_t& a, const Vector& b);
 
    inline Vector& operator <<= (const int bits)                            { return *this = *this << bits; }
    inline Vector& operator >>= (const int bits)                            { return *this = *this >> bits; }
@@ -196,7 +196,7 @@ public:
    { return WriteMaskedVector<Vector>(*this, m); }
 
    /// Shuffle
-   template<uint8 i0, uint8 i1, uint8 i2, uint8 i3> inline Vector Shuffle() const
+   template<uint8_t i0, uint8_t i1, uint8_t i2, uint8_t i3> inline Vector Shuffle() const
    { return _r.shuffle32<i0, i1, i2, i3>(); }
 
 
@@ -204,10 +204,10 @@ public:
    // Reduction Operations //
    //////////////////////////
 
-   inline int32 ReduceSum() const     { return _r.i32ReduceAdd().i32Extract<0>(); }
-   inline int32 ReduceProduct() const { return _r.i32ReduceMul().i32Extract<0>(); }
-   inline int32 ReduceMin() const     { return _r.i32ReduceMin().i32Extract<0>(); }
-   inline int32 ReduceMax() const     { return _r.i32ReduceMax().i32Extract<0>(); }
+   inline int32_t ReduceSum() const     { return _r.i32ReduceAdd().i32Extract<0>(); }
+   inline int32_t ReduceProduct() const { return _r.i32ReduceMul().i32Extract<0>(); }
+   inline int32_t ReduceMin() const     { return _r.i32ReduceMin().i32Extract<0>(); }
+   inline int32_t ReduceMax() const     { return _r.i32ReduceMax().i32Extract<0>(); }
 
 
    ////////////////////////////
@@ -228,8 +228,8 @@ private:
    inline Vector(const __m128i reg) : _r(reg) {}
    inline Vector(const SSERegister& reg) : _r(reg) {}
 
-   friend struct MATHEMATICS<Vector<int32, 4> >;
-   friend struct BITS<Vector<int32, 4> >;
+   friend struct MATHEMATICS<Vector<int32_t, 4> >;
+   friend struct BITS<Vector<int32_t, 4> >;
 
    /// Returns the register inside the object
    inline SSERegister getRegister() const { return _r; }
@@ -237,13 +237,13 @@ private:
    /// Make friends with all generic Vector types
    template <class U, int M> friend class Vector;
 
-   inline std::string internalTostd::string(int prec = 3) const
+   inline std::string internalToString(int prec = 3) const
    {
       return
-         std::string((int32)((int32*)&_r)[0], prec) + ", " +
-         std::string((int32)((int32*)&_r)[1], prec) + ", " +
-         std::string((int32)((int32*)&_r)[2], prec) + ", " +
-         std::string((int32)((int32*)&_r)[3], prec);
+         std::string((int32_t)((int32_t*)&_r)[0], prec) + ", " +
+         std::string((int32_t)((int32_t*)&_r)[1], prec) + ", " +
+         std::string((int32_t)((int32_t*)&_r)[2], prec) + ", " +
+         std::string((int32_t)((int32_t*)&_r)[3], prec);
    }
 };
 
@@ -260,10 +260,10 @@ private:
 /// If and when a more efficient implementation using SSE intrinsics is provided
 /// we'll move these into the SSERegister class.
 
-inline Vector<int32, 4> Vector<int32, 4>::operator << (const Vector<int32, 4>& bits) const
+inline Vector<int32_t, 4> Vector<int32_t, 4>::operator << (const Vector<int32_t, 4>& bits) const
 {
    /// This is the slowest possible way to do this
-   Vector<int32, 4> r;
+   Vector<int32_t, 4> r;
    r._r = r._r.i32Insert<0>(x() << bits.x());
    r._r = r._r.i32Insert<1>(y() << bits.y());
    r._r = r._r.i32Insert<2>(z() << bits.z());
@@ -272,10 +272,10 @@ inline Vector<int32, 4> Vector<int32, 4>::operator << (const Vector<int32, 4>& b
    return r;
 }
 
-inline Vector<int32, 4> Vector<int32, 4>::operator >> (const Vector<int32, 4>& bits) const
+inline Vector<int32_t, 4> Vector<int32_t, 4>::operator >> (const Vector<int32_t, 4>& bits) const
 {
    /// This is the slowest possible way to do this
-   Vector<int32, 4> r;
+   Vector<int32_t, 4> r;
    r._r = r._r.i32Insert<0>(x() >> bits.x());
    r._r = r._r.i32Insert<1>(y() >> bits.y());
    r._r = r._r.i32Insert<2>(z() >> bits.z());
@@ -283,10 +283,10 @@ inline Vector<int32, 4> Vector<int32, 4>::operator >> (const Vector<int32, 4>& b
    return r;
 }
 
-inline Vector<int32, 4> Vector<int32, 4>::LogicalRightShift(const Vector<int32, 4>& bits) const
+inline Vector<int32_t, 4> Vector<int32_t, 4>::LogicalRightShift(const Vector<int32_t, 4>& bits) const
 {
    /// This is the slowest possible way to do this
-   Vector<int32, 4> r;
+   Vector<int32_t, 4> r;
    r._r = r._r.i32Insert<0>((uint32_t)x() >> bits.x());
    r._r = r._r.i32Insert<1>((uint32_t)y() >> bits.y());
    r._r = r._r.i32Insert<2>((uint32_t)z() >> bits.z());
@@ -298,10 +298,10 @@ inline Vector<int32, 4> Vector<int32, 4>::LogicalRightShift(const Vector<int32, 
 
 // SSE also fails to provide integer modulus operations.
 
-inline Vector<int32, 4> operator % (
-   const Vector<int32, 4>& a, const Vector<int32, 4>& b)
+inline Vector<int32_t, 4> operator % (
+   const Vector<int32_t, 4>& a, const Vector<int32_t, 4>& b)
 {
-   Vector<int32, 4> r;
+   Vector<int32_t, 4> r;
    r._r = r._r.i32Insert<0>(a.x() % b.x());
    r._r = r._r.i32Insert<1>(a.y() % b.y());
    r._r = r._r.i32Insert<2>(a.z() % b.z());
@@ -310,10 +310,10 @@ inline Vector<int32, 4> operator % (
    return r;
 }
 
-inline Vector<int32, 4> operator % (
-   const Vector<int32, 4>& a, const int32& b)
+inline Vector<int32_t, 4> operator % (
+   const Vector<int32_t, 4>& a, const int32_t& b)
 {
-   Vector<int32, 4> r;
+   Vector<int32_t, 4> r;
    r._r = r._r.i32Insert<0>(a.x() % b);
    r._r = r._r.i32Insert<1>(a.y() % b);
    r._r = r._r.i32Insert<2>(a.z() % b);
@@ -332,41 +332,41 @@ inline Vector<int32, 4> operator % (
 // up-conversion on the load.  Specializations for U == float will use the SSE
 // instructions
 
-template <class U> inline Vector<int32, 4> Vector<int32, 4>::Load(U * addr)
+template <class U> inline Vector<int32_t, 4> Vector<int32_t, 4>::Load(U * addr)
 {
-   Vector<int32, 4> v;
-   for (int i = 0; i < 4; ++i) v[i] = (int32)(*(addr + i));
+   Vector<int32_t, 4> v;
+   for (int i = 0; i < 4; ++i) v[i] = (int32_t)(*(addr + i));
    return v;
 }
 
-template <class U> inline Vector<int32, 4> Vector<int32, 4>::Loadu(U * addr)
+template <class U> inline Vector<int32_t, 4> Vector<int32_t, 4>::Loadu(U * addr)
 {
-   Vector<int32, 4> v;
-   for (int i = 0; i < 4; ++i) v[i] = (int32)(*(addr + i));
+   Vector<int32_t, 4> v;
+   for (int i = 0; i < 4; ++i) v[i] = (int32_t)(*(addr + i));
    return v;
 }
 
-template <class U> inline Vector<int32, 4> Vector<int32, 4>::LoadBroadcast(U * addr)
-{ return Vector<int32, 4>((int32)(*addr)); }
+template <class U> inline Vector<int32_t, 4> Vector<int32_t, 4>::LoadBroadcast(U * addr)
+{ return Vector<int32_t, 4>((int32_t)(*addr)); }
 
-template <class U> inline Vector<int32, 4>
-Vector<int32, 4>::Gather(U * addr, const Vector<int32, 4>& offsets)
+template <class U> inline Vector<int32_t, 4>
+Vector<int32_t, 4>::Gather(U * addr, const Vector<int32_t, 4>& offsets)
 {
    Vector v;
-   for (int i = 0; i < 4; ++i) v[i] = (int32)(*(addr + offsets[i]));
+   for (int i = 0; i < 4; ++i) v[i] = (int32_t)(*(addr + offsets[i]));
    return v;
 }
 
-template <class U> inline Vector<int32, 4>
-Vector<int32, 4>::Gather(U * addr, const Vector<int32, 4>& offsets, const Mask& m)
+template <class U> inline Vector<int32_t, 4>
+Vector<int32_t, 4>::Gather(U * addr, const Vector<int32_t, 4>& offsets, const Mask& m)
 {
    Vector v;
    for (int i = 0; i < 4; ++i)
-      if (m.BitMask() & (1 << i)) { /*printf("  Ouch! (mask = %s)\n", *m.Tostd::string());*/ v[i] = (int32)(*(addr + offsets[i])); }
+      if (m.BitMask() & (1 << i)) { /*printf("  Ouch! (mask = %s)\n", *m.Tostd::string());*/ v[i] = (int32_t)(*(addr + offsets[i])); }
    return v;
 }
 
-template <class U> inline void Vector<int32, 4>::Store(U * addr) const
+template <class U> inline void Vector<int32_t, 4>::Store(U * addr) const
 {
    *(addr + 0) = (U)x();
    *(addr + 1) = (U)y();
@@ -374,11 +374,11 @@ template <class U> inline void Vector<int32, 4>::Store(U * addr) const
    *(addr + 3) = (U)w();
 }
 
-template <class U> inline void Vector<int32, 4>::StoreOne(U * addr) const
+template <class U> inline void Vector<int32_t, 4>::StoreOne(U * addr) const
 { *addr = (U)x(); }
 
 template <class U> inline void
-Vector<int32, 4>::Scatter(U * addr, const Vector<int32, 4>& offsets) const
+Vector<int32_t, 4>::Scatter(U * addr, const Vector<int32_t, 4>& offsets) const
 {
    *(addr + offsets[0]) = (U)x();
    *(addr + offsets[1]) = (U)y();
@@ -387,26 +387,26 @@ Vector<int32, 4>::Scatter(U * addr, const Vector<int32, 4>& offsets) const
 }
 
 template <class U> inline void
-Vector<int32, 4>::Scatter(U * addr, const Vector<int32, 4>& offsets, const Mask& m) const
+Vector<int32_t, 4>::Scatter(U * addr, const Vector<int32_t, 4>& offsets, const Mask& m) const
 {
-   int mask = m.bitMask();
+   int mask = m.BitMask();
    if (mask & 0x1) *(addr + offsets[0]) = (U)x();
    if (mask & 0x2) *(addr + offsets[1]) = (U)y();
    if (mask & 0x4) *(addr + offsets[2]) = (U)z();
    if (mask & 0x8) *(addr + offsets[3]) = (U)w();
 }
 
-/// Specialization for U == int32
-template <> inline Vector<int32, 4> Vector<int32, 4>::Load(int32 * addr)
+/// Specialization for U == int32_t
+template <> inline Vector<int32_t, 4> Vector<int32_t, 4>::Load(int32_t * addr)
 { return Vector(SSERegister::load((const SSERegister*)addr)); }
 
-template <> inline Vector<int32, 4> Vector<int32, 4>::Loadu(int32 * addr)
+template <> inline Vector<int32_t, 4> Vector<int32_t, 4>::Loadu(int32_t * addr)
 { return Vector(SSERegister::loadu((const SSERegister*)addr)); }
 
-template <> inline Vector<int32, 4> Vector<int32, 4>::LoadBroadcast(int32 * addr)
+template <> inline Vector<int32_t, 4> Vector<int32_t, 4>::LoadBroadcast(int32_t * addr)
 { return Vector(SSERegister::loadBroadcast((const SSERegister*)addr)); }
 
-template <> inline void Vector<int32, 4>::Store(int32 * addr) const
+template <> inline void Vector<int32_t, 4>::Store(int32_t * addr) const
 { _r.store((SSERegister*)addr); }
 
 
@@ -415,22 +415,22 @@ template <> inline void Vector<int32, 4>::Store(int32 * addr) const
 ///////////////////////////////////////////////////////////////////////////
 
 /// Mathematics. See Mathematics.h for complete interface specification
-template <> struct MATHEMATICS<Vector<int32, 4> >
+template <> struct MATHEMATICS<Vector<int32_t, 4> >
 {
 private:
-   typedef Vector<int32, 4> Vec4;
+   typedef Vector<int32_t, 4> Vec4;
 
 public:
 
    static inline Vec4 zero()                 { return Vec4(SSERegister::zeroes()); }
-   static inline Vec4 one()                  { return Vec4(ONE<int32>()); }
-   static inline Vec4 minusOne()             { return Vec4(MINUS_ONE<int32>()); }
-   static inline Vec4 inf()                  { return Vec4(INF<int32>()); }
-   static inline Vec4 _inf()                 { return Vec4(_INF<int32>()); }
+   static inline Vec4 one()                  { return Vec4(ONE<int32_t>()); }
+   static inline Vec4 minusOne()             { return Vec4(MINUS_ONE<int32_t>()); }
+   static inline Vec4 inf()                  { return Vec4(INF<int32_t>()); }
+   static inline Vec4 _inf()                 { return Vec4(_INF<int32_t>()); }
    static inline Vec4 abs(Vec4 x)            { return x._r.i32Abs(); }
 
    static inline Vec4 clampz(Vec4 x, Vec4 u)
-   { return blend(x < ZERO<Vec4>(), ZERO<Vec4>(), blend(x > u, u, x)); }
+   { return Blend(x < ZERO<Vec4>(), ZERO<Vec4>(), Blend(x > u, u, x)); }
 
    static inline Vec4 sign(Vec4 x)
    {
@@ -452,17 +452,17 @@ public:
 //                           Bit Manipulation                            //
 ///////////////////////////////////////////////////////////////////////////
 
-template <> struct BITS<Vector<int32, 4> >
+template <> struct BITS<Vector<int32_t, 4> >
 {
 private:
-   typedef Vector<int32, 4> Vec4;  ///< For shorthand, syntactical convenience
+   typedef Vector<int32_t, 4> Vec4;  ///< For shorthand, syntactical convenience
 
 public:
 
    /// Bit rotations
-   static inline Vec4 Rotr(Vec4 a, uint8 b)
+   static inline Vec4 Rotr(Vec4 a, uint8_t b)
    { return Vec4(a._r.rotateRight32(b)); }
-   static inline Vec4 Rotl(Vec4 a, uint8 b)
+   static inline Vec4 Rotl(Vec4 a, uint8_t b)
    { return Vec4(a._r.rotateLeft32(b)); }
 
    /// Bit interleaves, no SSE instructions for this, very slow
@@ -481,7 +481,7 @@ public:
    //static inline Vec4 bitCount(T a);
 };
 
-}; // namespace ToolChest
+}; // namespace Mathematics
 
 
 #endif // VECTOR4F_H

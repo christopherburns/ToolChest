@@ -2,7 +2,7 @@
 #define TRAVERSABLE_H
 
 #include <stdarg.h>
-#include "../Reference.h"
+#include "Reference.h"
 
 /* Design Principles
  - implementations handle reference counting under the hood, so that a data
@@ -45,7 +45,7 @@ namespace Collections
 
    namespace Common
    {      
-      template <class E> class InitializedBuffer : public ToolChest::Object
+      template <class E> class InitializedBuffer : public Object
       {
       private:
          E * _pool;
@@ -75,7 +75,7 @@ namespace Collections
       };
 
 
-      template <class E> class MemoryPool : public ToolChest::Object
+      template <class E> class MemoryPool : public Object
       {
       private:
          static const int MIN_CAPACITY = 0x10;
@@ -119,9 +119,9 @@ namespace Collections
          inline int Capacity() const { return _capacity; }
          inline int NextFreeIndex() const { return _nextFreeIndex; }
 
-         ToolChest::Ref<MemoryPool> Clone() const
+         Ref<MemoryPool> Clone() const
          {
-            ToolChest::Ref<MemoryPool> p = new MemoryPool();
+            Ref<MemoryPool> p = new MemoryPool();
             p->_capacity = _capacity;
             p->_nextFreeIndex = _nextFreeIndex;
             p->_pool = (E*)malloc(_capacity * sizeof(E));
@@ -203,7 +203,7 @@ namespace Collections
 
    // E is the element type, C is the concrete derived class, e.g. Array<int>
    template <class E, class C, class CTraits>
-   class Traversable : public ToolChest::Object
+   class Traversable : public Object
    {
    public:
 
@@ -474,8 +474,6 @@ namespace Collections
          builder.AddElement(vf(iterator.Next()));
       return builder.Result();
    }
-
-
 
 } // namespace Collections
 
