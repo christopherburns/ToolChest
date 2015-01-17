@@ -6,7 +6,7 @@ SRC_DIR = test
 
 CC = clang++ 
 ARCH := -arch x86_64 -msse4
-CFLAGS = -std=c++11 -O3 -g -D___OSX  -D___SSE -D___SSE4 $(ARCH) -Iinclude/math/ -Iinclude/collections -Iinclude/ -Wunused-value
+CFLAGS = -std=c++11 -O3 -g -D___OSX  -D___SSE -D___SSE4 $(ARCH) -Wno-backslash-newline-escape -Iinclude/math/ -Iinclude/collections -Iinclude/ -Wunused-value
 LDFLAGS = -lstdc++
 
 EXES = testunitcollections profilelinkedlist profilesort profilearray profiletreemap profiletreeset delaunay
